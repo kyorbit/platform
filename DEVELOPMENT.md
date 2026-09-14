@@ -164,3 +164,13 @@ Use the same origin you use in the browser (`BETTER_AUTH_URL` in `.env.local` sh
 ```bash
 bun run start
 ```
+
+## Releases
+
+Releases use [Release Please](https://github.com/googleapis/release-please) on conventional commits (enforced by commitlint).
+
+1. Land `feat` / `fix` / breaking changes on `main` as usual.
+2. Release Please opens or updates a **Release PR** with the version bump and `CHANGELOG.md`.
+3. Merge that Release PR when you are ready to cut — it creates a `v*` tag and a GitHub Release.
+
+Nothing ships until you merge the Release PR. Beta/alpha channels can be added later.
