@@ -11,12 +11,13 @@ permissions:
   pull-requests: write
 
 jobs:
-  release-please:
+  release:
     runs-on: ubuntu-latest
     steps:
       # Stable releases from main for now. Beta/alpha channels can be added later
       # via extra Release Please packages or prerelease branches.
       - uses: googleapis/release-please-action@v4
         with:
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
