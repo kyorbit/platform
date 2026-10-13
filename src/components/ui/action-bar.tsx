@@ -1,5 +1,9 @@
-import { useDirection } from '@radix-ui/react-direction';
-import { Slot } from '@radix-ui/react-slot';
+import {
+  DirectionProvider,
+  useDirection,
+} from '@base-ui/react/direction-provider';
+import { useRender } from '@base-ui/react/use-render';
+import { mergeProps } from '@base-ui/react/merge-props';
 import React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Button } from '@/components/ui/button';
@@ -20,13 +24,10 @@ const EVENT_OPTIONS = { bubbles: false, cancelable: true };
 type Direction = 'ltr' | 'rtl';
 type Orientation = 'horizontal' | 'vertical';
 
-interface DivProps extends React.ComponentProps<'div'> {
-  asChild?: boolean;
-}
+type DivProps = useRender.ComponentProps<'div'>;
 
 type RootElement = React.ComponentRef<typeof ActionBar>;
 type ItemElement = React.ComponentRef<typeof ActionBarItem>;
-type CloseElement = React.ComponentRef<typeof ActionBarClose>;
 
 function focusFirst(
   candidates: Array<React.RefObject<HTMLElement | null>>,
@@ -135,7 +136,7 @@ function ActionBar(props: ActionBarProps) {
     className,
     style,
     ref,
-    asChild,
+    render,
     ...rootProps
   } = props;
 
@@ -149,7 +150,8 @@ function ActionBar(props: ActionBarProps) {
     onOpenChange,
   });
 
-  const dir = useDirection(dirProp);
+  const inheritedDirection = useDirection();
+  const dir = dirProp ?? inheritedDirection;
 
   React.useLayoutEffect(() => {
     setMounted(true);
@@ -186,65 +188,68 @@ function ActionBar(props: ActionBarProps) {
   const portalContainer =
     portalContainerProp ?? (mounted ? globalThis.document?.body : null);
 
+  const element = useRender({
+    defaultTagName: 'div',
+    render,
+    ref: composedRef,
+    state: {
+      slot: 'action-bar',
+      side: side,
+      align: align,
+      orientation: orientation,
+    },
+    props: mergeProps<'div'>(
+      { role: 'toolbar', 'aria-orientation': orientation, dir: dir },
+      rootProps,
+      {
+        className: cn(
+          'bg-card fixed z-50 rounded-lg border shadow-lg outline-none',
+          'fade-in-0 zoom-in-95 animate-in duration-250 [animation-timing-function:cubic-bezier(0.16,1,0.3,1)]',
+          'data-[side=bottom]:slide-in-from-bottom-4 data-[side=top]:slide-in-from-top-4',
+          'motion-reduce:animate-none motion-reduce:transition-none',
+          orientation === 'horizontal'
+            ? 'flex flex-row items-center gap-2 px-2 py-1.5'
+            : 'flex flex-col items-start gap-2 px-1.5 py-2',
+          className
+        ),
+        style: {
+          [side]: `${sideOffset}px`,
+          ...(align === 'center' && {
+            left: '50%',
+            translate: '-50% 0',
+          }),
+          ...(align === 'start' && { left: `${alignOffset}px` }),
+          ...(align === 'end' && { right: `${alignOffset}px` }),
+          ...style,
+        },
+      }
+    ),
+  });
   if (!portalContainer || !open) return null;
-
-  const RootPrimitive = asChild ? Slot : 'div';
-
   return (
-    <ActionBarContext.Provider value={contextValue}>
-      {ReactDOM.createPortal(
-        <RootPrimitive
-          role="toolbar"
-          aria-orientation={orientation}
-          data-slot="action-bar"
-          data-side={side}
-          data-align={align}
-          data-orientation={orientation}
-          dir={dir}
-          {...rootProps}
-          ref={composedRef}
-          className={cn(
-            'bg-card fixed z-50 rounded-lg border shadow-lg outline-none',
-            'fade-in-0 zoom-in-95 animate-in duration-250 [animation-timing-function:cubic-bezier(0.16,1,0.3,1)]',
-            'data-[side=bottom]:slide-in-from-bottom-4 data-[side=top]:slide-in-from-top-4',
-            'motion-reduce:animate-none motion-reduce:transition-none',
-            orientation === 'horizontal'
-              ? 'flex flex-row items-center gap-2 px-2 py-1.5'
-              : 'flex flex-col items-start gap-2 px-1.5 py-2',
-            className
-          )}
-          style={{
-            [side]: `${sideOffset}px`,
-            ...(align === 'center' && {
-              left: '50%',
-              translate: '-50% 0',
-            }),
-            ...(align === 'start' && { left: `${alignOffset}px` }),
-            ...(align === 'end' && { right: `${alignOffset}px` }),
-            ...style,
-          }}
-        />,
-        portalContainer
-      )}
-    </ActionBarContext.Provider>
+    <DirectionProvider direction={dir}>
+      <ActionBarContext.Provider value={contextValue}>
+        {ReactDOM.createPortal(element, portalContainer)}
+      </ActionBarContext.Provider>
+    </DirectionProvider>
   );
 }
 
 function ActionBarSelection(props: DivProps) {
-  const { className, asChild, ...selectionProps } = props;
+  const { className, render, ...selectionProps } = props;
 
-  const SelectionPrimitive = asChild ? Slot : 'div';
-
-  return (
-    <SelectionPrimitive
-      data-slot="action-bar-selection"
-      {...selectionProps}
-      className={cn(
+  const element = useRender({
+    defaultTagName: 'div',
+    render,
+    state: { slot: 'action-bar-selection' },
+    props: mergeProps<'div'>(selectionProps, {
+      className: cn(
         'flex items-center gap-1 rounded-sm border px-2 py-1 text-sm font-medium tabular-nums',
         className
-      )}
-    />
-  );
+      ),
+    }),
+  });
+  return element;
 }
 
 function ActionBarGroup(props: DivProps) {
@@ -253,7 +258,7 @@ function ActionBarGroup(props: DivProps) {
     onFocus: onFocusProp,
     onMouseDown: onMouseDownProp,
     className,
-    asChild,
+    render,
     ref,
     ...groupProps
   } = props;
@@ -386,29 +391,35 @@ function ActionBarGroup(props: DivProps) {
     ]
   );
 
-  const GroupPrimitive = asChild ? Slot : 'div';
-
-  return (
-    <FocusContext.Provider value={focusContextValue}>
-      <GroupPrimitive
-        role="group"
-        data-slot="action-bar-group"
-        data-orientation={orientation}
-        dir={dir}
-        tabIndex={isTabbingBackOut || focusableItemCount === 0 ? -1 : 0}
-        {...groupProps}
-        ref={composedRef}
-        className={cn(
+  const element = useRender({
+    defaultTagName: 'div',
+    render,
+    ref: composedRef,
+    state: { slot: 'action-bar-group', orientation: orientation },
+    props: mergeProps<'div'>(
+      {
+        role: 'group',
+        dir: dir,
+        tabIndex: isTabbingBackOut || focusableItemCount === 0 ? -1 : 0,
+      },
+      groupProps,
+      {
+        className: cn(
           'flex gap-2 outline-none',
           orientation === 'horizontal'
             ? 'items-center'
             : 'w-full flex-col items-start',
           className
-        )}
-        onBlur={onBlur}
-        onFocus={onFocus}
-        onMouseDown={onMouseDown}
-      />
+        ),
+        onBlur: onBlur,
+        onFocus: onFocus,
+        onMouseDown: onMouseDown,
+      }
+    ),
+  });
+  return (
+    <FocusContext.Provider value={focusContextValue}>
+      {element}
     </FocusContext.Provider>
   );
 }
@@ -594,17 +605,15 @@ function ActionBarItem(props: ActionBarItemProps) {
   );
 }
 
-interface ActionBarCloseProps extends React.ComponentProps<'button'> {
-  asChild?: boolean;
-}
+type ActionBarCloseProps = useRender.ComponentProps<'button'>;
 
 function ActionBarClose(props: ActionBarCloseProps) {
-  const { asChild, className, onClick, ...closeProps } = props;
+  const { render, className, onClick, ...closeProps } = props;
 
   const { onOpenChange } = useActionBarContext(CLOSE_NAME);
 
   const onCloseClick = React.useCallback(
-    (event: React.MouseEvent<CloseElement>) => {
+    (event: React.MouseEvent<HTMLButtonElement>) => {
       onClick?.(event);
       if (event.defaultPrevented) return;
 
@@ -613,20 +622,19 @@ function ActionBarClose(props: ActionBarCloseProps) {
     [onOpenChange, onClick]
   );
 
-  const ClosePrimitive = asChild ? Slot : 'button';
-
-  return (
-    <ClosePrimitive
-      type="button"
-      data-slot="action-bar-close"
-      {...closeProps}
-      className={cn(
+  const element = useRender({
+    defaultTagName: 'button',
+    render,
+    state: { slot: 'action-bar-close' },
+    props: mergeProps<'button'>({ type: 'button' }, closeProps, {
+      className: cn(
         "focus-visible:border-ring focus-visible:ring-ring/50 rounded-xs opacity-70 outline-none hover:opacity-100 focus-visible:ring-2 disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5",
         className
-      )}
-      onClick={onCloseClick}
-    />
-  );
+      ),
+      onClick: onCloseClick,
+    }),
+  });
+  return element;
 }
 
 interface ActionBarSeparatorProps extends DivProps {
@@ -636,7 +644,7 @@ interface ActionBarSeparatorProps extends DivProps {
 function ActionBarSeparator(props: ActionBarSeparatorProps) {
   const {
     orientation: orientationProp,
-    asChild,
+    render,
     className,
     ...separatorProps
   } = props;
@@ -644,22 +652,27 @@ function ActionBarSeparator(props: ActionBarSeparatorProps) {
   const context = useActionBarContext(SEPARATOR_NAME);
   const orientation = orientationProp ?? context.orientation;
 
-  const SeparatorPrimitive = asChild ? Slot : 'div';
-
-  return (
-    <SeparatorPrimitive
-      role="separator"
-      aria-orientation={orientation}
-      aria-hidden="true"
-      data-slot="action-bar-separator"
-      {...separatorProps}
-      className={cn(
-        'bg-border in-data-[slot=action-bar-selection]:ml-0.5 in-data-[slot=action-bar-selection]:h-4 in-data-[slot=action-bar-selection]:w-px',
-        orientation === 'horizontal' ? 'h-6 w-px' : 'h-px w-full',
-        className
-      )}
-    />
-  );
+  const element = useRender({
+    defaultTagName: 'div',
+    render,
+    state: { slot: 'action-bar-separator' },
+    props: mergeProps<'div'>(
+      {
+        role: 'separator',
+        'aria-orientation': orientation,
+        'aria-hidden': 'true',
+      },
+      separatorProps,
+      {
+        className: cn(
+          'bg-border in-data-[slot=action-bar-selection]:ml-0.5 in-data-[slot=action-bar-selection]:h-4 in-data-[slot=action-bar-selection]:w-px',
+          orientation === 'horizontal' ? 'h-6 w-px' : 'h-px w-full',
+          className
+        ),
+      }
+    ),
+  });
+  return element;
 }
 
 export {
