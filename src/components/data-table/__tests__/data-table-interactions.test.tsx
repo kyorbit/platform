@@ -233,8 +233,11 @@ describe('shared data-table interactions', () => {
     );
     expect(screen.getByText('Athlete 21')).toBeTruthy();
     expect(screen.queryByText('Athlete 01')).toBeNull();
-    expect(screen.getAllByRole('slider')[0].getAttribute('aria-valuenow')).toBe(
-      '60'
-    );
+    // jsdom has no layout; browser checks verify the measured thumbs are visible.
+    expect(
+      screen
+        .getAllByRole('slider', { hidden: true })[0]
+        .getAttribute('aria-valuenow')
+    ).toBe('60');
   });
 });

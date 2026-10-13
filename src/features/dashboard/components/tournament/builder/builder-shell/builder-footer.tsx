@@ -168,15 +168,21 @@ export function BuilderFooter({
 
           <Separator orientation="vertical" className="mx-2 my-auto h-6" />
 
-          <Button variant="outline" size="sm" asChild className="gap-2">
-            <Link
-              to="/dashboard/tournaments/$id"
-              params={{ id: tournament.id }}
-              search={{}}
-            >
-              <ArrowLeft className="size-4" />
-              <span>Command Center</span>
-            </Link>
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2"
+            nativeButton={false}
+            render={
+              <Link
+                to="/dashboard/tournaments/$id"
+                params={{ id: tournament.id }}
+                search={{}}
+              />
+            }
+          >
+            <ArrowLeft className="size-4" />
+            <span>Command Center</span>
           </Button>
         </div>
       </footer>

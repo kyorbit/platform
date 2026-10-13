@@ -54,11 +54,12 @@ export function TournamentNotFound() {
       title="Tournament not found"
       description="This tournament may have been deleted or the link is invalid."
       action={
-        <Button asChild>
-          <Link to="/dashboard/tournaments">
-            <ArrowLeft data-icon="inline-start" />
-            Back to tournaments
-          </Link>
+        <Button
+          nativeButton={false}
+          render={<Link to="/dashboard/tournaments" />}
+        >
+          <ArrowLeft data-icon="inline-start" />
+          Back to tournaments
         </Button>
       }
     />
@@ -94,11 +95,13 @@ function RouteErrorRetry({ error, reset }: ErrorComponentProps) {
           >
             Retry
           </Button>
-          <Button variant="ghost" asChild>
-            <Link to="/dashboard">
-              <HomeIcon data-icon="inline-start" />
-              Dashboard
-            </Link>
+          <Button
+            variant="ghost"
+            nativeButton={false}
+            render={<Link to="/dashboard" />}
+          >
+            <HomeIcon data-icon="inline-start" />
+            Dashboard
           </Button>
         </div>
       </div>
@@ -117,11 +120,9 @@ export function DashboardRouteError(props: ErrorComponentProps) {
           "The page you're looking for might have been moved or doesn't exist."
         }
         action={
-          <Button asChild>
-            <Link to="/dashboard">
-              <HomeIcon data-icon="inline-start" />
-              Go to dashboard
-            </Link>
+          <Button nativeButton={false} render={<Link to="/dashboard" />}>
+            <HomeIcon data-icon="inline-start" />
+            Go to dashboard
           </Button>
         }
       />

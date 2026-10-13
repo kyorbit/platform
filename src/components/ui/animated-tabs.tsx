@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Tabs as TabsPrimitive } from 'radix-ui';
+import { Tabs as TabsPrimitive } from '@base-ui/react/tabs';
 import { AnimatePresence, motion } from 'motion/react';
 import type { Transition } from 'motion/react';
 
@@ -123,21 +123,19 @@ function PrimitiveTabsHighlightItem(props: PrimitiveTabsHighlightItemProps) {
 }
 
 interface PrimitiveTabsTabProps extends Omit<
-  React.ComponentProps<typeof TabsPrimitive.Trigger>,
+  React.ComponentProps<typeof TabsPrimitive.Tab>,
   'value'
 > {
   value?: TabsValue;
 }
 
 function PrimitiveTabsTab({
-  asChild,
   value = '',
   ...props
 }: PrimitiveTabsTabProps = {}) {
   return (
-    <TabsPrimitive.Trigger
-      data-slot={asChild ? undefined : 'tabs-tab'}
-      asChild={asChild}
+    <TabsPrimitive.Tab
+      data-slot="tabs-tab"
       value={normalizeTabsValue(value)}
       {...props}
     />
@@ -164,26 +162,26 @@ function PrimitiveTabsPanel({
     normalizeTabsValue(activeValue) === normalizeTabsValue(value);
 
   return (
-    <TabsPrimitive.Content
+    <TabsPrimitive.Panel
       value={normalizeTabsValue(value)}
-      forceMount={keepMounted || undefined}
-      asChild
-    >
-      <motion.div
-        data-slot="tabs-panel"
-        data-active={isActive}
-        layout
-        layoutDependency={normalizeTabsValue(value)}
-        initial={false} // Prevent initial animation
-        animate={{
-          opacity: isActive ? 1 : 0,
-          filter: isActive ? 'blur(0px)' : 'blur(4px)',
-          display: isActive ? 'block' : 'none',
-        }}
-        transition={transition}
-        {...props}
-      />
-    </TabsPrimitive.Content>
+      keepMounted={keepMounted}
+      render={
+        <motion.div
+          data-slot="tabs-panel"
+          data-active={isActive}
+          layout
+          layoutDependency={normalizeTabsValue(value)}
+          initial={false} // Prevent initial animation
+          animate={{
+            opacity: isActive ? 1 : 0,
+            filter: isActive ? 'blur(0px)' : 'blur(4px)',
+            display: isActive ? 'block' : 'none',
+          }}
+          transition={transition}
+          {...props}
+        />
+      }
+    />
   );
 }
 

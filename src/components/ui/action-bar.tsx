@@ -413,10 +413,12 @@ function ActionBarGroup(props: DivProps) {
   );
 }
 
-interface ActionBarItemProps extends Omit<
-  React.ComponentProps<typeof Button>,
-  'onSelect'
-> {
+type ActionBarButtonProps = React.ComponentProps<typeof Button>;
+type ActionBarButtonEvent<
+  K extends 'onClick' | 'onFocus' | 'onKeyDown' | 'onMouseDown',
+> = Parameters<NonNullable<ActionBarButtonProps[K]>>[0];
+
+interface ActionBarItemProps extends Omit<ActionBarButtonProps, 'onSelect'> {
   onSelect?: (event: Event) => void;
 }
 
@@ -464,7 +466,7 @@ function ActionBarItem(props: ActionBarItemProps) {
   }, [focusContext, itemId, disabled]);
 
   const onClick = React.useCallback(
-    (event: React.MouseEvent<ItemElement>) => {
+    (event: ActionBarButtonEvent<'onClick'>) => {
       onClickProp?.(event);
       if (event.defaultPrevented) return;
 
@@ -494,7 +496,7 @@ function ActionBarItem(props: ActionBarItemProps) {
   );
 
   const onFocus = React.useCallback(
-    (event: React.FocusEvent<ItemElement>) => {
+    (event: ActionBarButtonEvent<'onFocus'>) => {
       onFocusProp?.(event);
       if (event.defaultPrevented) return;
 
@@ -505,7 +507,7 @@ function ActionBarItem(props: ActionBarItemProps) {
   );
 
   const onKeyDown = React.useCallback(
-    (event: React.KeyboardEvent<ItemElement>) => {
+    (event: ActionBarButtonEvent<'onKeyDown'>) => {
       onKeyDownProp?.(event);
       if (event.defaultPrevented) return;
 
@@ -558,7 +560,7 @@ function ActionBarItem(props: ActionBarItemProps) {
   );
 
   const onMouseDown = React.useCallback(
-    (event: React.MouseEvent<ItemElement>) => {
+    (event: ActionBarButtonEvent<'onMouseDown'>) => {
       onMouseDownProp?.(event);
       if (event.defaultPrevented) return;
 

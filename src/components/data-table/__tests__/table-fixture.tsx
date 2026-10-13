@@ -27,9 +27,9 @@ const columns: Array<DataTableColumnDef<FixtureRow>> = [
     header: ({ table }) => (
       <Checkbox
         aria-label="Select current page"
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
+        checked={table.getIsAllPageRowsSelected()}
+        indeterminate={
+          table.getIsSomePageRowsSelected() && !table.getIsAllPageRowsSelected()
         }
         onCheckedChange={(checked) =>
           table.toggleAllPageRowsSelected(!!checked)
