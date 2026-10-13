@@ -51,22 +51,25 @@ export function DivisionRailRow({
         </span>
       </button>
       {!readOnly && (
-        <SheetTrigger asChild>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            className="mr-1 size-6 shrink-0"
-            aria-label="Division settings"
-            disabled={!active}
-            onClick={(e) => {
-              e.stopPropagation();
-              prepareSettingsDivision(division);
-            }}
-          >
-            <Settings className="size-3.5" />
-          </Button>
-        </SheetTrigger>
+        <SheetTrigger
+          disabled={!active}
+          render={
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="mr-1 size-6 shrink-0"
+              aria-label="Division settings"
+              disabled={!active}
+              onClick={(e) => {
+                e.stopPropagation();
+                prepareSettingsDivision(division);
+              }}
+            >
+              <Settings className="size-3.5" />
+            </Button>
+          }
+        />
       )}
     </div>
   );

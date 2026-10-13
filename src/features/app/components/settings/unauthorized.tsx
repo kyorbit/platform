@@ -21,10 +21,8 @@ export const Unauthorized = () => {
           Sign in to access tournament settings and athlete information.
         </EmptyDescription>
       </EmptyHeader>
-      <Button asChild>
-        <Link to="/login">
-          <LogInIcon /> Login to Continue
-        </Link>
+      <Button nativeButton={false} render={<Link to="/login" />}>
+        <LogInIcon /> Login to Continue
       </Button>
     </Empty>
   );

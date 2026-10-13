@@ -53,9 +53,9 @@ function DisabledWhenReadOnly({
   if (!readOnly) return children;
   return (
     <Tooltip>
-      <TooltipTrigger asChild>
-        <span className="inline-flex">{children}</span>
-      </TooltipTrigger>
+      <TooltipTrigger
+        render={<span className="inline-flex">{children}</span>}
+      />
       <TooltipContent>Tournament completed</TooltipContent>
     </Tooltip>
   );
@@ -82,7 +82,7 @@ export function BuilderFooter({
   const status = tournament.status;
 
   return (
-    <TooltipProvider delayDuration={200}>
+    <TooltipProvider delay={200}>
       <footer className="bg-sidebar/70 supports-backdrop-filter:bg-sidebar/50 flex h-12 items-center gap-2 border-t px-4">
         <div className="flex items-center gap-2">
           <Button
@@ -112,9 +112,14 @@ export function BuilderFooter({
           </DisabledWhenReadOnly>
 
           <Select
+            items={TOURNAMENT_STATUSES.map((s) => ({
+              value: s,
+              label: STATUS_LABEL[s],
+            }))}
             value={status}
             disabled={Boolean(isSettingTournamentStatus)}
             onValueChange={(v) => {
+              if (v === null) return;
               onAdminStatusIntent(v as TournamentStatus);
             }}
           >
@@ -168,15 +173,21 @@ export function BuilderFooter({
 
           <Separator orientation="vertical" className="mx-2 my-auto h-6" />
 
-          <Button variant="outline" size="sm" asChild className="gap-2">
-            <Link
-              to="/dashboard/tournaments/$id"
-              params={{ id: tournament.id }}
-              search={{}}
-            >
-              <ArrowLeft className="size-4" />
-              <span>Command Center</span>
-            </Link>
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2"
+            nativeButton={false}
+            render={
+              <Link
+                to="/dashboard/tournaments/$id"
+                params={{ id: tournament.id }}
+                search={{}}
+              />
+            }
+          >
+            <ArrowLeft className="size-4" />
+            <span>Command Center</span>
           </Button>
         </div>
       </footer>

@@ -170,19 +170,20 @@ function SetupStepRow({
               variant={isCurrent ? 'default' : 'outline'}
               size="sm"
               className="h-8 cursor-pointer"
-              asChild
+              nativeButton={false}
+              render={
+                <Link
+                  to="/dashboard/tournaments/$id/builder"
+                  params={{ id: tournamentId }}
+                  search={{
+                    tab: step.builderTab,
+                    ...(step.id === 'athletes' ? { addAthletes: true } : {}),
+                  }}
+                />
+              }
             >
-              <Link
-                to="/dashboard/tournaments/$id/builder"
-                params={{ id: tournamentId }}
-                search={{
-                  tab: step.builderTab,
-                  ...(step.id === 'athletes' ? { addAthletes: true } : {}),
-                }}
-              >
-                {step.ctaLabel}
-                <ArrowUpRight data-icon="inline-end" aria-hidden="true" />
-              </Link>
+              {step.ctaLabel}
+              <ArrowUpRight data-icon="inline-end" aria-hidden="true" />
             </Button>
           </div>
         )}

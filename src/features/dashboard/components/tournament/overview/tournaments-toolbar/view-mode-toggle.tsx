@@ -87,12 +87,12 @@ interface ViewModeToggleProps {
 export function ViewModeToggle({ value, onChange }: ViewModeToggleProps) {
   return (
     <ToggleGroup
-      type="single"
       variant="outline"
       size="sm"
-      value={value}
+      value={[value]}
       onValueChange={(next) => {
-        if (next === 'grid' || next === 'list') onChange(next);
+        const selected = next[0];
+        if (selected === 'grid' || selected === 'list') onChange(selected);
       }}
       aria-label="View mode"
     >

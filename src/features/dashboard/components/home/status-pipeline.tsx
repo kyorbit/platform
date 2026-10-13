@@ -254,12 +254,13 @@ function PipelineStage({
           variant="ghost"
           size="sm"
           className="text-muted-foreground hover:text-foreground h-8 px-2"
-          asChild
+          nativeButton={false}
+          render={
+            <Link to="/dashboard/tournaments" search={{ status: [status] }} />
+          }
         >
-          <Link to="/dashboard/tournaments" search={{ status: [status] }}>
-            {viewAllLabel}
-            <ArrowRight data-icon="inline-end" aria-hidden="true" />
-          </Link>
+          {viewAllLabel}
+          <ArrowRight data-icon="inline-end" aria-hidden="true" />
         </Button>
       </footer>
     </div>
@@ -276,11 +277,14 @@ export function StatusPipeline({
       description="Recent tournaments grouped by lifecycle stage"
       className="overflow-x-hidden! xl:overflow-visible"
       action={
-        <Button variant="ghost" className="cursor-pointer" asChild>
-          <Link to="/dashboard/tournaments">
-            View all tournaments
-            <ArrowRight data-icon="inline-end" aria-hidden="true" />
-          </Link>
+        <Button
+          variant="ghost"
+          className="cursor-pointer"
+          nativeButton={false}
+          render={<Link to="/dashboard/tournaments" />}
+        >
+          View all tournaments
+          <ArrowRight data-icon="inline-end" aria-hidden="true" />
         </Button>
       }
     >

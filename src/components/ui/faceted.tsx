@@ -45,6 +45,7 @@ interface FacetedProps<
 > extends React.ComponentProps<typeof Popover> {
   value?: FacetedValue<TMultiple>;
   onValueChange?: (value: FacetedValue<TMultiple> | undefined) => void;
+  onOpenChange?: (open: boolean) => void;
   children?: React.ReactNode;
   multiple?: TMultiple;
 }
@@ -202,10 +203,7 @@ function FacetedContent(props: React.ComponentProps<typeof PopoverContent>) {
     <PopoverContent
       {...contentProps}
       align="start"
-      className={cn(
-        'w-50 origin-(--radix-popover-content-transform-origin) p-0',
-        className
-      )}
+      className={cn('w-50 origin-(--transform-origin) p-0', className)}
     >
       <Command>{children}</Command>
     </PopoverContent>

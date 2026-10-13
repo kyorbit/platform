@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuLabel,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
@@ -75,37 +76,41 @@ export function DivisionsTabsHeader({
 
       <div className="bg-sidebar absolute inset-y-0 top-0 right-0 flex w-10 items-stretch justify-end border-l">
         <DropdownMenu modal={false}>
-          <DropdownMenuTrigger asChild>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="size-full rounded-none border-none"
-              aria-label="All divisions"
-            >
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
+          <DropdownMenuTrigger
+            render={
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="size-full rounded-none border-none"
+                aria-label="All divisions"
+              >
+                <MoreHorizontal />
+              </Button>
+            }
+          />
           <DropdownMenuContent
             align="end"
             alignOffset={4}
             className="max-h-70 w-auto overflow-y-auto"
           >
-            <DropdownMenuLabel className="text-center text-sm leading-none">
-              Select a division
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuRadioGroup value={selectedDivisionId!}>
-              {divisions.map((d) => (
-                <DropdownMenuRadioItem
-                  key={d.id}
-                  value={d.id}
-                  onSelect={() => handlePickFromMenu(d.id)}
-                >
-                  <span className="truncate">{d.name}</span>
-                </DropdownMenuRadioItem>
-              ))}
-            </DropdownMenuRadioGroup>
+            <DropdownMenuGroup>
+              <DropdownMenuLabel className="text-center text-sm leading-none">
+                Select a division
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuRadioGroup value={selectedDivisionId!}>
+                {divisions.map((d) => (
+                  <DropdownMenuRadioItem
+                    key={d.id}
+                    value={d.id}
+                    onClick={() => handlePickFromMenu(d.id)}
+                  >
+                    <span className="truncate">{d.name}</span>
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

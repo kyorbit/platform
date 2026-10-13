@@ -53,14 +53,19 @@ export function BuilderHeader({
       </Tabs>
 
       <div className="ml-auto flex items-center gap-2">
-        <Button variant="ghost" size="icon" asChild>
-          <a
-            href="https://github.com/chef0111/tku-sparring"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <GithubIcon />
-          </a>
+        <Button
+          variant="ghost"
+          size="icon"
+          nativeButton={false}
+          render={
+            <a
+              href="https://github.com/chef0111/tku-sparring"
+              target="_blank"
+              rel="noopener noreferrer"
+            />
+          }
+        >
+          <GithubIcon />
         </Button>
         <ThemeToggle />
         {user && <UserDropdown user={user} className="-mr-2 scale-95" />}

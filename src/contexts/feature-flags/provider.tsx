@@ -54,24 +54,30 @@ export function FeatureFlagsProvider({ children }: FeatureFlagsProviderProps) {
     <FeatureFlagsContext.Provider value={contextValue}>
       <div className="w-full overflow-x-auto p-1">
         <ToggleGroup
-          type="single"
           variant="outline"
           size="sm"
-          value={filterFlag}
-          onValueChange={onFilterFlagChange}
+          value={filterFlag ? [filterFlag] : []}
+          onValueChange={(next) => {
+            const selected = flagConfig.featureFlags.find(
+              (flag) => flag.value === next[0]
+            );
+            if (selected) {
+              onFilterFlagChange(selected.value);
+            } else {
+              void setFilterFlag(null);
+            }
+          }}
           className="w-fit gap-0"
         >
           {flagConfig.featureFlags.map((flag) => (
-            <Tooltip key={flag.value} delayDuration={700}>
+            <Tooltip key={flag.value}>
               <ToggleGroupItem
                 value={flag.value}
-                className="data-[state=on]:bg-accent/70 data-[state=on]:hover:bg-accent/90 px-3 text-xs whitespace-nowrap"
-                asChild
+                className="data-pressed:bg-accent/70 data-pressed:hover:bg-accent/90 px-3 text-xs whitespace-nowrap"
+                render={<TooltipTrigger delay={700} />}
               >
-                <TooltipTrigger>
-                  <flag.icon className="size-3.5 shrink-0" />
-                  {flag.label}
-                </TooltipTrigger>
+                <flag.icon className="size-3.5 shrink-0" />
+                {flag.label}
               </ToggleGroupItem>
               <TooltipContent
                 align="start"

@@ -33,34 +33,36 @@ export function PoolBeltFilter({
 }: PoolBeltFilterProps) {
   return (
     <Popover>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          className="min-w-12 border-dashed px-2 text-xs"
-        >
-          Belt
-          {(poolBeltMin != null || poolBeltMax != null) && (
-            <Badge
-              variant="secondary"
-              className="mx-0 max-w-28 truncate px-1 text-[10px]"
-              title={
-                poolBeltMin != null && poolBeltMax != null
-                  ? `${getBeltLabel(poolBeltMin)} – ${getBeltLabel(poolBeltMax)}`
+      <PopoverTrigger
+        render={
+          <Button
+            variant="outline"
+            size="sm"
+            className="min-w-12 border-dashed px-2 text-xs"
+          >
+            Belt
+            {(poolBeltMin != null || poolBeltMax != null) && (
+              <Badge
+                variant="secondary"
+                className="mx-0 max-w-28 truncate px-1 text-[10px]"
+                title={
+                  poolBeltMin != null && poolBeltMax != null
+                    ? `${getBeltLabel(poolBeltMin)} – ${getBeltLabel(poolBeltMax)}`
+                    : poolBeltMin != null
+                      ? `≥ ${getBeltLabel(poolBeltMin)}`
+                      : `≤ ${getBeltLabel(poolBeltMax!)}`
+                }
+              >
+                {poolBeltMin != null && poolBeltMax != null
+                  ? `${poolBeltMin}–${poolBeltMax}`
                   : poolBeltMin != null
-                    ? `≥ ${getBeltLabel(poolBeltMin)}`
-                    : `≤ ${getBeltLabel(poolBeltMax!)}`
-              }
-            >
-              {poolBeltMin != null && poolBeltMax != null
-                ? `${poolBeltMin}–${poolBeltMax}`
-                : poolBeltMin != null
-                  ? `≥${poolBeltMin}`
-                  : `≤${poolBeltMax}`}
-            </Badge>
-          )}
-        </Button>
-      </PopoverTrigger>
+                    ? `≥${poolBeltMin}`
+                    : `≤${poolBeltMax}`}
+              </Badge>
+            )}
+          </Button>
+        }
+      />
       <PopoverContent className="w-64 p-3" align="start">
         <div className="flex flex-col gap-3">
           <p className="text-xs font-medium">Belt range</p>
@@ -70,8 +72,16 @@ export function PoolBeltFilter({
                 Min
               </Label>
               <Select
+                items={[
+                  { value: 'any', label: 'Any' },
+                  ...BELT_LEVELS.map((b) => ({
+                    value: String(b.value),
+                    label: b.label,
+                  })),
+                ]}
                 value={poolBeltMin == null ? 'any' : String(poolBeltMin)}
                 onValueChange={(v) => {
+                  if (v === null) return;
                   const nextMin = v === 'any' ? null : Number(v);
                   onPatch({
                     poolBeltMin: nextMin,
@@ -102,8 +112,16 @@ export function PoolBeltFilter({
                 Max
               </Label>
               <Select
+                items={[
+                  { value: 'any', label: 'Any' },
+                  ...BELT_LEVELS.map((b) => ({
+                    value: String(b.value),
+                    label: b.label,
+                  })),
+                ]}
                 value={poolBeltMax == null ? 'any' : String(poolBeltMax)}
                 onValueChange={(v) => {
+                  if (v === null) return;
                   const nextMax = v === 'any' ? null : Number(v);
                   onPatch({
                     poolBeltMax: nextMax,

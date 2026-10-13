@@ -1,3 +1,4 @@
+import { Children, isValidElement } from 'react';
 import { useFieldContext } from './hooks';
 import { FormBase } from './form-base';
 import type { FormControlProps } from './form-base';
@@ -17,6 +18,19 @@ type FormSelectSharedProps = FormControlProps & {
   disabled?: boolean;
 };
 
+function selectItems(
+  children: ReactNode
+): Array<{ value: string; label: ReactNode }> {
+  return Children.toArray(children).flatMap((child) => {
+    if (!isValidElement<{ value?: string; children?: ReactNode }>(child))
+      return [];
+    if (typeof child.props.value === 'string') {
+      return [{ value: child.props.value, label: child.props.children }];
+    }
+    return selectItems(child.props.children);
+  });
+}
+
 export function FormSelect({
   children,
   descPosition,
@@ -31,6 +45,7 @@ export function FormSelect({
   return (
     <FormBase {...props} descPosition={descPosition}>
       <Select
+        items={selectItems(children)}
         disabled={disabled}
         onValueChange={(e) => field.handleChange(e ?? '')}
         value={field.state.value}
@@ -75,7 +90,14 @@ export function FormNumberSelect({
   return (
     <FormBase {...props} descPosition={descPosition}>
       <Select
+        items={[
+          ...(emptyValue !== undefined && emptyLabel !== undefined
+            ? [{ value: emptyValue, label: emptyLabel }]
+            : []),
+          ...selectItems(children),
+        ]}
         onValueChange={(v) => {
+          if (v === null) return;
           if (emptyValue !== undefined && v === emptyValue) {
             field.handleChange(undefined);
             return;
