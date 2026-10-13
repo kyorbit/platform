@@ -27,6 +27,8 @@ cmdk commands, Vaul drawers, Sonner, react-day-picker and Recharts remain on the
 
 ## Behavior changes
 
+FLAG: Base UI treats tooltip content as a visual hint and leaves accessible naming to the trigger ([usage guidelines](https://base-ui.com/react/components/tooltip)). The installed popup does not expose Radix's tooltip role/description association. Existing trigger text and explicit labels are retained; browser verification checks visible content, focus/hover and arrow positioning directly.
+
 Existing explicit delays (700ms feature flags, 300ms bracket layouts, 200ms builder provider, 0ms sidebar provider) are retained. No unsupported Radix delay/hoverable-content overrides were present.
 
 ## Verify by hand
