@@ -15,7 +15,18 @@ import { FullWidthDivider } from '@/components/ui/full-width-divider';
 
 function isNotFoundError(error: unknown): boolean {
   if (!error || typeof error !== 'object') return false;
-  return (error as { code?: string }).code === 'NOT_FOUND';
+  return 'code' in error && error.code === 'NOT_FOUND';
+}
+
+function getErrorMessage(error: unknown) {
+  if (
+    error &&
+    typeof error === 'object' &&
+    'message' in error &&
+    typeof error.message === 'string'
+  ) {
+    return error.message;
+  }
 }
 
 function NotFoundShell({
@@ -80,7 +91,7 @@ function RouteErrorRetry({ error, reset }: ErrorComponentProps) {
         <div className="flex flex-col gap-1">
           <p className="text-lg font-medium">Something went wrong</p>
           <p className="text-muted-foreground text-sm">
-            {error.message || 'Failed to load this page.'}
+            {getErrorMessage(error) || 'Failed to load this page.'}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -116,7 +127,7 @@ export function DashboardRouteError(props: ErrorComponentProps) {
       <NotFoundShell
         title="Not found"
         description={
-          props.error.message ||
+          getErrorMessage(props.error) ||
           "The page you're looking for might have been moved or doesn't exist."
         }
         action={
