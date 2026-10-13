@@ -192,7 +192,7 @@ export function DataTableSliderFilter<TData extends RowData>({
               <>
                 <Separator
                   orientation="vertical"
-                  className="mx-0.5 data-[orientation=vertical]:h-4"
+                  className="mx-0.5 my-auto data-[orientation=vertical]:h-4"
                 />
                 {formatValue(columnFilterValue[0])} -{' '}
                 {formatValue(columnFilterValue[1])}

@@ -151,10 +151,10 @@ export function DataTableFacetedFilter<TData extends RowData, TValue>({
           </>
         )}
       </ComboboxTrigger>
-      <ComboboxContent align="center">
-        <ComboboxInput showTrigger={false} placeholder={searchTitle} />
+      <ComboboxContent align="center" className="w-max">
+        <ComboboxInput showTrigger={false} placeholder={searchTitle} size={1} />
         <ComboboxEmpty>No results found.</ComboboxEmpty>
-        <ComboboxList className="max-h-75 scroll-py-1 overflow-x-hidden overflow-y-auto">
+        <ComboboxList className="scroll-py-1 overflow-x-hidden overflow-y-auto">
           {(option: Option) => {
             const isSelected = selectedValues.has(option.value);
 
