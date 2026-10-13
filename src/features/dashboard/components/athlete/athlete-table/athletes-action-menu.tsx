@@ -15,6 +15,7 @@ import type { DataTableRow } from '@/lib/data-table/features';
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuRadioGroup,
@@ -100,109 +101,123 @@ export default function AthletesActionMenu({
 
   return (
     <DropdownMenu modal={false}>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="absolute inset-2 size-8">
-          <MoreHorizontal className="size-4" />
-          <span className="sr-only">Open menu</span>
-        </Button>
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute inset-2 size-8"
+          >
+            <MoreHorizontal className="size-4" />
+            <span className="sr-only">Open menu</span>
+          </Button>
+        }
+      />
       <DropdownMenuContent align="end" className="min-w-42">
-        <DropdownMenuItem
-          onClick={() => options.onRowAction({ row, variant: 'update' })}
-        >
-          <Pencil className="mr-2 size-4" />
-          Edit
-        </DropdownMenuItem>
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger disabled={isUpdating}>
-            <Mars className="mr-2 size-4" />
-            Gender
-          </DropdownMenuSubTrigger>
-          <DropdownMenuSubContent>
-            <DropdownMenuLabel className="text-center">
-              Choose gender
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuRadioGroup
-              value={row.original.gender}
-              onValueChange={(value) => {
-                if (value === row.original.gender) return;
-                const genderValue = GENDER_OPTIONS.find(
-                  (option) => option.value === value
-                )?.value;
-                if (!genderValue) return;
-                onUpdate({ gender: genderValue });
-              }}
-            >
-              {GENDER_OPTIONS.map((gender) => (
-                <DropdownMenuRadioItem
-                  key={gender.value}
-                  value={gender.value}
-                  disabled={isUpdating}
-                  className="min-w-32"
+        <DropdownMenuGroup>
+          <DropdownMenuItem
+            onClick={() => options.onRowAction({ row, variant: 'update' })}
+          >
+            <Pencil className="mr-2 size-4" />
+            Edit
+          </DropdownMenuItem>
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger disabled={isUpdating}>
+              <Mars className="mr-2 size-4" />
+              Gender
+            </DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              <DropdownMenuGroup>
+                <DropdownMenuLabel className="text-center">
+                  Choose gender
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuRadioGroup
+                  value={row.original.gender}
+                  onValueChange={(value) => {
+                    if (value === row.original.gender) return;
+                    const genderValue = GENDER_OPTIONS.find(
+                      (option) => option.value === value
+                    )?.value;
+                    if (!genderValue) return;
+                    onUpdate({ gender: genderValue });
+                  }}
                 >
-                  {gender.label}
-                </DropdownMenuRadioItem>
-              ))}
-            </DropdownMenuRadioGroup>
-          </DropdownMenuSubContent>
-        </DropdownMenuSub>
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger disabled={isUpdating}>
-            <ChartNoAxesColumn className="mr-2 size-4" />
-            Belt level
-          </DropdownMenuSubTrigger>
-          <DropdownMenuSubContent>
-            <DropdownMenuLabel className="text-center">
-              Choose belt level
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuRadioGroup
-              value={String(row.original.beltLevel)}
-              onValueChange={(value) => {
-                const beltLevel = Number(value);
-                if (Number.isNaN(beltLevel)) return;
-                if (beltLevel === row.original.beltLevel) return;
-                onUpdate({ beltLevel });
-              }}
-            >
-              {BELT_LEVELS.map((belt) => (
-                <DropdownMenuRadioItem
-                  key={belt.value}
-                  value={String(belt.value)}
-                  disabled={isUpdating}
-                  className="min-w-36"
+                  {GENDER_OPTIONS.map((gender) => (
+                    <DropdownMenuRadioItem
+                      key={gender.value}
+                      value={gender.value}
+                      disabled={isUpdating}
+                      className="min-w-32"
+                    >
+                      {gender.label}
+                    </DropdownMenuRadioItem>
+                  ))}
+                </DropdownMenuRadioGroup>
+              </DropdownMenuGroup>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger disabled={isUpdating}>
+              <ChartNoAxesColumn className="mr-2 size-4" />
+              Belt level
+            </DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              <DropdownMenuGroup>
+                <DropdownMenuLabel className="text-center">
+                  Choose belt level
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuRadioGroup
+                  value={String(row.original.beltLevel)}
+                  onValueChange={(value) => {
+                    const beltLevel = Number(value);
+                    if (Number.isNaN(beltLevel)) return;
+                    if (beltLevel === row.original.beltLevel) return;
+                    onUpdate({ beltLevel });
+                  }}
                 >
-                  {belt.label}
-                </DropdownMenuRadioItem>
-              ))}
-            </DropdownMenuRadioGroup>
-          </DropdownMenuSubContent>
-        </DropdownMenuSub>
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger disabled={isUpdating}>
-            <Trophy className="mr-2 size-4" />
-            Tournaments
-          </DropdownMenuSubTrigger>
-          <DropdownMenuSubContent className="max-h-60 min-w-48 overflow-y-auto">
-            <DropdownMenuLabel className="text-center">
-              Add to tournaments
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <TournamentQuickAddItems
-              disabled={bulkAddToTournament.isPending}
-              onPick={onQuickAddToTournament}
-            />
-          </DropdownMenuSubContent>
-        </DropdownMenuSub>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          variant="destructive"
-          onClick={() => options.onRowAction({ row, variant: 'delete' })}
-        >
-          <Trash2 className="mr-2 size-4" />
-          Delete
-        </DropdownMenuItem>
+                  {BELT_LEVELS.map((belt) => (
+                    <DropdownMenuRadioItem
+                      key={belt.value}
+                      value={String(belt.value)}
+                      disabled={isUpdating}
+                      className="min-w-36"
+                    >
+                      {belt.label}
+                    </DropdownMenuRadioItem>
+                  ))}
+                </DropdownMenuRadioGroup>
+              </DropdownMenuGroup>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger disabled={isUpdating}>
+              <Trophy className="mr-2 size-4" />
+              Tournaments
+            </DropdownMenuSubTrigger>
+            <DropdownMenuSubContent className="max-h-60 min-w-48 overflow-y-auto">
+              <DropdownMenuGroup>
+                <DropdownMenuLabel className="text-center">
+                  Add to tournaments
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <TournamentQuickAddItems
+                  disabled={bulkAddToTournament.isPending}
+                  onPick={onQuickAddToTournament}
+                />
+              </DropdownMenuGroup>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            variant="destructive"
+            onClick={() => options.onRowAction({ row, variant: 'delete' })}
+          >
+            <Trash2 className="mr-2 size-4" />
+            Delete
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );

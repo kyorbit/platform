@@ -68,8 +68,15 @@ export function RetireArenaDialog({
                 Move divisions to
               </FieldLabel>
               <Select
+                items={targetArenaOptions.map((a) => ({
+                  value: String(a),
+                  label: <>Arena {a}</>,
+                }))}
                 value={String(toArena)}
-                onValueChange={(v) => setToArena(Number(v))}
+                onValueChange={(v) => {
+                  if (v === null) return;
+                  setToArena(Number(v));
+                }}
                 disabled={isPending}
               >
                 <SelectTrigger id="retire-arena-target" className="w-full">

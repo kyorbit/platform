@@ -22,12 +22,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <Link to="/dashboard">
-                <BrandIcon className="size-8!" />
-                <span className="truncate text-2xl font-semibold">Kyorbit</span>
-              </Link>
-            </SidebarMenuButton>
+            <SidebarMenuButton
+              size="lg"
+              render={
+                <Link to="/dashboard">
+                  <BrandIcon className="size-8!" />
+                  <span className="truncate text-2xl font-semibold">
+                    Kyorbit
+                  </span>
+                </Link>
+              }
+            />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>

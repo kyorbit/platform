@@ -9,7 +9,6 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
 
 export function NavMain({
   items,
@@ -29,15 +28,15 @@ export function NavMain({
           <SidebarMenuItem className="flex items-center gap-2">
             <SidebarMenuButton
               data-slot="button"
-              data-variant="default"
               tooltip="Quick Create"
-              className={cn(
-                'ring-primary dark:ring-ring text-primary-foreground! h-7.5 min-w-8 border-none bg-[linear-gradient(to_bottom,color-mix(in_srgb,var(--accent-foreground)_80%,transparent),var(--primary-accent))] shadow-none ring-1 dark:bg-[linear-gradient(to_top,var(--primary),var(--primary-accent))]'
-              )}
-            >
-              <CirclePlusIcon />
-              <span>Quick Create</span>
-            </SidebarMenuButton>
+              render={
+                <Button size="sm" className="text-primary-foreground! flex-1">
+                  <CirclePlusIcon />
+                  <span>Quick Create</span>
+                </Button>
+              }
+            />
+
             <Button
               size="icon"
               className="pointer-events-none size-8 group-data-[collapsible=icon]:opacity-0"
@@ -54,13 +53,13 @@ export function NavMain({
               <SidebarMenuButton
                 isActive={pathname === item.to}
                 tooltip={item.title}
-                asChild
-              >
-                <Link to={item.to}>
-                  <item.icon />
-                  <span>{item.title}</span>
-                </Link>
-              </SidebarMenuButton>
+                render={
+                  <Link to={item.to}>
+                    <item.icon />
+                    <span>{item.title}</span>
+                  </Link>
+                }
+              />
             </SidebarMenuItem>
           ))}
         </SidebarMenu>

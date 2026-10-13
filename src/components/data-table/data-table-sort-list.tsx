@@ -1,6 +1,6 @@
 import { ArrowDownUp, GripVertical, Trash2 } from 'lucide-react';
 import React from 'react';
-import type { ColumnSort, RowData, SortDirection } from '@tanstack/react-table';
+import type { ColumnSort, RowData } from '@tanstack/react-table';
 
 import type { DataTableControlledState } from '@/hooks/use-data-table';
 import type { DataTableInstance } from '@/lib/data-table/features';
@@ -166,30 +166,33 @@ export function DataTableSortList<TData extends RowData>({
       getItemValue={(item) => item.id}
     >
       <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            size="sm"
-            className="font-normal"
-            onKeyDown={onTriggerKeyDown}
-            disabled={disabled}
-          >
-            <ArrowDownUp className="text-muted-foreground" />
-            Sort
-            {sorting.length > 0 && (
-              <Badge
-                variant="secondary"
-                className="h-[18.24px] rounded-[3.2px] px-[5.12px] font-mono text-[10.4px] font-normal"
-              >
-                {sorting.length}
-              </Badge>
-            )}
-          </Button>
-        </PopoverTrigger>
+        <PopoverTrigger
+          disabled={disabled}
+          render={
+            <Button
+              variant="outline"
+              size="sm"
+              className="font-normal"
+              onKeyDown={onTriggerKeyDown}
+              disabled={disabled}
+            >
+              <ArrowDownUp className="text-muted-foreground" />
+              Sort
+              {sorting.length > 0 && (
+                <Badge
+                  variant="secondary"
+                  className="h-[18.24px] rounded-[3.2px] px-[5.12px] font-mono text-[10.4px] font-normal"
+                >
+                  {sorting.length}
+                </Badge>
+              )}
+            </Button>
+          }
+        />
         <PopoverContent
           aria-labelledby={labelId}
           aria-describedby={descriptionId}
-          className="flex w-full max-w-(--radix-popover-content-available-width) flex-col gap-3.5 p-4 sm:min-w-95"
+          className="flex w-full max-w-(--available-width) flex-col gap-3.5 p-4 sm:min-w-95"
           {...props}
         >
           <div className="flex flex-col gap-1">
@@ -209,24 +212,26 @@ export function DataTableSortList<TData extends RowData>({
             </p>
           </div>
           {sorting.length > 0 && (
-            <SortableContent asChild>
-              <div
-                role="list"
-                className="flex max-h-75 flex-col gap-2 overflow-y-auto p-1"
-              >
-                {sorting.map((sort) => (
-                  <DataTableSortItem
-                    key={sort.id}
-                    sort={sort}
-                    sortItemId={`${id}-sort-${sort.id}`}
-                    columns={columns}
-                    columnLabels={columnLabels}
-                    onSortUpdate={onSortUpdate}
-                    onSortRemove={onSortRemove}
-                  />
-                ))}
-              </div>
-            </SortableContent>
+            <SortableContent
+              render={
+                <div
+                  role="list"
+                  className="flex max-h-75 flex-col gap-2 overflow-y-auto p-1"
+                >
+                  {sorting.map((sort) => (
+                    <DataTableSortItem
+                      key={sort.id}
+                      sort={sort}
+                      sortItemId={`${id}-sort-${sort.id}`}
+                      columns={columns}
+                      columnLabels={columnLabels}
+                      onSortUpdate={onSortUpdate}
+                      onSortRemove={onSortRemove}
+                    />
+                  ))}
+                </div>
+              }
+            />
           )}
           <div className="flex w-full items-center gap-2">
             <Button
@@ -310,100 +315,113 @@ function DataTableSortItem({
   );
 
   return (
-    <SortableItem value={sort.id} asChild>
-      <div
-        role="listitem"
-        id={sortItemId}
-        tabIndex={-1}
-        className="flex items-center gap-2"
-        onKeyDown={onItemKeyDown}
-      >
-        <Combobox
-          itemToStringLabel={(c: { id: string; label: string }) => c.label}
-          itemToStringValue={(c: { id: string; label: string }) => c.id}
-          items={columns}
-          onOpenChange={setShowFieldSelector}
-          open={showFieldSelector}
+    <SortableItem
+      value={sort.id}
+      render={
+        <div
+          role="listitem"
+          id={sortItemId}
+          tabIndex={-1}
+          className="flex items-center gap-2"
+          onKeyDown={onItemKeyDown}
         >
-          <ComboboxTrigger
-            id={fieldTriggerId}
-            aria-controls={fieldListboxId}
-            className={cn(
-              buttonVariants({ variant: 'outline', size: 'sm' }),
-              'w-44 justify-between rounded font-normal'
-            )}
+          <Combobox
+            itemToStringLabel={(c: { id: string; label: string }) => c.label}
+            itemToStringValue={(c: { id: string; label: string }) => c.id}
+            items={columns}
+            onOpenChange={setShowFieldSelector}
+            open={showFieldSelector}
           >
-            <span className="truncate">{columnLabels.get(sort.id)}</span>
-          </ComboboxTrigger>
-          <ComboboxContent
-            id={fieldListboxId}
-            className="min-w-44"
-            align="start"
-          >
-            <ComboboxInput placeholder="Search fields..." showTrigger={false} />
-            <ComboboxEmpty>No fields found.</ComboboxEmpty>
-            <ComboboxList>
-              {(col: { id: string; label: string }) => (
-                <ComboboxItem
-                  key={col.id}
-                  value={col}
-                  onClick={() => {
-                    onSortUpdate(sort.id, { id: col.id });
-                    setShowFieldSelector(false);
-                  }}
-                >
-                  <span className="truncate">{col.label}</span>
-                </ComboboxItem>
+            <ComboboxTrigger
+              id={fieldTriggerId}
+              aria-controls={fieldListboxId}
+              className={cn(
+                buttonVariants({ variant: 'outline', size: 'sm' }),
+                'w-44 justify-between rounded font-normal'
               )}
-            </ComboboxList>
-          </ComboboxContent>
-        </Combobox>
+            >
+              <span className="truncate">{columnLabels.get(sort.id)}</span>
+            </ComboboxTrigger>
+            <ComboboxContent
+              id={fieldListboxId}
+              className="min-w-44"
+              align="start"
+            >
+              <ComboboxInput
+                placeholder="Search fields..."
+                showTrigger={false}
+              />
+              <ComboboxEmpty>No fields found.</ComboboxEmpty>
+              <ComboboxList>
+                {(col: { id: string; label: string }) => (
+                  <ComboboxItem
+                    key={col.id}
+                    value={col}
+                    onClick={() => {
+                      onSortUpdate(sort.id, { id: col.id });
+                      setShowFieldSelector(false);
+                    }}
+                  >
+                    <span className="truncate">{col.label}</span>
+                  </ComboboxItem>
+                )}
+              </ComboboxList>
+            </ComboboxContent>
+          </Combobox>
 
-        <Select
-          open={showDirectionSelector}
-          onOpenChange={setShowDirectionSelector}
-          value={sort.desc ? 'desc' : 'asc'}
-          onValueChange={(value: SortDirection) =>
-            onSortUpdate(sort.id, { desc: value === 'desc' })
-          }
-        >
-          <SelectTrigger
-            aria-controls={directionListboxId}
-            size="sm"
-            className="w-24 rounded"
+          <Select
+            items={dataTableConfig.sortOrders.map((order) => ({
+              value: order.value,
+              label: order.label,
+            }))}
+            open={showDirectionSelector}
+            onOpenChange={setShowDirectionSelector}
+            value={sort.desc ? 'desc' : 'asc'}
+            onValueChange={(value) =>
+              value !== null &&
+              onSortUpdate(sort.id, { desc: value === 'desc' })
+            }
           >
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent
-            id={directionListboxId}
-            className="min-w-(--radix-select-trigger-width)"
-          >
-            {dataTableConfig.sortOrders.map((order) => (
-              <SelectItem key={order.value} value={order.value}>
-                {order.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Button
-          aria-controls={sortItemId}
-          variant="outline"
-          size="icon"
-          className="size-8 shrink-0 rounded"
-          onClick={() => onSortRemove(sort.id)}
-        >
-          <Trash2 />
-        </Button>
-        <SortableItemHandle asChild>
+            <SelectTrigger
+              aria-controls={directionListboxId}
+              size="sm"
+              className="w-24 rounded"
+            >
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent
+              id={directionListboxId}
+              className="min-w-(--anchor-width)"
+            >
+              {dataTableConfig.sortOrders.map((order) => (
+                <SelectItem key={order.value} value={order.value}>
+                  {order.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Button
+            aria-controls={sortItemId}
             variant="outline"
             size="icon"
             className="size-8 shrink-0 rounded"
+            onClick={() => onSortRemove(sort.id)}
           >
-            <GripVertical />
+            <Trash2 />
           </Button>
-        </SortableItemHandle>
-      </div>
-    </SortableItem>
+          <SortableItemHandle
+            render={
+              <Button
+                variant="outline"
+                size="icon"
+                className="size-8 shrink-0 rounded"
+              >
+                <GripVertical />
+              </Button>
+            }
+          />
+        </div>
+      }
+    />
   );
 }

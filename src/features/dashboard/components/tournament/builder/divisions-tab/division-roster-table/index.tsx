@@ -124,17 +124,19 @@ function DivisionRosterActive({
               <StatusLabel>Ready</StatusLabel>
             </Status>
             {!readOnly && (
-              <SheetTrigger asChild>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="size-7"
-                  onClick={() => prepareSettingsDivision(division)}
-                >
-                  <Settings className="size-4" />
-                </Button>
-              </SheetTrigger>
+              <SheetTrigger
+                render={
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="size-7"
+                    onClick={() => prepareSettingsDivision(division)}
+                  >
+                    <Settings className="size-4" />
+                  </Button>
+                }
+              />
             )}
           </div>
         </div>

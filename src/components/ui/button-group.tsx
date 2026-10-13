@@ -1,5 +1,7 @@
+import React from 'react';
 import { cva } from 'class-variance-authority';
-import { Slot } from 'radix-ui';
+import { mergeProps } from '@base-ui/react/merge-props';
+import { useRender } from '@base-ui/react/use-render';
 import type { VariantProps } from 'class-variance-authority';
 
 import { cn } from '@/lib/utils';
@@ -40,22 +42,25 @@ function ButtonGroup({
 
 function ButtonGroupText({
   className,
-  asChild = false,
+  render,
   ...props
-}: React.ComponentProps<'div'> & {
-  asChild?: boolean;
-}) {
-  const Comp = asChild ? Slot.Root : 'div';
-
-  return (
-    <Comp
-      className={cn(
-        "bg-muted flex items-center gap-2 rounded-md border px-2.5 text-sm font-medium shadow-xs [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4",
-        className
-      )}
-      {...props}
-    />
-  );
+}: useRender.ComponentProps<'div'>) {
+  return useRender({
+    defaultTagName: 'div',
+    render,
+    props: mergeProps<'div'>(
+      {
+        className: cn(
+          "bg-muted flex items-center gap-2 rounded-md border px-2.5 text-sm font-medium shadow-xs [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4",
+          className
+        ),
+      },
+      props
+    ),
+    state: {
+      slot: 'button-group-text',
+    },
+  });
 }
 
 function ButtonGroupSeparator({

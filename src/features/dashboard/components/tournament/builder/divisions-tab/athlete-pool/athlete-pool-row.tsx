@@ -98,9 +98,7 @@ export function AthletePoolRow({
         plusButton
       ) : (
         <Tooltip>
-          <TooltipTrigger asChild>
-            <span>{plusButton}</span>
-          </TooltipTrigger>
+          <TooltipTrigger render={<span>{plusButton}</span>} />
           <TooltipContent>
             {readOnly ? 'Read-only workspace' : 'Select a division first'}
           </TooltipContent>

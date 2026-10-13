@@ -86,14 +86,19 @@ export function TournamentCommandCenter({
             <History data-icon="inline-start" />
             Activity
           </Button>
-          <Button variant="outline" size="sm" asChild>
-            <Link
-              to="/dashboard/tournaments/$id/builder"
-              params={{ id: tournamentId }}
-            >
-              <Edit data-icon="inline-start" />
-              Open Builder
-            </Link>
+          <Button
+            variant="outline"
+            size="sm"
+            nativeButton={false}
+            render={
+              <Link
+                to="/dashboard/tournaments/$id/builder"
+                params={{ id: tournamentId }}
+              />
+            }
+          >
+            <Edit data-icon="inline-start" />
+            Open Builder
           </Button>
           {transitionAction && (
             <Button

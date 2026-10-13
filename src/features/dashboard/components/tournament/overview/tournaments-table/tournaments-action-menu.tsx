@@ -26,6 +26,7 @@ import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuRadioGroup,
@@ -94,74 +95,83 @@ export function TournamentsActionMenu({
 
   return (
     <DropdownMenu modal={false}>
-      <DropdownMenuTrigger asChild onClick={stopRowClick}>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="size-8 lg:absolute lg:top-2 lg:right-2"
-        >
-          <MoreHorizontal className="size-4" />
-          <span className="sr-only">Open tournament menu</span>
-        </Button>
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger
+        onClick={stopRowClick}
+        render={
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-8 lg:absolute lg:top-2 lg:right-2"
+          >
+            <MoreHorizontal className="size-4" />
+            <span className="sr-only">Open tournament menu</span>
+          </Button>
+        }
+      />
       <DropdownMenuContent align="end" className="min-w-40">
-        <DropdownMenuItem
-          onClick={() =>
-            navigate({
-              to: '/dashboard/tournaments/$id',
-              params: { id: row.original.id },
-            })
-          }
-        >
-          <ExternalLink className="mr-2 size-4" />
-          Open
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => options.onRowAction({ row, variant: 'update' })}
-        >
-          <Pencil className="mr-2 size-4" />
-          Rename
-        </DropdownMenuItem>
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger disabled={isUpdating}>
-            <CircleDot className="mr-2 size-4" />
-            Status
-          </DropdownMenuSubTrigger>
-          <DropdownMenuSubContent>
-            <DropdownMenuLabel className="text-center">
-              Choose status
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuRadioGroup
-              value={tournament.status}
-              onValueChange={(value) => {
-                if (!TOURNAMENT_STATUSES.includes(value as TournamentStatus)) {
-                  return;
-                }
-                onStatusChange(value as TournamentStatus);
-              }}
-            >
-              {TOURNAMENT_STATUSES.map((status) => (
-                <DropdownMenuRadioItem
-                  key={status}
-                  value={status}
-                  disabled={isUpdating}
-                  className="min-w-32"
+        <DropdownMenuGroup>
+          <DropdownMenuItem
+            onClick={() =>
+              navigate({
+                to: '/dashboard/tournaments/$id',
+                params: { id: row.original.id },
+              })
+            }
+          >
+            <ExternalLink className="mr-2 size-4" />
+            Open
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => options.onRowAction({ row, variant: 'update' })}
+          >
+            <Pencil className="mr-2 size-4" />
+            Rename
+          </DropdownMenuItem>
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger disabled={isUpdating}>
+              <CircleDot className="mr-2 size-4" />
+              Status
+            </DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              <DropdownMenuGroup>
+                <DropdownMenuLabel className="text-center">
+                  Choose status
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuRadioGroup
+                  value={tournament.status}
+                  onValueChange={(value) => {
+                    if (
+                      !TOURNAMENT_STATUSES.includes(value as TournamentStatus)
+                    ) {
+                      return;
+                    }
+                    onStatusChange(value as TournamentStatus);
+                  }}
                 >
-                  {TOURNAMENT_STATUS_LABEL[status]}
-                </DropdownMenuRadioItem>
-              ))}
-            </DropdownMenuRadioGroup>
-          </DropdownMenuSubContent>
-        </DropdownMenuSub>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          variant="destructive"
-          onClick={() => options.onRowAction({ row, variant: 'delete' })}
-        >
-          <Trash2 className="mr-2 size-4" />
-          Delete
-        </DropdownMenuItem>
+                  {TOURNAMENT_STATUSES.map((status) => (
+                    <DropdownMenuRadioItem
+                      key={status}
+                      value={status}
+                      disabled={isUpdating}
+                      className="min-w-32"
+                    >
+                      {TOURNAMENT_STATUS_LABEL[status]}
+                    </DropdownMenuRadioItem>
+                  ))}
+                </DropdownMenuRadioGroup>
+              </DropdownMenuGroup>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            variant="destructive"
+            onClick={() => options.onRowAction({ row, variant: 'delete' })}
+          >
+            <Trash2 className="mr-2 size-4" />
+            Delete
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );

@@ -67,8 +67,13 @@ export function DataTablePagination<TData extends RowData>({
               Rows per page
             </p>
             <Select
+              items={pageSizeOptions.map((pageSize) => ({
+                value: `${pageSize}`,
+                label: pageSize,
+              }))}
               value={`${state.pagination.pageSize}`}
               onValueChange={(value) => {
+                if (value === null) return;
                 table.setPageSize(Number(value));
               }}
             >

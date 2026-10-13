@@ -52,12 +52,11 @@ function AuthLayout() {
           <Button
             variant="ghost"
             className="gap-1.5 hover:bg-blue-500/20! has-data-[icon=inline-start]:ps-1.5"
-            asChild
+            nativeButton={false}
+            render={<Link to="/" />}
           >
-            <Link to="/">
-              <ChevronLeftIcon data-icon="inline-start" />
-              Back to Website
-            </Link>
+            <ChevronLeftIcon data-icon="inline-start" />
+            Back to Website
           </Button>
         </div>
 

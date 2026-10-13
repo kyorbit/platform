@@ -28,11 +28,9 @@ export function NotFound() {
               </EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
-              <Button asChild>
-                <Link to="/">
-                  <HomeIcon data-icon="inline-start" />
-                  Go Home
-                </Link>
+              <Button nativeButton={false} render={<Link to="/" />}>
+                <HomeIcon data-icon="inline-start" />
+                Go Home
               </Button>
             </EmptyContent>
           </Empty>

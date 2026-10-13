@@ -49,11 +49,14 @@ function EmptyAthleteLibrary() {
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
-        <Button variant="outline" size="sm" asChild>
-          <Link to="/dashboard/athletes">
-            Go to Athletes
-            <ArrowRight data-icon="inline-end" />
-          </Link>
+        <Button
+          variant="outline"
+          size="sm"
+          nativeButton={false}
+          render={<Link to="/dashboard/athletes" />}
+        >
+          Go to Athletes
+          <ArrowRight data-icon="inline-end" />
         </Button>
       </EmptyContent>
     </Empty>

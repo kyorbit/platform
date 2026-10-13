@@ -56,13 +56,18 @@ export function DivisionsOverview({
               </EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
-              <Button variant="outline" size="sm" asChild>
-                <Link
-                  to="/dashboard/tournaments/$id/builder"
-                  params={{ id: tournamentId }}
-                >
-                  Open Builder
-                </Link>
+              <Button
+                variant="outline"
+                size="sm"
+                nativeButton={false}
+                render={
+                  <Link
+                    to="/dashboard/tournaments/$id/builder"
+                    params={{ id: tournamentId }}
+                  />
+                }
+              >
+                Open Builder
               </Button>
             </EmptyContent>
           </Empty>

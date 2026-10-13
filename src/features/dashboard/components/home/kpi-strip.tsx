@@ -60,11 +60,15 @@ export function KpiStrip({ stats }: KpiStripProps) {
           variant="ghost"
           size="icon-sm"
           className="text-muted-foreground size-7"
-          asChild
+          nativeButton={false}
+          render={
+            <Link
+              to="/dashboard/tournaments"
+              aria-label="View all tournaments"
+            />
+          }
         >
-          <Link to="/dashboard/tournaments" aria-label="View all tournaments">
-            <ArrowUpRight aria-hidden="true" />
-          </Link>
+          <ArrowUpRight aria-hidden="true" />
         </Button>
       ),
     },

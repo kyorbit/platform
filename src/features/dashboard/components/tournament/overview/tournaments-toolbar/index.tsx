@@ -122,7 +122,17 @@ export function TournamentsToolbar({
         />
       </InputGroup>
 
-      <Select value={statusSelectValue} onValueChange={onStatusChange}>
+      <Select
+        items={[
+          { value: ALL_STATUS_VALUE, label: 'All statuses' },
+          ...STATUS_VALUES.map((value) => ({
+            value: value,
+            label: STATUS_LABELS[value],
+          })),
+        ]}
+        value={statusSelectValue}
+        onValueChange={(value) => value !== null && onStatusChange(value)}
+      >
         <SelectTrigger className="h-9 w-36" aria-label="Filter by status">
           <SelectValue placeholder="Status" />
         </SelectTrigger>

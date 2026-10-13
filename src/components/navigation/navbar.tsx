@@ -38,14 +38,16 @@ export const Navbar = () => {
         {isPending ? null : <SessionActions user={user} />}
 
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-          <DialogTrigger asChild>
-            <Button
-              variant="ghost"
-              className="no-focus mx-2.5 size-12! hover:bg-transparent"
-            >
-              <MenuIcon className="size-12" />
-            </Button>
-          </DialogTrigger>
+          <DialogTrigger
+            render={
+              <Button
+                variant="ghost"
+                className="no-focus mx-2.5 size-12! hover:bg-transparent"
+              >
+                <MenuIcon className="size-12" />
+              </Button>
+            }
+          />
           <AppSettings />
         </Dialog>
       </div>

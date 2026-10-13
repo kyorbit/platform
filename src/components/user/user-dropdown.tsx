@@ -30,8 +30,8 @@ export function UserDropdown({ user, className }: UserDropdownProps) {
           className="border-foreground bg-background size-10 cursor-pointer rounded-full border object-cover"
         />
       </DropdownMenuTrigger>
-      <DropdownMenuGroup>
-        <DropdownMenuContent align="end" className="w-35 border">
+      <DropdownMenuContent align="end" className="w-35 border">
+        <DropdownMenuGroup>
           <DropdownMenuLabel className="flex items-center gap-2">
             <div className="relative flex items-center">
               <UserAvatar
@@ -49,26 +49,30 @@ export function UserDropdown({ user, className }: UserDropdownProps) {
             {user.name}
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
-            <Link to="/dashboard" target="_blank">
-              <LayoutDashboard />
-              Dashboard
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <a
-              href="https://github.com/kyorbit"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <GithubIcon />
-              Open source
-            </a>
-          </DropdownMenuItem>
+          <DropdownMenuItem
+            render={
+              <Link to="/dashboard" target="_blank">
+                <LayoutDashboard />
+                Dashboard
+              </Link>
+            }
+          />
+          <DropdownMenuItem
+            render={
+              <a
+                href="https://github.com/kyorbit"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <GithubIcon />
+                Open source
+              </a>
+            }
+          />
           <DropdownMenuSeparator />
           <SignOutItem />
-        </DropdownMenuContent>
-      </DropdownMenuGroup>
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
     </DropdownMenu>
   );
 }

@@ -3,11 +3,7 @@ import { useQueryState } from 'nuqs';
 import React from 'react';
 import type { RowData } from '@tanstack/react-table';
 
-import type {
-  ExtendedColumnFilter,
-  FilterOperator,
-  Option,
-} from '@/types/data-table';
+import type { ExtendedColumnFilter, Option } from '@/types/data-table';
 import type {
   DataTableColumn,
   DataTableInstance,
@@ -282,22 +278,25 @@ export function DataTableFilterMenu<TData extends RowData>({
         </Button>
       )}
       <Popover open={open} onOpenChange={onOpenChange}>
-        <PopoverTrigger asChild>
-          <Button
-            aria-label="Open filter command menu"
-            variant="outline"
-            size={filters.length > 0 ? 'icon' : 'sm'}
-            className={cn(filters.length > 0 && 'size-8', 'h-8 font-normal')}
-            ref={triggerRef}
-            onKeyDown={onTriggerKeyDown}
-            disabled={disabled}
-          >
-            <ListFilter className="text-muted-foreground" />
-            {filters.length > 0 ? null : 'Filter'}
-          </Button>
-        </PopoverTrigger>
+        <PopoverTrigger
+          disabled={disabled}
+          render={
+            <Button
+              aria-label="Open filter command menu"
+              variant="outline"
+              size={filters.length > 0 ? 'icon' : 'sm'}
+              className={cn(filters.length > 0 && 'size-8', 'h-8 font-normal')}
+              ref={triggerRef}
+              onKeyDown={onTriggerKeyDown}
+              disabled={disabled}
+            >
+              <ListFilter className="text-muted-foreground" />
+              {filters.length > 0 ? null : 'Filter'}
+            </Button>
+          }
+        />
         <PopoverContent
-          className="w-full max-w-(--radix-popover-content-available-width) p-0"
+          className="w-full max-w-(--available-width) p-0"
           {...props}
         >
           <Command loop className="[&_[cmdk-input-wrapper]_svg]:hidden">
@@ -479,10 +478,15 @@ function DataTableFilterItem<TData extends RowData>({
           </ComboboxContent>
         </Combobox>
         <Select
+          items={filterOperators.map((operator) => ({
+            value: operator.value,
+            label: operator.label,
+          }))}
           open={showOperatorSelector}
           onOpenChange={setShowOperatorSelector}
           value={filter.operator}
-          onValueChange={(value: FilterOperator) =>
+          onValueChange={(value) =>
+            value !== null &&
             onFilterUpdate(filter.filterId, {
               operator: value,
               value:
@@ -694,11 +698,15 @@ function onFilterInputRender<TData extends RowData>({
 
       return (
         <Select
+          items={[
+            { value: 'true', label: 'True' },
+            { value: 'false', label: 'False' },
+          ]}
           open={showValueSelector}
           onOpenChange={setShowValueSelector}
           value={typeof filter.value === 'string' ? filter.value : 'true'}
-          onValueChange={(value: 'true' | 'false') =>
-            onFilterUpdate(filter.filterId, { value })
+          onValueChange={(value) =>
+            onFilterUpdate(filter.filterId, { value: value ?? '' })
           }
         >
           <SelectTrigger
@@ -846,21 +854,23 @@ function onFilterInputRender<TData extends RowData>({
 
       return (
         <Popover open={showValueSelector} onOpenChange={setShowValueSelector}>
-          <PopoverTrigger asChild>
-            <Button
-              id={inputId}
-              aria-controls={inputListboxId}
-              variant="ghost"
-              size="sm"
-              className={cn(
-                'dark:bg-input/30 h-full rounded-none border px-1.5 font-normal',
-                !filter.value && 'text-muted-foreground'
-              )}
-            >
-              <CalendarIcon className="size-3.5" />
-              <span className="truncate">{displayValue}</span>
-            </Button>
-          </PopoverTrigger>
+          <PopoverTrigger
+            render={
+              <Button
+                id={inputId}
+                aria-controls={inputListboxId}
+                variant="ghost"
+                size="sm"
+                className={cn(
+                  'dark:bg-input/30 h-full rounded-none border px-1.5 font-normal',
+                  !filter.value && 'text-muted-foreground'
+                )}
+              >
+                <CalendarIcon className="size-3.5" />
+                <span className="truncate">{displayValue}</span>
+              </Button>
+            }
+          />
           <PopoverContent
             id={inputListboxId}
             align="start"

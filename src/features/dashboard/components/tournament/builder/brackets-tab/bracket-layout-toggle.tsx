@@ -28,18 +28,21 @@ export function BracketLayoutToggle({
     >
       <TabsList aria-label="Bracket canvas layout" className="h-10! gap-1 p-1">
         {bracketConfig.map((layout) => (
-          <Tooltip key={layout.value} delayDuration={300}>
-            <TooltipTrigger>
-              <TabsTrigger
-                key={layout.value}
-                value={layout.value}
-                aria-label={layout.label}
-                className="size-8"
-              >
-                <layout.icon className="size-4" />
-                <span className="sr-only">{layout.label}</span>
-              </TabsTrigger>
-            </TooltipTrigger>
+          <Tooltip key={layout.value}>
+            <TooltipTrigger
+              delay={300}
+              render={
+                <TabsTrigger
+                  key={layout.value}
+                  value={layout.value}
+                  aria-label={layout.label}
+                  className="size-8"
+                >
+                  <layout.icon className="size-4" />
+                  <span className="sr-only">{layout.label}</span>
+                </TabsTrigger>
+              }
+            />
             <TooltipContent
               align="start"
               side="bottom"
