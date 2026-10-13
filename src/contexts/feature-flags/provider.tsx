@@ -70,11 +70,11 @@ export function FeatureFlagsProvider({ children }: FeatureFlagsProviderProps) {
           className="w-fit gap-0"
         >
           {flagConfig.featureFlags.map((flag) => (
-            <Tooltip key={flag.value} delayDuration={700}>
+            <Tooltip key={flag.value}>
               <ToggleGroupItem
                 value={flag.value}
                 className="data-pressed:bg-accent/70 data-pressed:hover:bg-accent/90 px-3 text-xs whitespace-nowrap"
-                render={<TooltipTrigger />}
+                render={<TooltipTrigger delay={700} />}
               >
                 <flag.icon className="size-3.5 shrink-0" />
                 {flag.label}

@@ -21,14 +21,16 @@ export function ActivityEventRow({ row }: { row: ActivityEventRowData }) {
       <div className="flex items-start justify-between gap-2">
         <p className="text-sm leading-snug">{row.summary}</p>
         <Tooltip>
-          <TooltipTrigger asChild>
-            <time
-              className="text-muted-foreground shrink-0 text-xs whitespace-nowrap"
-              dateTime={createdAt.toISOString()}
-            >
-              {formatDistanceToNow(createdAt, { addSuffix: true })}
-            </time>
-          </TooltipTrigger>
+          <TooltipTrigger
+            render={
+              <time
+                className="text-muted-foreground shrink-0 text-xs whitespace-nowrap"
+                dateTime={createdAt.toISOString()}
+              >
+                {formatDistanceToNow(createdAt, { addSuffix: true })}
+              </time>
+            }
+          />
           <TooltipContent side="left">
             {createdAt.toLocaleString()}
           </TooltipContent>

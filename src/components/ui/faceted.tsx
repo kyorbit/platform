@@ -45,6 +45,7 @@ interface FacetedProps<
 > extends React.ComponentProps<typeof Popover> {
   value?: FacetedValue<TMultiple>;
   onValueChange?: (value: FacetedValue<TMultiple> | undefined) => void;
+  onOpenChange?: (open: boolean) => void;
   children?: React.ReactNode;
   multiple?: TMultiple;
 }

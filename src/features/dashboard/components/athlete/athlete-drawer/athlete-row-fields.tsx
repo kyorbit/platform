@@ -62,9 +62,16 @@ export function AthleteRowFields({
       />
 
       <Select
+        items={GENDER_OPTIONS.map((opt) => ({
+          value: opt.value,
+          label: opt.label,
+        }))}
         value={row.gender}
         disabled={readOnly}
-        onValueChange={(v) => onUpdate(index, 'gender', v as 'M' | 'F')}
+        onValueChange={(v) => {
+          if (v === null) return;
+          onUpdate(index, 'gender', v as 'M' | 'F');
+        }}
       >
         <SelectTrigger className="w-full min-w-0">
           <SelectValue />
@@ -79,9 +86,16 @@ export function AthleteRowFields({
       </Select>
 
       <Select
+        items={BELT_LEVELS.map((belt) => ({
+          value: String(belt.value),
+          label: belt.label,
+        }))}
         value={String(row.beltLevel)}
         disabled={readOnly}
-        onValueChange={(v) => onUpdate(index, 'beltLevel', Number(v))}
+        onValueChange={(v) => {
+          if (v === null) return;
+          onUpdate(index, 'beltLevel', Number(v));
+        }}
       >
         <SelectTrigger className="w-full min-w-0">
           <SelectValue />

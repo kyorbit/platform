@@ -25,34 +25,36 @@ export function PoolWeightFilter({
 }: PoolWeightFilterProps) {
   return (
     <Popover>
-      <PopoverTrigger asChild>
-        <Button
-          size="sm"
-          variant="outline"
-          className="h-8 border-dashed px-2 text-xs"
-        >
-          Weight
-          {(poolWeightMin != null || poolWeightMax != null) && (
-            <Badge
-              variant="secondary"
-              className="max-w-24 truncate px-1 text-[10px]"
-              title={
-                poolWeightMin != null && poolWeightMax != null
-                  ? `${poolWeightMin}–${poolWeightMax} kg`
+      <PopoverTrigger
+        render={
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-8 border-dashed px-2 text-xs"
+          >
+            Weight
+            {(poolWeightMin != null || poolWeightMax != null) && (
+              <Badge
+                variant="secondary"
+                className="max-w-24 truncate px-1 text-[10px]"
+                title={
+                  poolWeightMin != null && poolWeightMax != null
+                    ? `${poolWeightMin}–${poolWeightMax} kg`
+                    : poolWeightMin != null
+                      ? `≥ ${poolWeightMin} kg`
+                      : `≤ ${poolWeightMax} kg`
+                }
+              >
+                {poolWeightMin != null && poolWeightMax != null
+                  ? `${poolWeightMin}–${poolWeightMax}`
                   : poolWeightMin != null
-                    ? `≥ ${poolWeightMin} kg`
-                    : `≤ ${poolWeightMax} kg`
-              }
-            >
-              {poolWeightMin != null && poolWeightMax != null
-                ? `${poolWeightMin}–${poolWeightMax}`
-                : poolWeightMin != null
-                  ? `≥${poolWeightMin}`
-                  : `≤${poolWeightMax}`}
-            </Badge>
-          )}
-        </Button>
-      </PopoverTrigger>
+                    ? `≥${poolWeightMin}`
+                    : `≤${poolWeightMax}`}
+              </Badge>
+            )}
+          </Button>
+        }
+      />
       <PopoverContent className="w-56 p-3" align="start">
         <div className="flex flex-col gap-2">
           <p className="text-xs font-medium">Weight range (kg)</p>

@@ -48,12 +48,14 @@ export function OutOfRangeBadge({ violations }: OutOfRangeBadgeProps) {
 
   return (
     <Tooltip>
-      <TooltipTrigger asChild>
-        <Badge variant="destructive" className="gap-1">
-          <AlertTriangle className="size-3" />
-          {label}
-        </Badge>
-      </TooltipTrigger>
+      <TooltipTrigger
+        render={
+          <Badge variant="destructive" className="gap-1">
+            <AlertTriangle className="size-3" />
+            {label}
+          </Badge>
+        }
+      />
       <TooltipContent>
         Athlete does not match division constraints: {label}
       </TooltipContent>
@@ -70,12 +72,14 @@ export function DivisionViolationBadge({ count }: DivisionViolationBadgeProps) {
 
   return (
     <Tooltip>
-      <TooltipTrigger asChild>
-        <Badge variant="warning" className="gap-1">
-          <AlertTriangle className="size-3" />
-          {count}
-        </Badge>
-      </TooltipTrigger>
+      <TooltipTrigger
+        render={
+          <Badge variant="warning" className="gap-1">
+            <AlertTriangle className="size-3" />
+            {count}
+          </Badge>
+        }
+      />
       <TooltipContent>
         {count} athlete{count > 1 ? 's' : ''} outside division constraints
       </TooltipContent>

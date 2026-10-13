@@ -92,37 +92,40 @@ export function FormCombobox({
   return (
     <FormBase {...props} descPosition={descPosition}>
       <Popover onOpenChange={setOpen} open={open}>
-        <PopoverTrigger asChild>
-          <Button
-            ref={triggerRef}
-            aria-invalid={isInvalid}
-            aria-busy={pending}
-            className="w-full justify-between font-normal"
-            disabled={triggerDisabled}
-            id={field.name}
-            type="button"
-            variant="outline"
-            onBlur={field.handleBlur}
-          >
-            <span className="truncate">
-              {selectedLabel ?? `Select ${type}...`}
-            </span>
-            {pending ? (
-              <Spinner className="size-4 shrink-0" />
-            ) : (
-              <IconChevronDown className="text-muted-foreground size-4 shrink-0" />
-            )}
-          </Button>
-        </PopoverTrigger>
+        <PopoverTrigger
+          disabled={triggerDisabled}
+          render={
+            <Button
+              ref={triggerRef}
+              aria-invalid={isInvalid}
+              aria-busy={pending}
+              className="w-full justify-between font-normal"
+              disabled={triggerDisabled}
+              id={field.name}
+              type="button"
+              variant="outline"
+              onBlur={field.handleBlur}
+            >
+              <span className="truncate">
+                {selectedLabel ?? `Select ${type}...`}
+              </span>
+              {pending ? (
+                <Spinner className="size-4 shrink-0" />
+              ) : (
+                <IconChevronDown className="text-muted-foreground size-4 shrink-0" />
+              )}
+            </Button>
+          }
+        />
         <PopoverContent
           align="start"
-          className="w-auto max-w-(--radix-popover-content-available-width) min-w-(--radix-popover-trigger-width) p-0"
+          className="w-auto max-w-(--available-width) min-w-(--anchor-width) p-0"
           style={{ width }}
         >
           <div className="relative">
             <Command>
               <CommandInput
-                className="min-w-[calc(var(--radix-popover-trigger-width)-2.5rem)]"
+                className="min-w-[calc(var(--anchor-width)-2.5rem)]"
                 placeholder={`Search ${type}...`}
                 disabled={pending}
               />

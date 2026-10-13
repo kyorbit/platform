@@ -54,13 +54,13 @@ export function NavMain({
               <SidebarMenuButton
                 isActive={pathname === item.to}
                 tooltip={item.title}
-                asChild
-              >
-                <Link to={item.to}>
-                  <item.icon />
-                  <span>{item.title}</span>
-                </Link>
-              </SidebarMenuButton>
+                render={
+                  <Link to={item.to}>
+                    <item.icon />
+                    <span>{item.title}</span>
+                  </Link>
+                }
+              />
             </SidebarMenuItem>
           ))}
         </SidebarMenu>

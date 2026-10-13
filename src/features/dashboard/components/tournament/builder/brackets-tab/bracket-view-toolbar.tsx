@@ -39,85 +39,95 @@ export function BracketViewToolbar({
       onMouseDown={(e) => e.stopPropagation()}
     >
       <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            className="size-8 cursor-pointer"
-            disabled={!canScreenshot}
-            onClick={() => setScreenshotOpen(true)}
-          >
-            <Camera data-icon="inline-start" />
-            <span className="sr-only">Screenshot</span>
-          </Button>
-        </TooltipTrigger>
+        <TooltipTrigger
+          render={
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              className="size-8 cursor-pointer"
+              disabled={!canScreenshot}
+              onClick={() => setScreenshotOpen(true)}
+            >
+              <Camera data-icon="inline-start" />
+              <span className="sr-only">Screenshot</span>
+            </Button>
+          }
+        />
         <TooltipContent side="left">Screenshot</TooltipContent>
       </Tooltip>
       <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            className="size-8 cursor-pointer"
-            onClick={onZoomIn}
-          >
-            <ZoomIn data-icon="inline-start" />
-            <span className="sr-only">Zoom in</span>
-          </Button>
-        </TooltipTrigger>
+        <TooltipTrigger
+          render={
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              className="size-8 cursor-pointer"
+              onClick={onZoomIn}
+            >
+              <ZoomIn data-icon="inline-start" />
+              <span className="sr-only">Zoom in</span>
+            </Button>
+          }
+        />
         <TooltipContent side="left">Zoom in</TooltipContent>
       </Tooltip>
       <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            className="size-8 cursor-pointer"
-            onClick={onZoomOut}
-          >
-            <ZoomOut data-icon="inline-start" />
-            <span className="sr-only">Zoom out</span>
-          </Button>
-        </TooltipTrigger>
+        <TooltipTrigger
+          render={
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              className="size-8 cursor-pointer"
+              onClick={onZoomOut}
+            >
+              <ZoomOut data-icon="inline-start" />
+              <span className="sr-only">Zoom out</span>
+            </Button>
+          }
+        />
         <TooltipContent side="left">Zoom out</TooltipContent>
       </Tooltip>
       <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            className="size-8 cursor-pointer"
-            onClick={onFit}
-          >
-            <Scan data-icon="inline-start" />
-            <span className="sr-only">Fit to view</span>
-          </Button>
-        </TooltipTrigger>
+        <TooltipTrigger
+          render={
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              className="size-8 cursor-pointer"
+              onClick={onFit}
+            >
+              <Scan data-icon="inline-start" />
+              <span className="sr-only">Fit to view</span>
+            </Button>
+          }
+        />
         <TooltipContent side="left">Fit to view</TooltipContent>
       </Tooltip>
       <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            className="size-8 cursor-pointer"
-            onClick={toggleFullscreen}
-          >
-            {isFullscreen ? (
-              <Minimize2 data-icon="inline-start" />
-            ) : (
-              <Maximize2 data-icon="inline-start" />
-            )}
-            <span className="sr-only">
-              {isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
-            </span>
-          </Button>
-        </TooltipTrigger>
+        <TooltipTrigger
+          render={
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              className="size-8 cursor-pointer"
+              onClick={toggleFullscreen}
+            >
+              {isFullscreen ? (
+                <Minimize2 data-icon="inline-start" />
+              ) : (
+                <Maximize2 data-icon="inline-start" />
+              )}
+              <span className="sr-only">
+                {isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
+              </span>
+            </Button>
+          }
+        />
         <TooltipContent side="left">
           {isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
         </TooltipContent>

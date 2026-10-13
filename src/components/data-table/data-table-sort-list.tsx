@@ -1,6 +1,6 @@
 import { ArrowDownUp, GripVertical, Trash2 } from 'lucide-react';
 import React from 'react';
-import type { ColumnSort, RowData, SortDirection } from '@tanstack/react-table';
+import type { ColumnSort, RowData } from '@tanstack/react-table';
 
 import type { DataTableControlledState } from '@/hooks/use-data-table';
 import type { DataTableInstance } from '@/lib/data-table/features';
@@ -166,30 +166,33 @@ export function DataTableSortList<TData extends RowData>({
       getItemValue={(item) => item.id}
     >
       <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            size="sm"
-            className="font-normal"
-            onKeyDown={onTriggerKeyDown}
-            disabled={disabled}
-          >
-            <ArrowDownUp className="text-muted-foreground" />
-            Sort
-            {sorting.length > 0 && (
-              <Badge
-                variant="secondary"
-                className="h-[18.24px] rounded-[3.2px] px-[5.12px] font-mono text-[10.4px] font-normal"
-              >
-                {sorting.length}
-              </Badge>
-            )}
-          </Button>
-        </PopoverTrigger>
+        <PopoverTrigger
+          disabled={disabled}
+          render={
+            <Button
+              variant="outline"
+              size="sm"
+              className="font-normal"
+              onKeyDown={onTriggerKeyDown}
+              disabled={disabled}
+            >
+              <ArrowDownUp className="text-muted-foreground" />
+              Sort
+              {sorting.length > 0 && (
+                <Badge
+                  variant="secondary"
+                  className="h-[18.24px] rounded-[3.2px] px-[5.12px] font-mono text-[10.4px] font-normal"
+                >
+                  {sorting.length}
+                </Badge>
+              )}
+            </Button>
+          }
+        />
         <PopoverContent
           aria-labelledby={labelId}
           aria-describedby={descriptionId}
-          className="flex w-full max-w-(--radix-popover-content-available-width) flex-col gap-3.5 p-4 sm:min-w-95"
+          className="flex w-full max-w-(--available-width) flex-col gap-3.5 p-4 sm:min-w-95"
           {...props}
         >
           <div className="flex flex-col gap-1">
@@ -360,11 +363,15 @@ function DataTableSortItem({
         </Combobox>
 
         <Select
+          items={dataTableConfig.sortOrders.map((order) => ({
+            value: order.value,
+            label: order.label,
+          }))}
           open={showDirectionSelector}
           onOpenChange={setShowDirectionSelector}
           value={sort.desc ? 'desc' : 'asc'}
-          onValueChange={(value: SortDirection) =>
-            onSortUpdate(sort.id, { desc: value === 'desc' })
+          onValueChange={(value) =>
+            value !== null && onSortUpdate(sort.id, { desc: value === 'desc' })
           }
         >
           <SelectTrigger
@@ -376,7 +383,7 @@ function DataTableSortItem({
           </SelectTrigger>
           <SelectContent
             id={directionListboxId}
-            className="min-w-(--radix-select-trigger-width)"
+            className="min-w-(--anchor-width)"
           >
             {dataTableConfig.sortOrders.map((order) => (
               <SelectItem key={order.value} value={order.value}>

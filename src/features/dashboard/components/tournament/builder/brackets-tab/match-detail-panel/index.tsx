@@ -71,44 +71,51 @@ export function MatchDetailPanel() {
                       match.blueTournamentAthleteId == null,
                   })}
             </SheetTitle>
-            <SheetDescription asChild>
-              <div className="flex flex-col gap-3">
-                <div className="flex flex-wrap items-center gap-2">
-                  <MatchSheetStatus status={match.status} />
-                  {position.canChangeMatchStatus && (
-                    <Select
-                      value={match.status}
-                      disabled={position.adminSetMatchStatus.isPending}
-                      onValueChange={(v) =>
-                        position.handleMatchStatusSelect(v as MatchStatus)
-                      }
-                    >
-                      <SelectTrigger size="sm" className="w-28">
-                        <SelectValue placeholder="Set status" />
-                      </SelectTrigger>
-                      <SelectContent className="min-w-28">
-                        <SelectGroup>
-                          {MATCH_STATUSES.map((s) => (
-                            <SelectItem key={s} value={s}>
-                              {MATCH_STATUS_LABEL[s]}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  )}
-                  {match.redLocked || match.blueLocked ? (
-                    <span className="text-muted-foreground text-xs">
-                      {match.redLocked && match.blueLocked
-                        ? 'Both athletes locked'
-                        : match.redLocked
-                          ? 'Red locked'
-                          : 'Blue locked'}
-                    </span>
-                  ) : null}
+            <SheetDescription
+              render={
+                <div className="flex flex-col gap-3">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <MatchSheetStatus status={match.status} />
+                    {position.canChangeMatchStatus && (
+                      <Select
+                        items={MATCH_STATUSES.map((s) => ({
+                          value: s,
+                          label: MATCH_STATUS_LABEL[s],
+                        }))}
+                        value={match.status}
+                        disabled={position.adminSetMatchStatus.isPending}
+                        onValueChange={(v) => {
+                          if (v === null) return;
+                          position.handleMatchStatusSelect(v as MatchStatus);
+                        }}
+                      >
+                        <SelectTrigger size="sm" className="w-28">
+                          <SelectValue placeholder="Set status" />
+                        </SelectTrigger>
+                        <SelectContent className="min-w-28">
+                          <SelectGroup>
+                            {MATCH_STATUSES.map((s) => (
+                              <SelectItem key={s} value={s}>
+                                {MATCH_STATUS_LABEL[s]}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    )}
+                    {match.redLocked || match.blueLocked ? (
+                      <span className="text-muted-foreground text-xs">
+                        {match.redLocked && match.blueLocked
+                          ? 'Both athletes locked'
+                          : match.redLocked
+                            ? 'Red locked'
+                            : 'Blue locked'}
+                      </span>
+                    ) : null}
+                  </div>
                 </div>
-              </div>
-            </SheetDescription>
+              }
+            />
           </SheetHeader>
 
           <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-6 py-4">

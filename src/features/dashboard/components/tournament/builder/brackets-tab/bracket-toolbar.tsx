@@ -73,21 +73,23 @@ export function BracketToolbar() {
     <div className="fixed top-1/3 left-3 z-10 -translate-y-1/4 space-y-2">
       <Card className="bg-popover flex flex-col gap-1 rounded-md border p-1 shadow-md">
         <Tooltip>
-          <TooltipTrigger asChild>
-            <span className="inline-flex">
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                disabled={customBlocked}
-                aria-label="Create custom match"
-                className="rounded-sm"
-                onClick={() => setCustomOpen(true)}
-              >
-                <Plus />
-              </Button>
-            </span>
-          </TooltipTrigger>
+          <TooltipTrigger
+            render={
+              <span className="inline-flex">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  disabled={customBlocked}
+                  aria-label="Create custom match"
+                  className="rounded-sm"
+                  onClick={() => setCustomOpen(true)}
+                >
+                  <Plus />
+                </Button>
+              </span>
+            }
+          />
           <TooltipContent side="right">
             {readOnly
               ? 'Read-only mode'
@@ -103,79 +105,85 @@ export function BracketToolbar() {
       </Card>
       <Card className="bg-popover flex flex-col gap-1 rounded-md border p-1 shadow-md">
         <Tooltip>
-          <TooltipTrigger asChild>
-            <span className="inline-flex">
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                disabled={blocked || shuffle.isPending}
-                aria-label="Shuffle bracket"
-                className="rounded-sm"
-                onClick={() => {
-                  if (!divisionId) return;
-                  void wrap(shuffle.mutateAsync({ divisionId }), {
-                    loading: 'Shuffling bracket…',
-                    success: 'Bracket shuffled',
-                  });
-                }}
-              >
-                <Shuffle />
-              </Button>
-            </span>
-          </TooltipTrigger>
+          <TooltipTrigger
+            render={
+              <span className="inline-flex">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  disabled={blocked || shuffle.isPending}
+                  aria-label="Shuffle bracket"
+                  className="rounded-sm"
+                  onClick={() => {
+                    if (!divisionId) return;
+                    void wrap(shuffle.mutateAsync({ divisionId }), {
+                      loading: 'Shuffling bracket…',
+                      success: 'Bracket shuffled',
+                    });
+                  }}
+                >
+                  <Shuffle />
+                </Button>
+              </span>
+            }
+          />
           <TooltipContent side="right">
             {reason ?? 'Shuffle athletes'}
           </TooltipContent>
         </Tooltip>
 
         <Tooltip>
-          <TooltipTrigger asChild>
-            <span className="inline-flex">
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                disabled={blocked || regenerate.isPending}
-                aria-label="Regenerate bracket"
-                onClick={() => {
-                  if (!divisionId) return;
-                  void wrap(regenerate.mutateAsync({ divisionId }), {
-                    loading: 'Regenerating bracket…',
-                    success: 'Bracket regenerated',
-                  });
-                }}
-              >
-                <RefreshCw />
-              </Button>
-            </span>
-          </TooltipTrigger>
+          <TooltipTrigger
+            render={
+              <span className="inline-flex">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  disabled={blocked || regenerate.isPending}
+                  aria-label="Regenerate bracket"
+                  onClick={() => {
+                    if (!divisionId) return;
+                    void wrap(regenerate.mutateAsync({ divisionId }), {
+                      loading: 'Regenerating bracket…',
+                      success: 'Bracket regenerated',
+                    });
+                  }}
+                >
+                  <RefreshCw />
+                </Button>
+              </span>
+            }
+          />
           <TooltipContent side="right">
             {reason ?? 'Regenerate bracket'}
           </TooltipContent>
         </Tooltip>
 
         <Tooltip>
-          <TooltipTrigger asChild>
-            <span className="inline-flex">
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                disabled={resetDisabledForCleanBracket}
-                aria-label="Reset bracket"
-                onClick={() => {
-                  if (!divisionId) return;
-                  void wrap(reset.mutateAsync({ divisionId }), {
-                    loading: 'Resetting bracket…',
-                    success: 'Bracket reset',
-                  });
-                }}
-              >
-                <Eraser />
-              </Button>
-            </span>
-          </TooltipTrigger>
+          <TooltipTrigger
+            render={
+              <span className="inline-flex">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  disabled={resetDisabledForCleanBracket}
+                  aria-label="Reset bracket"
+                  onClick={() => {
+                    if (!divisionId) return;
+                    void wrap(reset.mutateAsync({ divisionId }), {
+                      loading: 'Resetting bracket…',
+                      success: 'Bracket reset',
+                    });
+                  }}
+                >
+                  <Eraser />
+                </Button>
+              </span>
+            }
+          />
           <TooltipContent side="right">{resetTooltip}</TooltipContent>
         </Tooltip>
       </Card>

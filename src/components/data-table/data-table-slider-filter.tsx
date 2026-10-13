@@ -167,39 +167,41 @@ export function DataTableSliderFilter<TData extends RowData>({
 
   return (
     <Popover>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          className="border-dashed font-normal"
-        >
-          {columnFilterValue ? (
-            <div
-              role="button"
-              aria-label={`Clear ${title} filter`}
-              tabIndex={0}
-              className="focus-visible:ring-ring rounded-sm opacity-70 transition-opacity hover:opacity-100 focus-visible:ring-1 focus-visible:outline-none"
-              onClick={onReset}
-            >
-              <XCircle />
-            </div>
-          ) : (
-            <PlusCircle />
-          )}
-          <span>{title}</span>
-          {columnFilterValue ? (
-            <>
-              <Separator
-                orientation="vertical"
-                className="mx-0.5 data-[orientation=vertical]:h-4"
-              />
-              {formatValue(columnFilterValue[0])} -{' '}
-              {formatValue(columnFilterValue[1])}
-              {unit ? ` ${unit}` : ''}
-            </>
-          ) : null}
-        </Button>
-      </PopoverTrigger>
+      <PopoverTrigger
+        render={
+          <Button
+            variant="outline"
+            size="sm"
+            className="border-dashed font-normal"
+          >
+            {columnFilterValue ? (
+              <div
+                role="button"
+                aria-label={`Clear ${title} filter`}
+                tabIndex={0}
+                className="focus-visible:ring-ring rounded-sm opacity-70 transition-opacity hover:opacity-100 focus-visible:ring-1 focus-visible:outline-none"
+                onClick={onReset}
+              >
+                <XCircle />
+              </div>
+            ) : (
+              <PlusCircle />
+            )}
+            <span>{title}</span>
+            {columnFilterValue ? (
+              <>
+                <Separator
+                  orientation="vertical"
+                  className="mx-0.5 data-[orientation=vertical]:h-4"
+                />
+                {formatValue(columnFilterValue[0])} -{' '}
+                {formatValue(columnFilterValue[1])}
+                {unit ? ` ${unit}` : ''}
+              </>
+            ) : null}
+          </Button>
+        }
+      />
       <PopoverContent align="center" className="flex w-auto flex-col gap-4">
         <div className="flex flex-col gap-3">
           <p className="leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">

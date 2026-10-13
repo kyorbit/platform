@@ -173,18 +173,20 @@ function DivisionSettingsForm({
       </div>
 
       <Tooltip>
-        <TooltipTrigger asChild>
-          <div className="w-fit">
-            <form.AppField name="thirdPlaceMatch">
-              {(field) => (
-                <field.Checkbox
-                  label="Third-place match"
-                  disabled={!thirdPlaceAllowed}
-                />
-              )}
-            </form.AppField>
-          </div>
-        </TooltipTrigger>
+        <TooltipTrigger
+          render={
+            <div className="w-fit">
+              <form.AppField name="thirdPlaceMatch">
+                {(field) => (
+                  <field.Checkbox
+                    label="Third-place match"
+                    disabled={!thirdPlaceAllowed}
+                  />
+                )}
+              </form.AppField>
+            </div>
+          }
+        />
         {!thirdPlaceAllowed && (
           <TooltipContent side="right" className="max-w-xs">
             Third-place match needs at least 4 athletes in the division.

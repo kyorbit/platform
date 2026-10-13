@@ -14,8 +14,16 @@ interface PoolGenderSelectProps {
 export function PoolGenderSelect({ value, onChange }: PoolGenderSelectProps) {
   return (
     <Select
+      items={[
+        { value: 'all', label: 'All' },
+        { value: 'M', label: 'Male' },
+        { value: 'F', label: 'Female' },
+      ]}
       value={value ?? 'all'}
-      onValueChange={(v) => onChange(v === 'all' ? null : (v as 'M' | 'F'))}
+      onValueChange={(v) => {
+        if (v === null) return;
+        onChange(v === 'all' ? null : (v as 'M' | 'F'));
+      }}
     >
       <SelectTrigger className="h-8! max-w-24! flex-1 text-xs">
         <SelectValue />

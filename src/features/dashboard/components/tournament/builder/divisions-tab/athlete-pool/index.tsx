@@ -115,12 +115,14 @@ export function AthletePool({
             <Badge variant="secondary">{total}</Badge>
           </div>
           {!readOnly && (
-            <SheetTrigger asChild>
-              <Button size="sm" variant="outline">
-                <UserPlus data-icon="inline-start" aria-hidden="true" />
-                Athletes
-              </Button>
-            </SheetTrigger>
+            <SheetTrigger
+              render={
+                <Button size="sm" variant="outline">
+                  <UserPlus data-icon="inline-start" aria-hidden="true" />
+                  Athletes
+                </Button>
+              }
+            />
           )}
         </div>
 
@@ -216,12 +218,16 @@ function PoolNoMatches() {
 function AddFromLibraryTrigger() {
   return (
     <EmptyContent>
-      <SheetTrigger data-slot="button" data-variant="default" asChild>
-        <Button size="sm">
-          <UserPlus data-icon="inline-start" aria-hidden="true" />
-          Add from library
-        </Button>
-      </SheetTrigger>
+      <SheetTrigger
+        data-slot="button"
+        data-variant="default"
+        render={
+          <Button size="sm">
+            <UserPlus data-icon="inline-start" aria-hidden="true" />
+            Add from library
+          </Button>
+        }
+      />
     </EmptyContent>
   );
 }

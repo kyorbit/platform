@@ -6,7 +6,6 @@ import type { RowData } from '@tanstack/react-table';
 import type {
   DataTableColumnMeta,
   ExtendedColumnFilter,
-  FilterOperator,
   JoinOperator,
 } from '@/types/data-table';
 import type {
@@ -223,30 +222,33 @@ export function DataTableFilterList<TData extends RowData>({
       getItemValue={(item) => item.filterId}
     >
       <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            size="sm"
-            className="font-normal"
-            onKeyDown={onTriggerKeyDown}
-            disabled={disabled}
-          >
-            <ListFilter className="text-muted-foreground" />
-            Filter
-            {filters.length > 0 && (
-              <Badge
-                variant="secondary"
-                className="h-[18.24px] rounded-[3.2px] px-[5.12px] font-mono text-[10.4px] font-normal"
-              >
-                {filters.length}
-              </Badge>
-            )}
-          </Button>
-        </PopoverTrigger>
+        <PopoverTrigger
+          disabled={disabled}
+          render={
+            <Button
+              variant="outline"
+              size="sm"
+              className="font-normal"
+              onKeyDown={onTriggerKeyDown}
+              disabled={disabled}
+            >
+              <ListFilter className="text-muted-foreground" />
+              Filter
+              {filters.length > 0 && (
+                <Badge
+                  variant="secondary"
+                  className="h-[18.24px] rounded-[3.2px] px-[5.12px] font-mono text-[10.4px] font-normal"
+                >
+                  {filters.length}
+                </Badge>
+              )}
+            </Button>
+          }
+        />
         <PopoverContent
           aria-describedby={descriptionId}
           aria-labelledby={labelId}
-          className="flex w-full max-w-(--radix-popover-content-available-width) flex-col gap-3.5 p-4 sm:min-w-95"
+          className="flex w-full max-w-(--available-width) flex-col gap-3.5 p-4 sm:min-w-95"
           {...props}
         >
           <div className="flex flex-col gap-1">
@@ -404,8 +406,14 @@ function DataTableFilterItem<TData extends RowData>({
             <span className="text-muted-foreground text-sm">Where</span>
           ) : index === 1 ? (
             <Select
+              items={dataTableConfig.joinOperators.map((joinOp) => ({
+                value: joinOp,
+                label: joinOp,
+              }))}
               value={joinOperator}
-              onValueChange={(value: JoinOperator) => setJoinOperator(value)}
+              onValueChange={(value) =>
+                value !== null && setJoinOperator(value)
+              }
             >
               <SelectTrigger
                 aria-label="Select join operator"
@@ -417,8 +425,8 @@ function DataTableFilterItem<TData extends RowData>({
               </SelectTrigger>
               <SelectContent
                 id={joinOperatorListboxId}
-                position="popper"
-                className="min-w-(--radix-select-trigger-width) lowercase"
+                alignItemWithTrigger={false}
+                className="min-w-(--anchor-width) lowercase"
               >
                 {dataTableConfig.joinOperators.map((joinOp) => (
                   <SelectItem key={joinOp} value={joinOp}>
@@ -489,10 +497,15 @@ function DataTableFilterItem<TData extends RowData>({
           </ComboboxContent>
         </Combobox>
         <Select
+          items={filterOperators.map((operator) => ({
+            value: operator.value,
+            label: operator.label,
+          }))}
           open={showOperatorSelector}
           onOpenChange={setShowOperatorSelector}
           value={filter.operator}
-          onValueChange={(value: FilterOperator) =>
+          onValueChange={(value) =>
+            value !== null &&
             onFilterUpdate(filter.filterId, {
               operator: value,
               value:
@@ -636,12 +649,16 @@ function onFilterInputRender<TData extends RowData>({
 
       return (
         <Select
+          items={[
+            { value: 'true', label: 'True' },
+            { value: 'false', label: 'False' },
+          ]}
           open={showValueSelector}
           onOpenChange={setShowValueSelector}
           value={filter.value}
           onValueChange={(value) =>
             onFilterUpdate(filter.filterId, {
-              value,
+              value: value ?? '',
             })
           }
         >
@@ -687,24 +704,26 @@ function onFilterInputRender<TData extends RowData>({
           }}
           multiple={multiple}
         >
-          <FacetedTrigger asChild>
-            <Button
-              id={inputId}
-              aria-controls={inputListboxId}
-              aria-label={`${columnMeta?.label} filter value${multiple ? 's' : ''}`}
-              variant="outline"
-              size="sm"
-              className="w-full rounded font-normal"
-            >
-              <FacetedBadgeList
-                options={columnMeta?.options}
-                placeholder={
-                  columnMeta?.placeholder ??
-                  `Select option${multiple ? 's' : ''}...`
-                }
-              />
-            </Button>
-          </FacetedTrigger>
+          <FacetedTrigger
+            render={
+              <Button
+                id={inputId}
+                aria-controls={inputListboxId}
+                aria-label={`${columnMeta?.label} filter value${multiple ? 's' : ''}`}
+                variant="outline"
+                size="sm"
+                className="w-full rounded font-normal"
+              >
+                <FacetedBadgeList
+                  options={columnMeta?.options}
+                  placeholder={
+                    columnMeta?.placeholder ??
+                    `Select option${multiple ? 's' : ''}...`
+                  }
+                />
+              </Button>
+            }
+          />
           <FacetedContent id={inputListboxId} className="w-44">
             <FacetedInput
               aria-label={`Search ${columnMeta?.label} options`}
@@ -758,22 +777,24 @@ function onFilterInputRender<TData extends RowData>({
 
       return (
         <Popover open={showValueSelector} onOpenChange={setShowValueSelector}>
-          <PopoverTrigger asChild>
-            <Button
-              id={inputId}
-              aria-controls={inputListboxId}
-              aria-label={`${columnMeta?.label} date filter`}
-              variant="outline"
-              size="sm"
-              className={cn(
-                'w-full justify-start rounded text-left font-normal',
-                !filter.value && 'text-muted-foreground'
-              )}
-            >
-              <CalendarIcon />
-              <span className="truncate">{displayValue}</span>
-            </Button>
-          </PopoverTrigger>
+          <PopoverTrigger
+            render={
+              <Button
+                id={inputId}
+                aria-controls={inputListboxId}
+                aria-label={`${columnMeta?.label} date filter`}
+                variant="outline"
+                size="sm"
+                className={cn(
+                  'w-full justify-start rounded text-left font-normal',
+                  !filter.value && 'text-muted-foreground'
+                )}
+              >
+                <CalendarIcon />
+                <span className="truncate">{displayValue}</span>
+              </Button>
+            }
+          />
           <PopoverContent
             id={inputListboxId}
             align="start"

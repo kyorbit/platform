@@ -165,7 +165,11 @@ function TournamentSelect({
   const items = tournaments ?? [];
 
   return (
-    <Select value={tournamentId} onValueChange={onTournamentIdChange}>
+    <Select
+      items={items.map((t) => ({ value: t.id, label: t.name }))}
+      value={tournamentId}
+      onValueChange={(value) => value !== null && onTournamentIdChange(value)}
+    >
       <SelectTrigger className="w-full">
         <SelectValue placeholder="Select a tournament..." />
       </SelectTrigger>
