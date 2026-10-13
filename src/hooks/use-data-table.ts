@@ -211,7 +211,11 @@ export function useDataTable<TData extends RowData>(
       const filterKey = filterKeyByColumnId[column.id ?? ''] ?? column.id ?? '';
       if (!filterKey) return acc;
 
-      if (column.meta?.options) {
+      if (
+        column.meta?.variant === 'range' ||
+        column.meta?.variant === 'dateRange' ||
+        column.meta?.options
+      ) {
         acc[filterKey] = parseAsArrayOf(
           parseAsString,
           ARRAY_SEPARATOR
