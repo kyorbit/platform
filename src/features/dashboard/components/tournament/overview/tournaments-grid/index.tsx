@@ -15,7 +15,6 @@ const GRID_SKELETON_COUNT = 8;
 interface TournamentsGridProps {
   query: TournamentsManagerQuery;
   onRowAction: TournamentRowActionOptions['onRowAction'];
-  onCreate: () => void;
   onClearFilters: () => void;
   className?: string;
 }
@@ -23,7 +22,6 @@ interface TournamentsGridProps {
 export function TournamentsGrid({
   query,
   onRowAction,
-  onCreate,
   onClearFilters,
   className,
 }: TournamentsGridProps) {
@@ -65,7 +63,6 @@ export function TournamentsGrid({
     return (
       <TournamentsEmptyState
         variant={hasActiveFilters ? 'no-results' : 'no-data'}
-        onCreate={hasActiveFilters ? undefined : onCreate}
         onClearFilters={hasActiveFilters ? onClearFilters : undefined}
         className={className}
       />

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from '@tanstack/react-router';
 import { PlusIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,38 +15,56 @@ import { Spinner } from '@/components/ui/spinner';
 import { useCreateTournament } from '@/queries/tournament';
 
 interface CreateTournamentDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  children?: React.ReactNode;
+  children: React.ReactNode;
 }
 
 export function CreateTournamentDialog({
-  open,
-  onOpenChange,
   children,
 }: CreateTournamentDialogProps) {
+  const [open, setOpen] = React.useState(false);
+  const [triggerId, setTriggerId] = React.useState<string | null>(null);
   const [name, setName] = React.useState('');
 
+  const navigate = useNavigate();
   const mutation = useCreateTournament();
 
   function handleSubmit(e: React.SubmitEvent) {
     e.preventDefault();
-    if (!name.trim()) return;
+    if (!name.trim() || mutation.isPending) return;
     mutation.mutate(
       { name: name.trim() },
       {
-        onSuccess: () => {
+        onSuccess: (tournament) => {
           setName('');
-          onOpenChange(false);
+          setOpen(false);
+          void navigate({
+            to: '/dashboard/tournaments/$id/builder',
+            params: { id: tournament.id },
+          });
         },
       }
     );
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog
+      open={open}
+      triggerId={triggerId}
+      onOpenChange={(nextOpen, eventDetails) => {
+        if (!nextOpen && mutation.isPending) {
+          eventDetails.cancel();
+          return;
+        }
+        setOpen(nextOpen);
+        setTriggerId(eventDetails.trigger?.id ?? null);
+        if (!nextOpen) {
+          setName('');
+          mutation.reset();
+        }
+      }}
+    >
       {children}
-      <DialogContent>
+      <DialogContent showCloseButton={!mutation.isPending}>
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>Create Tournament</DialogTitle>
@@ -61,18 +80,19 @@ export function CreateTournamentDialog({
               onChange={(e) => setName(e.target.value)}
               autoFocus
               required
+              disabled={mutation.isPending}
             />
           </div>
           <DialogFooter>
             <Button type="submit" disabled={!name.trim() || mutation.isPending}>
               {mutation.isPending ? (
                 <>
-                  <Spinner />
+                  <Spinner data-icon="inline-start" />
                   Creating...
                 </>
               ) : (
                 <>
-                  <PlusIcon />
+                  <PlusIcon data-icon="inline-start" />
                   Create Tournament
                 </>
               )}

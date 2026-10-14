@@ -16,7 +16,6 @@ import { SiteHeader } from '@/features/dashboard/components/sidebar/site-header'
 import { ErrorBoundary } from '@/components/error-boundary';
 
 export function TournamentsOverview() {
-  const [createOpen, setCreateOpen] = React.useState(false);
   const [rowAction, setRowAction] =
     React.useState<DataTableRowAction<TournamentListItem> | null>(null);
   const [viewMode] = useTournamentsViewMode();
@@ -32,7 +31,6 @@ export function TournamentsOverview() {
     []
   );
 
-  const onCreate = React.useCallback(() => setCreateOpen(true), []);
   const onClearFilters = React.useCallback(() => {
     void setUrlFilters({ query: null, status: null });
   }, [setUrlFilters]);
@@ -42,27 +40,27 @@ export function TournamentsOverview() {
       <SiteHeader title="Tournaments" />
 
       <div className="mx-auto w-full max-w-7xl flex-1 overflow-auto p-6">
-        <TournamentsToolbar onCreate={onCreate} />
-        <ErrorBoundary title="Failed to load tournaments">
-          {viewMode === 'grid' ? (
-            <TournamentsGrid
-              query={query}
-              onRowAction={setRowAction}
-              onCreate={onCreate}
-              onClearFilters={onClearFilters}
-              className="pt-2"
-            />
-          ) : (
-            <TournamentsTable
-              columns={columns}
-              query={query}
-              className="pt-2"
-            />
-          )}
-        </ErrorBoundary>
+        <CreateTournamentDialog>
+          <TournamentsToolbar />
+          <ErrorBoundary title="Failed to load tournaments">
+            {viewMode === 'grid' ? (
+              <TournamentsGrid
+                query={query}
+                onRowAction={setRowAction}
+                onClearFilters={onClearFilters}
+                className="pt-2"
+              />
+            ) : (
+              <TournamentsTable
+                columns={columns}
+                query={query}
+                className="pt-2"
+              />
+            )}
+          </ErrorBoundary>
+        </CreateTournamentDialog>
       </div>
 
-      <CreateTournamentDialog open={createOpen} onOpenChange={setCreateOpen} />
       <RenameTournamentDialog
         tournament={
           rowAction?.variant === 'update' ? rowAction.row.original : null

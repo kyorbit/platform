@@ -10,6 +10,7 @@ import {
 import { ViewModeToggle, useTournamentsViewMode } from './view-mode-toggle';
 import type { TournamentStatus } from '@/contracts/tournament/list';
 import { Button } from '@/components/ui/button';
+import { DialogTrigger } from '@/components/ui/dialog';
 import {
   Select,
   SelectContent,
@@ -42,14 +43,10 @@ const STATUS_LABELS: Record<TournamentStatus, string> = {
 const ALL_STATUS_VALUE = '__all__';
 
 interface TournamentsToolbarProps {
-  onCreate: () => void;
   className?: string;
 }
 
-export function TournamentsToolbar({
-  onCreate,
-  className,
-}: TournamentsToolbarProps) {
+export function TournamentsToolbar({ className }: TournamentsToolbarProps) {
   const [viewMode, setViewMode] = useTournamentsViewMode();
 
   const [query, setQuery] = useQueryState(
@@ -148,10 +145,14 @@ export function TournamentsToolbar({
 
       <ViewModeToggle value={viewMode} onChange={setViewMode} />
 
-      <Button size="sm" onClick={onCreate}>
-        <Plus className="mr-1 size-4" />
-        New tournament
-      </Button>
+      <DialogTrigger
+        render={
+          <Button size="sm">
+            <Plus data-icon="inline-start" />
+            New tournament
+          </Button>
+        }
+      />
     </div>
   );
 }

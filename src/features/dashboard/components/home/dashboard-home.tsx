@@ -17,7 +17,6 @@ import { Button } from '@/components/ui/button';
 import { DialogTrigger } from '@/components/ui/dialog';
 
 export function DashboardHome() {
-  const [createOpen, setCreateOpen] = useState(false);
   const [rowAction, setRowAction] =
     useState<DataTableRowAction<TournamentListItem> | null>(null);
 
@@ -36,15 +35,11 @@ export function DashboardHome() {
                 Cross-tournament monitoring and setup status
               </p>
             </div>
-            <CreateTournamentDialog
-              open={createOpen}
-              onOpenChange={setCreateOpen}
-            >
+            <CreateTournamentDialog>
               <DialogTrigger
-                onClick={() => setCreateOpen(true)}
                 render={
                   <Button>
-                    <Plus className="size-4" data-icon="inline-start" />
+                    <Plus data-icon="inline-start" />
                     Create Tournament
                   </Button>
                 }
