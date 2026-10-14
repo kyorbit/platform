@@ -250,13 +250,15 @@ export function useAdvanceSettingsComboboxState(args: {
     ]
   );
 
-  const refetchSelection = useCallback(() => {
-    void queryClient.invalidateQueries({
-      queryKey: arenaSelectionCatalogQueryOptions({
-        deviceId,
-        tournamentId: advance.tournament,
-      }).queryKey,
-    });
+  const refetchSelection = useCallback(async () => {
+    const requests = [
+      queryClient.invalidateQueries({
+        queryKey: arenaSelectionCatalogQueryOptions({
+          deviceId,
+          tournamentId: advance.tournament,
+        }).queryKey,
+      }),
+    ];
     if (
       deviceId &&
       advance.tournament &&
@@ -264,14 +266,17 @@ export function useAdvanceSettingsComboboxState(args: {
       advance.division &&
       advance.division.length > 0
     ) {
-      void queryClient.invalidateQueries({
-        queryKey: arenaSelectionMatchesQueryOptions({
-          deviceId,
-          tournamentId: advance.tournament,
-          divisionId: advance.division,
-        }).queryKey,
-      });
+      requests.push(
+        queryClient.invalidateQueries({
+          queryKey: arenaSelectionMatchesQueryOptions({
+            deviceId,
+            tournamentId: advance.tournament,
+            divisionId: advance.division,
+          }).queryKey,
+        })
+      );
     }
+    await Promise.all(requests);
   }, [advance.division, advance.tournament, deviceId, queryClient]);
 
   return { tournamentFields, refetchSelection };

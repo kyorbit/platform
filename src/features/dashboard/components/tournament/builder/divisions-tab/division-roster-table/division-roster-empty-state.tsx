@@ -1,8 +1,8 @@
 import { ArrowRight, UserPlus } from 'lucide-react';
 import type { DivisionData } from '@/contracts/tournament/division';
-import { Button } from '@/components/ui/button';
+import { StatusButton } from '@/components/async/status-button';
+import { useButtonStatus } from '@/hooks/use-button-status';
 import { useAutoAssignDivision } from '@/queries/division';
-import { Spinner } from '@/components/ui/spinner';
 
 interface DivisionRosterEmptyStateProps {
   variant: 'no-division-selected' | 'no-athletes';
@@ -18,6 +18,7 @@ export function DivisionRosterEmptyState({
   readOnly,
 }: DivisionRosterEmptyStateProps) {
   const autoAssign = useAutoAssignDivision();
+  const autoAssignButton = useButtonStatus(autoAssign.status);
 
   if (variant === 'no-division-selected') {
     return (
@@ -43,22 +44,16 @@ export function DivisionRosterEmptyState({
       <p className="text-foreground text-sm font-medium">
         No athletes assigned
       </p>
-      <Button
+      <StatusButton
+        successLabel="Assigned"
+        {...autoAssignButton}
         size="sm"
         onClick={() =>
           autoAssign.mutate({ divisionId: division.id, tournamentId })
         }
-        disabled={autoAssign.isPending}
       >
-        {autoAssign.isPending ? (
-          <>
-            <Spinner />
-            Assigning…
-          </>
-        ) : (
-          'Auto-assign'
-        )}
-      </Button>
+        Auto-assign
+      </StatusButton>
       <p className="text-xs">Drag from the pool or click + on a pool row.</p>
     </div>
   );

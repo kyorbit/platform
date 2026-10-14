@@ -3,6 +3,7 @@ import { Download, Upload } from 'lucide-react';
 
 import { BulkAddAthletesDialog } from '../dialogs/bulk-add-athletes-dialog';
 import { BulkDeleteAthletesDialog } from '../dialogs/bulk-delete-athletes-dialog';
+import { AthleteImportDialog } from '../dialogs/athlete-import-dialog';
 import { AthletesActionBar } from './athletes-action-bar';
 
 import type { AthleteProfileData } from '@/contracts/athlete/profile';
@@ -19,6 +20,7 @@ import { cn } from '@/lib/utils';
 import { DataTable } from '@/components/data-table/data-table';
 import { DataTableToolbar } from '@/components/data-table/data-table-toolbar';
 import { Button } from '@/components/ui/button';
+import { DialogTrigger } from '@/components/ui/dialog';
 import { DataTableSkeleton } from '@/components/data-table/data-table-skeleton';
 import { DataTableSortList } from '@/components/data-table/data-table-sort-list';
 import { DataTableFilterList } from '@/components/data-table/data-table-filter-list';
@@ -31,7 +33,6 @@ interface AthleteTableProps {
   columns: Array<DataTableColumnDef<AthleteProfileData>>;
   className?: string;
   onAdd: () => void;
-  onImport: () => void;
   enableQueryFilter?: boolean;
   onBulkEdit?: (
     profiles: Array<AthleteProfileData>,
@@ -43,7 +44,6 @@ export function AthleteTable({
   columns,
   className,
   onAdd,
-  onImport,
   enableQueryFilter = true,
   onBulkEdit,
 }: AthleteTableProps) {
@@ -190,10 +190,16 @@ export function AthleteTable({
             </DataTableAdvancedToolbar>
           ) : (
             <DataTableToolbar table={table} state={tableState}>
-              <Button variant="outline" size="sm" onClick={onImport}>
-                <Upload className="mr-1 size-4" />
-                Import
-              </Button>
+              <AthleteImportDialog>
+                <DialogTrigger
+                  render={
+                    <Button variant="outline" size="sm">
+                      <Upload className="mr-1 size-4" />
+                      Import
+                    </Button>
+                  }
+                />
+              </AthleteImportDialog>
               <Button variant="outline" size="sm" onClick={handleExportAll}>
                 <Download className="mr-1 size-4" />
                 Export

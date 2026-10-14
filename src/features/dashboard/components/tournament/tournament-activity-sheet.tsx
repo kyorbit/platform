@@ -5,7 +5,8 @@ import type { ActivityEventRowData } from './command-center/activity-event-row';
 import type { TournamentActivityEventType } from '@/contracts/activity/event-types';
 import type { ActivityEventFilterOption } from '@/features/dashboard/lib/tournament/activity-filter-options';
 import { getNormalizedEvents } from '@/features/dashboard/lib/tournament/activity-filter-options';
-import { Button, buttonVariants } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
+import { StatusButton } from '@/components/async/status-button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   Combobox,
@@ -267,15 +268,18 @@ export function TournamentActivitySheet({
 
         {query.hasNextPage && (
           <div className="border-t p-4">
-            <Button
+            <StatusButton
+              successLabel="Loaded more"
+              status={query.isFetchingNextPage ? 'loading' : 'idle'}
               variant="outline"
               size="sm"
               className="w-full"
-              disabled={query.isFetchingNextPage}
-              onClick={() => query.fetchNextPage()}
+              onClick={() => {
+                void query.fetchNextPage();
+              }}
             >
-              {query.isFetchingNextPage ? 'Loading…' : 'Load more'}
-            </Button>
+              Load more
+            </StatusButton>
           </div>
         )}
       </SheetContent>

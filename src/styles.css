@@ -170,6 +170,18 @@
   --color-blue-player: rgba(0, 0, 255, 0.2);
   --color-skeleton-highlight: var(--skeleton-highlight);
   --animate-skeleton: skeleton 2s -1s infinite linear;
+
+  --animate-spinner-opacity: spinner-opacity
+    var(--tw-animation-duration, var(--tw-duration, 1s)) linear infinite;
+
+  @keyframes spinner-opacity {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0.15;
+    }
+  }
 }
 
 @keyframes skeleton {
@@ -212,22 +224,6 @@
   button,
   [role='button'] {
     cursor: pointer;
-  }
-
-  [data-slot='button'] {
-    --btn-radius: var(--radius-md);
-  }
-  [data-slot='button'].rounded {
-    --btn-radius: 0.25rem;
-  }
-  [data-slot='button'].rounded-sm {
-    --btn-radius: var(--radius-sm);
-  }
-  [data-slot='button'].rounded-md {
-    --btn-radius: var(--radius-md);
-  }
-  [data-slot='button'].rounded-lg {
-    --btn-radius: var(--radius-lg);
   }
 
   ::-webkit-scrollbar {

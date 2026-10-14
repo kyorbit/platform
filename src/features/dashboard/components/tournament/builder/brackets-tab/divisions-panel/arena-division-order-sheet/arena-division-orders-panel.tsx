@@ -23,6 +23,7 @@ import type {
 import type { ArenaCrossInsertPreview } from './arena-division-order-editor';
 import type { DivisionData } from '@/contracts/tournament/division';
 import type { TournamentData } from '@/contracts/tournament/list';
+import { Button } from '@/components/ui/button';
 import {
   arenaIndicesForOrderPanel,
   nextArenaSlotToAdd,
@@ -30,8 +31,6 @@ import {
   shouldShowArenaOrderUi,
 } from '@/lib/tournament/arena/arena-division-order';
 import { resolveArenaDivisionOrder } from '@/lib/tournament/arena/match-label';
-import { Button } from '@/components/ui/button';
-import { Spinner } from '@/components/ui/spinner';
 import {
   useEnsureArenaSlot,
   useMoveDivisionBetweenArenas,
@@ -247,11 +246,11 @@ export function ArenaDivisionOrdersPanel({
       {!dndDisabled && nextSlot != null ? (
         <div className="flex flex-col gap-2">
           <Button
+            disabled={ensureSlot.isPending}
             type="button"
             variant="outline"
             size="sm"
             className="w-full shrink-0"
-            disabled={ensureSlot.isPending}
             onClick={() =>
               ensureSlot.mutate({
                 tournamentId,
@@ -259,17 +258,8 @@ export function ArenaDivisionOrdersPanel({
               })
             }
           >
-            {ensureSlot.isPending ? (
-              <>
-                <Spinner data-icon="inline-start" />
-                Adding arena…
-              </>
-            ) : (
-              <>
-                <Plus data-icon="inline-start" />
-                Add arena {nextSlot}
-              </>
-            )}
+            <Plus data-icon="inline-start" />
+            Add arena {nextSlot}
           </Button>
         </div>
       ) : null}

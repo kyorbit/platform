@@ -33,7 +33,6 @@ export function useTournamentBuilder({
   const [showAutoAssignAll, setShowAutoAssignAll] = React.useState(false);
   const [pendingAdminStatus, setPendingAdminStatus] =
     React.useState<TournamentStatus | null>(null);
-  const [isRefreshing, setIsRefreshing] = React.useState(false);
   const prevReadOnlyRef = React.useRef(isReadOnly);
 
   React.useEffect(() => {
@@ -50,17 +49,12 @@ export function useTournamentBuilder({
   const user = sessionData?.user;
 
   const handleRefresh = React.useCallback(async () => {
-    setIsRefreshing(true);
-    try {
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['tournament'] }),
-        invalidateDivisionListQueries(queryClient),
-        queryClient.invalidateQueries({ queryKey: ['match'] }),
-        queryClient.invalidateQueries({ queryKey: ['tournamentAthlete'] }),
-      ]);
-    } finally {
-      setIsRefreshing(false);
-    }
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ['tournament'] }),
+      invalidateDivisionListQueries(queryClient),
+      queryClient.invalidateQueries({ queryKey: ['match'] }),
+      queryClient.invalidateQueries({ queryKey: ['tournamentAthlete'] }),
+    ]);
   }, [queryClient]);
 
   const handleAdminStatusIntent = React.useCallback(
@@ -85,7 +79,6 @@ export function useTournamentBuilder({
     setShowAutoAssignAll,
     pendingAdminStatus,
     setPendingAdminStatus,
-    isRefreshing,
     user,
     handleRefresh,
     handleAdminStatusIntent,

@@ -1,6 +1,7 @@
 import { Plus, SearchX, Trophy } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
+import { DialogTrigger } from '@/components/ui/dialog';
 import {
   Empty,
   EmptyContent,
@@ -13,14 +14,12 @@ import { cn } from '@/lib/utils';
 
 interface TournamentsEmptyStateProps {
   variant: 'no-data' | 'no-results';
-  onCreate?: () => void;
   onClearFilters?: () => void;
   className?: string;
 }
 
 export function TournamentsEmptyState({
   variant,
-  onCreate,
   onClearFilters,
   className,
 }: TournamentsEmptyStateProps) {
@@ -36,14 +35,16 @@ export function TournamentsEmptyState({
             Create your first tournament to get started.
           </EmptyDescription>
         </EmptyHeader>
-        {onCreate ? (
-          <EmptyContent>
-            <Button size="sm" onClick={onCreate}>
-              <Plus className="mr-1 size-4" />
-              New tournament
-            </Button>
-          </EmptyContent>
-        ) : null}
+        <EmptyContent>
+          <DialogTrigger
+            render={
+              <Button size="sm">
+                <Plus data-icon="inline-start" />
+                New tournament
+              </Button>
+            }
+          />
+        </EmptyContent>
       </Empty>
     );
   }

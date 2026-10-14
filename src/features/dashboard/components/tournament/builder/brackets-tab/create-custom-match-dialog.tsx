@@ -4,6 +4,7 @@ import type { CreateCustomMatchDTO } from '@/orpc/matches/dto';
 import type { CreateCustomMatchFormValues } from '@/lib/validations';
 import type { MatchData } from '@/contracts/tournament/match';
 import type { TournamentAthleteData } from '@/contracts/tournament/division';
+import { StatusButton } from '@/components/async/status-button';
 import {
   AthleteSelectionSync,
   DedupeAthleteSelection,
@@ -22,7 +23,6 @@ import {
 } from '@/components/ui/dialog';
 import { FieldGroup } from '@/components/ui/field';
 import { SelectItem } from '@/components/ui/select';
-import { Spinner } from '@/components/ui/spinner';
 import { useAppForm } from '@/components/form/hooks';
 import { CreateCustomMatchFormSchema } from '@/lib/validations';
 import { useCreateCustomMatch } from '@/queries/match';
@@ -31,14 +31,13 @@ import { Label } from '@/components/ui/label';
 type FormValues = CreateCustomMatchFormValues;
 
 export interface CreateCustomMatchDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  children: React.ReactNode;
 }
 
 export function CreateCustomMatchDialog({
-  open,
-  onOpenChange,
+  children,
 }: CreateCustomMatchDialogProps) {
+  const [open, setOpen] = React.useState(false);
   const {
     selectedDivisionId: divisionId,
     matches,
@@ -114,7 +113,7 @@ export function CreateCustomMatchDialog({
       try {
         await mutation.mutateAsync(payload);
         form.reset(defaultValues);
-        onOpenChange(false);
+        setOpen(false);
       } catch {
         // Error toast is handled by useCreateCustomMatch
       }
@@ -130,10 +129,11 @@ export function CreateCustomMatchDialog({
     <Dialog
       open={open}
       onOpenChange={(v) => {
-        onOpenChange(v);
+        setOpen(v);
         if (!v) form.reset(defaultValues);
       }}
     >
+      {children}
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
         <form
           onSubmit={(e) => {
@@ -330,31 +330,25 @@ export function CreateCustomMatchDialog({
             <Button
               type="button"
               variant="outline"
-              onClick={() => onOpenChange(false)}
+              onClick={() => setOpen(false)}
             >
               Cancel
             </Button>
             <form.Subscribe
               selector={(state) => [state.canSubmit, state.isSubmitting]}
               children={([canSubmit, isSubmitting]) => (
-                <Button
-                  type="submit"
+                <StatusButton
                   disabled={
-                    blocked || !canSubmit || isSubmitting || mutation.isPending
+                    blocked || (!canSubmit && !isSubmitting) || isSubmitting
                   }
+                  status={
+                    isSubmitting || mutation.isPending ? 'loading' : 'idle'
+                  }
+                  type="submit"
                 >
-                  {isSubmitting || mutation.isPending ? (
-                    <>
-                      <Spinner />
-                      <span>Creating…</span>
-                    </>
-                  ) : (
-                    <>
-                      <PlusIcon />
-                      Create
-                    </>
-                  )}
-                </Button>
+                  <PlusIcon />
+                  Create
+                </StatusButton>
               )}
             />
           </DialogFooter>

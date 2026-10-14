@@ -1,5 +1,6 @@
 import { Trash2 } from 'lucide-react';
 import type { AthleteProfileData } from '@/contracts/athlete/profile';
+import { StatusButton } from '@/components/async/status-button';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -10,7 +11,6 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useDeleteAthleteProfile } from '@/queries/athlete-profile';
-import { Spinner } from '@/components/ui/spinner';
 
 interface DeleteAthleteDialogProps {
   athlete: AthleteProfileData | null;
@@ -38,25 +38,16 @@ export function DeleteAthleteDialog({
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <Button
+          <StatusButton
+            status={mutation.isPending ? 'loading' : 'idle'}
             variant="destructive"
-            disabled={mutation.isPending}
             onClick={() => {
               if (athlete) mutation.mutate({ id: athlete.id });
             }}
           >
-            {mutation.isPending ? (
-              <>
-                <Spinner />
-                Deleting...
-              </>
-            ) : (
-              <>
-                <Trash2 />
-                Delete
-              </>
-            )}
-          </Button>
+            <Trash2 />
+            Delete
+          </StatusButton>
         </DialogFooter>
       </DialogContent>
     </Dialog>

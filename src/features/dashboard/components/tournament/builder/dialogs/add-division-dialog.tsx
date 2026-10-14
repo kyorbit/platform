@@ -1,6 +1,6 @@
 import React from 'react';
 import { PlusIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { StatusButton } from '@/components/async/status-button';
 import { Input } from '@/components/ui/input';
 import {
   DialogContent,
@@ -10,7 +10,6 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useCreateDivision } from '@/queries/division';
-import { Spinner } from '@/components/ui/spinner';
 
 interface AddDivisionDialogProps {
   onOpenChange: (open: boolean) => void;
@@ -55,19 +54,14 @@ export function AddDivisionDialog({
           />
         </div>
         <DialogFooter>
-          <Button type="submit" disabled={!name.trim() || mutation.isPending}>
-            {mutation.isPending ? (
-              <>
-                <Spinner />
-                <span>Creating...</span>
-              </>
-            ) : (
-              <>
-                <PlusIcon />
-                <span>Add division</span>
-              </>
-            )}
-          </Button>
+          <StatusButton
+            disabled={!name.trim()}
+            status={mutation.isPending ? 'loading' : 'idle'}
+            type="submit"
+          >
+            <PlusIcon />
+            <span>Add division</span>
+          </StatusButton>
         </DialogFooter>
       </form>
     </DialogContent>

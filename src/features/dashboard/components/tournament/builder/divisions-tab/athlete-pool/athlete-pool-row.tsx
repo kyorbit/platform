@@ -4,7 +4,8 @@ import { toast } from 'sonner';
 import type { TournamentAthleteData } from '@/contracts/tournament/division';
 import { getBeltLabel } from '@/config/athlete';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { StatusButton } from '@/components/async/status-button';
+import { useButtonStatus } from '@/hooks/use-button-status';
 import {
   Tooltip,
   TooltipContent,
@@ -25,6 +26,7 @@ export function AthletePoolRow({
   readOnly,
 }: AthletePoolRowProps) {
   const assignAthlete = useAssignAthlete({ suppressErrorToast: true });
+  const assignButton = useButtonStatus(assignAthlete.status);
   const { setNodeRef, attributes, listeners, isDragging } = useDraggable({
     id: athlete.id,
     data: { type: 'pool-athlete', athleteId: athlete.id },
@@ -50,7 +52,9 @@ export function AthletePoolRow({
   };
 
   const plusButton = (
-    <Button
+    <StatusButton
+      successLabel={<span className="sr-only">Assigned</span>}
+      {...assignButton}
       type="button"
       size="icon"
       variant="ghost"
@@ -60,10 +64,11 @@ export function AthletePoolRow({
         e.stopPropagation();
         handleAssign();
       }}
-      disabled={!canAssign || assignAthlete.isPending}
+      disabled={!canAssign}
+      aria-label="Add athlete to division"
     >
       <Plus className="size-3.5" />
-    </Button>
+    </StatusButton>
   );
 
   return (

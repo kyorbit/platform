@@ -1,6 +1,5 @@
 import { Eraser, Plus, RefreshCw, Shuffle } from 'lucide-react';
 import { toast } from 'sonner';
-import React from 'react';
 import { CreateCustomMatchDialog } from './create-custom-match-dialog';
 import { useTournamentBracket } from '@/features/dashboard/contexts/tournament-bracket/use-tournament-bracket';
 import {
@@ -9,6 +8,9 @@ import {
   useShuffleBracket,
 } from '@/queries/match';
 import { Button } from '@/components/ui/button';
+import { StatusButton } from '@/components/async/status-button';
+import { useButtonStatus } from '@/hooks/use-button-status';
+import { DialogTrigger } from '@/components/ui/dialog';
 import {
   Tooltip,
   TooltipContent,
@@ -28,7 +30,9 @@ export function BracketToolbar() {
   const shuffle = useShuffleBracket();
   const regenerate = useRegenerateBracket();
   const reset = useResetBracket();
-  const [customOpen, setCustomOpen] = React.useState(false);
+  const shuffleButton = useButtonStatus(shuffle.status);
+  const regenerateButton = useButtonStatus(regenerate.status);
+  const resetButton = useButtonStatus(reset.status);
 
   const draftOnly = tournamentStatus !== 'draft';
   const blocked = disabled || readOnly || draftOnly || !divisionId;
@@ -47,8 +51,7 @@ export function BracketToolbar() {
         : undefined;
 
   const resetHasWork = divisionId != null && isResettableMatch(matches);
-  const resetDisabledForCleanBracket =
-    blocked || reset.isPending || !resetHasWork;
+  const resetDisabledForCleanBracket = blocked || !resetHasWork;
   const resetTooltip =
     reason ??
     (!resetHasWork
@@ -72,47 +75,54 @@ export function BracketToolbar() {
   return (
     <div className="fixed top-1/3 left-3 z-10 -translate-y-1/4 space-y-2">
       <Card className="bg-popover flex flex-col gap-1 rounded-md border p-1 shadow-md">
-        <Tooltip>
-          <TooltipTrigger
-            render={
-              <span className="inline-flex">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  disabled={customBlocked}
-                  aria-label="Create custom match"
-                  className="rounded-sm"
-                  onClick={() => setCustomOpen(true)}
-                >
-                  <Plus />
-                </Button>
-              </span>
-            }
-          />
-          <TooltipContent side="right">
-            {readOnly
-              ? 'Read-only mode'
-              : !divisionId
-                ? 'Select a division'
-                : matches.length === 0
-                  ? 'Generate a bracket first'
-                  : tournamentStatus === 'completed'
-                    ? 'Tournament completed'
-                    : 'Custom match'}
-          </TooltipContent>
-        </Tooltip>
+        <CreateCustomMatchDialog>
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <span className="inline-flex">
+                  <DialogTrigger
+                    disabled={customBlocked}
+                    render={
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        aria-label="Create custom match"
+                        className="rounded-sm"
+                      >
+                        <Plus />
+                      </Button>
+                    }
+                  />
+                </span>
+              }
+            />
+            <TooltipContent side="right">
+              {readOnly
+                ? 'Read-only mode'
+                : !divisionId
+                  ? 'Select a division'
+                  : matches.length === 0
+                    ? 'Generate a bracket first'
+                    : tournamentStatus === 'completed'
+                      ? 'Tournament completed'
+                      : 'Custom match'}
+            </TooltipContent>
+          </Tooltip>
+        </CreateCustomMatchDialog>
       </Card>
       <Card className="bg-popover flex flex-col gap-1 rounded-md border p-1 shadow-md">
         <Tooltip>
           <TooltipTrigger
             render={
               <span className="inline-flex">
-                <Button
+                <StatusButton
+                  successLabel={<span className="sr-only">Shuffled</span>}
+                  {...shuffleButton}
                   type="button"
                   variant="ghost"
                   size="icon"
-                  disabled={blocked || shuffle.isPending}
+                  disabled={blocked}
                   aria-label="Shuffle bracket"
                   className="rounded-sm"
                   onClick={() => {
@@ -124,7 +134,7 @@ export function BracketToolbar() {
                   }}
                 >
                   <Shuffle />
-                </Button>
+                </StatusButton>
               </span>
             }
           />
@@ -137,11 +147,13 @@ export function BracketToolbar() {
           <TooltipTrigger
             render={
               <span className="inline-flex">
-                <Button
+                <StatusButton
+                  successLabel={<span className="sr-only">Regenerated</span>}
+                  {...regenerateButton}
                   type="button"
                   variant="ghost"
                   size="icon"
-                  disabled={blocked || regenerate.isPending}
+                  disabled={blocked}
                   aria-label="Regenerate bracket"
                   onClick={() => {
                     if (!divisionId) return;
@@ -152,7 +164,7 @@ export function BracketToolbar() {
                   }}
                 >
                   <RefreshCw />
-                </Button>
+                </StatusButton>
               </span>
             }
           />
@@ -165,7 +177,9 @@ export function BracketToolbar() {
           <TooltipTrigger
             render={
               <span className="inline-flex">
-                <Button
+                <StatusButton
+                  successLabel={<span className="sr-only">Reset</span>}
+                  {...resetButton}
                   type="button"
                   variant="ghost"
                   size="icon"
@@ -180,14 +194,13 @@ export function BracketToolbar() {
                   }}
                 >
                   <Eraser />
-                </Button>
+                </StatusButton>
               </span>
             }
           />
           <TooltipContent side="right">{resetTooltip}</TooltipContent>
         </Tooltip>
       </Card>
-      <CreateCustomMatchDialog open={customOpen} onOpenChange={setCustomOpen} />
     </div>
   );
 }

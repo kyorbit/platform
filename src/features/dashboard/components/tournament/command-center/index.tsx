@@ -20,7 +20,7 @@ import type { MatchData } from '@/contracts/tournament/match';
 import type { TournamentData } from '@/contracts/tournament/list';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { useTournamentCommandCenter } from '@/features/dashboard/hooks/use-tournament-command-center';
-import { SiteHeader } from '@/features/dashboard/components/sidebar/site-header';
+import { DashboardHeaderContent } from '@/features/dashboard/components/sidebar/dashboard-header';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { useDivisions } from '@/queries/division';
@@ -64,17 +64,7 @@ export function TournamentCommandCenter({
 
   return (
     <div className="flex h-full flex-col">
-      <SiteHeader
-        title={
-          <Link
-            to="/dashboard/tournaments"
-            className="text-muted-foreground hover:text-foreground"
-          >
-            Tournaments
-          </Link>
-        }
-        action={tournament.name}
-      >
+      <DashboardHeaderContent breadcrumb={tournament.name}>
         <div className="ml-auto flex items-center gap-2">
           <TournamentStatusPill status={tournament.status} />
           <Button
@@ -110,7 +100,7 @@ export function TournamentCommandCenter({
             </Button>
           )}
         </div>
-      </SiteHeader>
+      </DashboardHeaderContent>
 
       <div className="flex-1 overflow-auto p-6">
         <main className="mx-auto flex max-w-7xl flex-col gap-6">

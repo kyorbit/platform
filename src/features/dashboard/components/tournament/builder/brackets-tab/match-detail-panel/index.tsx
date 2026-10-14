@@ -12,6 +12,8 @@ import { MatchSheetStatus } from './match-sheet-status';
 import { ParticipantRow } from './participant-row';
 import { ScoreControl } from './score-control';
 import type { MatchStatus } from '@/contracts/tournament/match';
+import { useButtonStatus } from '@/hooks/use-button-status';
+import { StatusButton } from '@/components/async/status-button';
 import { useMatchDetailPanel } from '@/features/dashboard/hooks/use-match-detail-panel';
 import { formatMatchHeaderLine } from '@/lib/tournament/arena/match-label';
 import {
@@ -34,7 +36,6 @@ import { Button } from '@/components/ui/button';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { Spinner } from '@/components/ui/spinner';
 
 const MATCH_STATUSES: Array<MatchStatus> = ['pending', 'active', 'complete'];
 
@@ -46,6 +47,9 @@ const MATCH_STATUS_LABEL: Record<MatchStatus, string> = {
 
 export function MatchDetailPanel() {
   const position = useMatchDetailPanel();
+  const positionResetMatchScoreButton = useButtonStatus(
+    position.resetMatchScore.status
+  );
   if (!position.match) return null;
 
   const { match, matchLabel } = position;
@@ -124,10 +128,10 @@ export function MatchDetailPanel() {
                 <h4 className="text-sm font-medium">Participants</h4>
                 {position.canSwap ? (
                   <Button
+                    disabled={position.swapParticipants.isPending}
                     variant="ghost"
                     size="sm"
                     onClick={position.handleSwap}
-                    disabled={position.swapParticipants.isPending}
                   >
                     <ArrowLeftRight data-icon="inline-start" />
                     Swap
@@ -227,28 +231,30 @@ export function MatchDetailPanel() {
                       </Field>
                     </FieldGroup>
                     <div className="flex gap-2">
-                      <Button
+                      <StatusButton
+                        status={
+                          position.setWinner.isPending ? 'loading' : 'idle'
+                        }
                         size="sm"
                         variant="outline"
                         className="text-destructive! flex-1"
                         onClick={() => position.handleSetWinner('red')}
-                        disabled={
-                          !position.redAthlete || position.setWinner.isPending
-                        }
+                        disabled={!position.redAthlete}
                       >
                         Red wins
-                      </Button>
-                      <Button
+                      </StatusButton>
+                      <StatusButton
+                        status={
+                          position.setWinner.isPending ? 'loading' : 'idle'
+                        }
                         size="sm"
                         variant="outline"
                         className="flex-1 text-blue-500!"
                         onClick={() => position.handleSetWinner('blue')}
-                        disabled={
-                          !position.blueAthlete || position.setWinner.isPending
-                        }
+                        disabled={!position.blueAthlete}
                       >
                         Blue wins
-                      </Button>
+                      </StatusButton>
                     </div>
                     <Button
                       variant="ghost"
@@ -267,45 +273,28 @@ export function MatchDetailPanel() {
           <SheetFooter className="mt-auto flex flex-col gap-2 border-t px-6 py-4">
             {position.canEdit ? (
               <Button
-                className="w-full"
-                onClick={position.handleSaveScore}
                 disabled={
                   !position.scoreDirty || position.updateScore.isPending
                 }
+                className="w-full"
+                onClick={position.handleSaveScore}
               >
-                {position.updateScore.isPending ? (
-                  <>
-                    <Spinner />
-                    Saving…
-                  </>
-                ) : (
-                  <>
-                    <SaveIcon data-icon="inline-start" />
-                    Save score
-                  </>
-                )}
+                <SaveIcon data-icon="inline-start" />
+                Save score
               </Button>
             ) : (
               !!position.canResetMatch && (
-                <Button
+                <StatusButton
+                  successLabel="Reset"
+                  {...positionResetMatchScoreButton}
                   type="button"
                   variant="outline"
                   className="text-destructive! border-destructive/50 hover:bg-destructive/10 w-full"
                   onClick={position.handleResetMatch}
-                  disabled={position.resetMatchScore.isPending}
                 >
-                  {position.resetMatchScore.isPending ? (
-                    <>
-                      <Spinner className="text-destructive" />
-                      Resetting…
-                    </>
-                  ) : (
-                    <>
-                      <RotateCcw />
-                      Reset match
-                    </>
-                  )}
-                </Button>
+                  <RotateCcw />
+                  Reset match
+                </StatusButton>
               )
             )}
             {position.canDeleteCustomMatch ? (

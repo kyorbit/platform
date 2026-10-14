@@ -1,3 +1,4 @@
+import { StatusButton } from '@/components/async/status-button';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -7,7 +8,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Spinner } from '@/components/ui/spinner';
 
 interface MatchStatusDialogProps {
   open: boolean;
@@ -43,19 +43,12 @@ export function MatchStatusDialog({
           >
             Cancel
           </Button>
-          <Button onClick={onConfirm} disabled={isPending}>
-            {isPending ? (
-              <>
-                <Spinner
-                  data-icon="inline-start"
-                  className="text-primary-foreground"
-                />
-                Saving…
-              </>
-            ) : (
-              'Confirm'
-            )}
-          </Button>
+          <StatusButton
+            status={isPending ? 'loading' : 'idle'}
+            onClick={onConfirm}
+          >
+            Confirm
+          </StatusButton>
         </DialogFooter>
       </DialogContent>
     </Dialog>

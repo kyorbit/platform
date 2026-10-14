@@ -7,6 +7,7 @@ import { TournamentsOverview } from '@/features/dashboard/components/tournament/
 import { TournamentsPending } from '@/features/dashboard/components/tournament/overview/tournaments-pending';
 
 export const Route = createFileRoute('/dashboard/tournaments/')({
+  staticData: { breadcrumb: 'Tournaments' },
   loaderDeps: ({ search }) => ({
     input: parseTournamentsListInput(search as Record<string, unknown>),
   }),

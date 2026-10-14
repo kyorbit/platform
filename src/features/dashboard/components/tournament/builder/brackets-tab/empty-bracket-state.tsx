@@ -1,7 +1,8 @@
 import { Dices } from 'lucide-react';
 import { toast } from 'sonner';
+import { StatusButton } from '@/components/async/status-button';
+import { useButtonStatus } from '@/hooks/use-button-status';
 import { useGenerateBracket } from '@/queries/match';
-import { Button } from '@/components/ui/button';
 import {
   Empty,
   EmptyContent,
@@ -10,7 +11,6 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@/components/ui/empty';
-import { Spinner } from '@/components/ui/spinner';
 
 interface EmptyBracketStateProps {
   divisionId: string | null;
@@ -26,6 +26,7 @@ export function EmptyBracketState({
   athleteCount,
 }: EmptyBracketStateProps) {
   const generate = useGenerateBracket();
+  const generateButton = useButtonStatus(generate.status);
 
   const hidden = readOnly || tournamentStatus !== 'draft';
   if (hidden) {
@@ -57,8 +58,10 @@ export function EmptyBracketState({
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
-        <Button
-          disabled={!divisionId || generate.isPending || athleteCount < 2}
+        <StatusButton
+          successLabel="Generated"
+          {...generateButton}
+          disabled={!divisionId || athleteCount < 2}
           onClick={() => {
             if (!divisionId) return;
             void toast.promise(generate.mutateAsync({ divisionId }), {
@@ -69,18 +72,9 @@ export function EmptyBracketState({
             });
           }}
         >
-          {generate.isPending ? (
-            <>
-              <Spinner />
-              Generating…
-            </>
-          ) : (
-            <>
-              <Dices data-icon="inline-start" />
-              Generate Bracket
-            </>
-          )}
-        </Button>
+          <Dices data-icon="inline-start" />
+          Generate Bracket
+        </StatusButton>
       </EmptyContent>
     </Empty>
   );

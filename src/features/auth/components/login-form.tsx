@@ -3,13 +3,12 @@ import { toast } from 'sonner';
 import { useNavigate } from '@tanstack/react-router';
 import { IconAlertCircle } from '@tabler/icons-react';
 import type z from 'zod';
+import { StatusButton } from '@/components/async/status-button';
 import { LoginSchema } from '@/lib/validations';
 import { useAppForm } from '@/components/form/hooks';
 import { authClient } from '@/lib/auth-client';
 import { FieldGroup } from '@/components/ui/field';
-import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Spinner } from '@/components/ui/spinner';
 
 type FormData = z.infer<typeof LoginSchema>;
 
@@ -92,20 +91,15 @@ const LoginForm = () => {
         <form.Subscribe
           selector={(state) => [state.canSubmit, state.isSubmitting]}
           children={([canSubmit, isSubmitting]) => (
-            <Button
+            <StatusButton
+              successLabel="Signed in"
+              status={isSubmitting ? 'loading' : 'idle'}
               type="submit"
               className="mt-2 w-full"
-              disabled={!canSubmit || isSubmitting}
+              disabled={!canSubmit && !isSubmitting}
             >
-              {isSubmitting ? (
-                <>
-                  <Spinner />
-                  Signing in...
-                </>
-              ) : (
-                'Continue'
-              )}
-            </Button>
+              Continue
+            </StatusButton>
           )}
         />
       </FieldGroup>

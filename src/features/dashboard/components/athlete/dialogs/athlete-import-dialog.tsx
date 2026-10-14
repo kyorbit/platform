@@ -2,10 +2,10 @@ import React from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { UserPlus } from 'lucide-react';
+import { StatusButton } from '@/components/async/status-button';
 import { parseImportFile } from '@/lib/data-table/import';
 import { client } from '@/orpc/client';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -15,7 +15,6 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Spinner } from '@/components/ui/spinner';
 
 interface AthleteRowValues {
   athleteCode: string;
@@ -28,14 +27,11 @@ interface AthleteRowValues {
 }
 
 interface AthleteImportDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  children: React.ReactNode;
 }
 
-export function AthleteImportDialog({
-  open,
-  onOpenChange,
-}: AthleteImportDialogProps) {
+export function AthleteImportDialog({ children }: AthleteImportDialogProps) {
+  const [open, setOpen] = React.useState(false);
   const [preview, setPreview] = React.useState<Array<AthleteRowValues> | null>(
     null
   );
@@ -51,7 +47,7 @@ export function AthleteImportDialog({
 
   function handleOpenChange(nextOpen: boolean) {
     if (!nextOpen) resetState();
-    onOpenChange(nextOpen);
+    setOpen(nextOpen);
   }
 
   async function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -91,7 +87,7 @@ export function AthleteImportDialog({
 
     await queryClient.invalidateQueries({ queryKey: ['athleteProfile'] });
     setIsImporting(false);
-    onOpenChange(false);
+    setOpen(false);
     resetState();
 
     if (failCount > 0) {
@@ -105,6 +101,7 @@ export function AthleteImportDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
+      {children}
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Import Athletes</DialogTitle>
@@ -132,22 +129,14 @@ export function AthleteImportDialog({
           )}
         </div>
         <DialogFooter>
-          <Button
-            disabled={!preview || preview.length === 0 || isImporting}
+          <StatusButton
+            status={isImporting ? 'loading' : 'idle'}
+            disabled={!preview || preview.length === 0}
             onClick={handleImport}
           >
-            {isImporting ? (
-              <>
-                <Spinner />
-                <span>Importing...</span>
-              </>
-            ) : (
-              <>
-                <UserPlus />
-                <span>Import {preview?.length ?? 0} Athletes</span>
-              </>
-            )}
-          </Button>
+            <UserPlus />
+            <span>Import {preview?.length ?? 0} Athletes</span>
+          </StatusButton>
         </DialogFooter>
       </DialogContent>
     </Dialog>

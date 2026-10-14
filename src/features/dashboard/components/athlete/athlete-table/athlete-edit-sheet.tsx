@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { AlertTriangle, SaveIcon } from 'lucide-react';
 import type z from 'zod';
 import type { AthleteProfileData } from '@/contracts/athlete/profile';
+import { StatusButton } from '@/components/async/status-button';
 import { EditAthleteSchema } from '@/lib/validations';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -15,7 +16,6 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
-import { Spinner } from '@/components/ui/spinner';
 import { BELT_LEVELS, GENDER_OPTIONS } from '@/config/athlete';
 import { useAppForm } from '@/components/form/hooks';
 import {
@@ -282,24 +282,15 @@ export function AthleteEditSheet({
                       >
                         Cancel
                       </Button>
-                      <Button
+                      <StatusButton
+                        status={updateMutation.isPending ? 'loading' : 'idle'}
                         type="button"
                         size="sm"
-                        disabled={updateMutation.isPending}
                         onClick={onConfirmDuplicate}
                       >
-                        {updateMutation.isPending ? (
-                          <>
-                            <Spinner />
-                            Saving...
-                          </>
-                        ) : (
-                          <>
-                            <SaveIcon />
-                            Save Anyway
-                          </>
-                        )}
-                      </Button>
+                        <SaveIcon />
+                        Save Anyway
+                      </StatusButton>
                     </div>
                   </AlertDescription>
                 </Alert>
@@ -308,22 +299,14 @@ export function AthleteEditSheet({
           </div>
 
           <SheetFooter className="border-t px-6 py-4">
-            <Button
+            <StatusButton
+              status={isPending ? 'loading' : 'idle'}
               type="submit"
-              disabled={isPending || possibleDuplicates.length > 0}
+              disabled={possibleDuplicates.length > 0}
             >
-              {isPending ? (
-                <>
-                  <Spinner />
-                  Saving...
-                </>
-              ) : (
-                <>
-                  <SaveIcon />
-                  Save changes
-                </>
-              )}
-            </Button>
+              <SaveIcon />
+              Save changes
+            </StatusButton>
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>

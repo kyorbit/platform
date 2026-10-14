@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { Link, createFileRoute } from '@tanstack/react-router';
 import { NotFound } from '@/components/not-found';
 import { TournamentRouteError } from '@/features/dashboard/components/dashboard-route-error';
 import { TournamentCommandCenter } from '@/features/dashboard/components/tournament/command-center';
@@ -9,6 +9,16 @@ import { tournamentMatchesQueryOptions } from '@/queries/match';
 import { tournamentQueryOptions } from '@/queries/tournament';
 
 export const Route = createFileRoute('/dashboard/tournaments/$id')({
+  staticData: {
+    breadcrumb: (
+      <Link
+        to="/dashboard/tournaments"
+        className="text-muted-foreground hover:text-foreground"
+      >
+        Tournaments
+      </Link>
+    ),
+  },
   loader: async ({ params, context: { queryClient } }) => {
     await queryClient.ensureQueryData(tournamentQueryOptions(params.id));
     void queryClient.prefetchQuery(divisionListQueryOptions(params.id));

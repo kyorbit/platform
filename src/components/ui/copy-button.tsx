@@ -1,10 +1,11 @@
 import { motion } from 'motion/react';
 import { CheckIcon, CircleXIcon, CopyIcon } from 'lucide-react';
 import type { ComponentProps } from 'react';
+import type { Button } from '@/components/ui/button';
 
 import type { CopyInput, CopyState } from '@/hooks/use-copy-to-clipboard';
 import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard';
-import { Button } from '@/components/ui/button';
+import { StatusButton } from '@/components/async/status-button';
 import { IconSwap, IconSwapItem } from '@/components/ui/icon-swap';
 
 export type CopyStateIconProps = {
@@ -81,14 +82,23 @@ export function CopyButton({
   onCopyError,
   ...props
 }: CopyButtonProps) {
-  const { state, copy } = useCopyToClipboard({
+  const { state, copy, isCopying } = useCopyToClipboard({
     onCopySuccess,
     onCopyError,
   });
 
   return (
-    <Button
+    <StatusButton
       size={size}
+      successLabel={
+        size?.startsWith('icon') ? (
+          <span className="sr-only">Copied</span>
+        ) : (
+          'Copied'
+        )
+      }
+      successDuration={1500}
+      status={isCopying ? 'loading' : state === 'done' ? 'success' : 'idle'}
       onClick={(e) => {
         void copy(toCopyInput({ text, blob, mimeType }));
         onClick?.(e);
@@ -103,6 +113,6 @@ export function CopyButton({
         errorIcon={errorIcon}
       />
       {children}
-    </Button>
+    </StatusButton>
   );
 }

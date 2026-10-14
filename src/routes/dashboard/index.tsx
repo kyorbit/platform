@@ -5,6 +5,7 @@ import { tournamentsAllQueryOptions } from '@/queries/tournament';
 import { NotFound } from '@/components/not-found';
 
 export const Route = createFileRoute('/dashboard/')({
+  staticData: { breadcrumb: 'Dashboard' },
   loader: ({ context: { queryClient } }) => {
     // Defer list data — shell paints immediately; Suspense streams content.
     void queryClient.prefetchQuery(tournamentsAllQueryOptions());

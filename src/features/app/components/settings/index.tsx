@@ -1,8 +1,8 @@
 import { settingTabs } from './constant/tabs';
 import { Unauthorized } from './unauthorized';
+import { StatusButton } from '@/components/async/status-button';
 import { useSettings } from '@/features/app/contexts/settings';
 import { Button } from '@/components/ui/button';
-import { Spinner } from '@/components/ui/spinner';
 import {
   DialogContent,
   DialogFooter,
@@ -31,8 +31,7 @@ export const AppSettings = () => {
     activeTab,
     setActiveTab,
   } = useSettings();
-  const isConfirmDisabled =
-    !formState.isDirty || !formState.isValid || applySettingsPending;
+  const isConfirmDisabled = !formState.isDirty || !formState.isValid;
 
   return (
     <DialogContent
@@ -107,21 +106,15 @@ export const AppSettings = () => {
         >
           Cancel
         </Button>
-        <Button
+        <StatusButton
+          status={applySettingsPending ? 'loading' : 'idle'}
           size="xl"
           className="px-4 text-xl"
           onClick={applySettings}
           disabled={isConfirmDisabled}
         >
-          {applySettingsPending ? (
-            <>
-              <Spinner />
-              Applying…
-            </>
-          ) : (
-            'Confirm'
-          )}
-        </Button>
+          Confirm
+        </StatusButton>
       </DialogFooter>
     </DialogContent>
   );
