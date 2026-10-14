@@ -28,14 +28,11 @@ interface AthleteRowValues {
 }
 
 interface AthleteImportDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  children: React.ReactNode;
 }
 
-export function AthleteImportDialog({
-  open,
-  onOpenChange,
-}: AthleteImportDialogProps) {
+export function AthleteImportDialog({ children }: AthleteImportDialogProps) {
+  const [open, setOpen] = React.useState(false);
   const [preview, setPreview] = React.useState<Array<AthleteRowValues> | null>(
     null
   );
@@ -51,7 +48,7 @@ export function AthleteImportDialog({
 
   function handleOpenChange(nextOpen: boolean) {
     if (!nextOpen) resetState();
-    onOpenChange(nextOpen);
+    setOpen(nextOpen);
   }
 
   async function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -91,7 +88,7 @@ export function AthleteImportDialog({
 
     await queryClient.invalidateQueries({ queryKey: ['athleteProfile'] });
     setIsImporting(false);
-    onOpenChange(false);
+    setOpen(false);
     resetState();
 
     if (failCount > 0) {
@@ -105,6 +102,7 @@ export function AthleteImportDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
+      {children}
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Import Athletes</DialogTitle>

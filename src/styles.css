@@ -170,6 +170,18 @@
   --color-blue-player: rgba(0, 0, 255, 0.2);
   --color-skeleton-highlight: var(--skeleton-highlight);
   --animate-skeleton: skeleton 2s -1s infinite linear;
+
+  --animate-spinner-opacity: spinner-opacity
+    var(--tw-animation-duration, var(--tw-duration, 1s)) linear infinite;
+
+  @keyframes spinner-opacity {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0.15;
+    }
+  }
 }
 
 @keyframes skeleton {

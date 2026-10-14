@@ -11,7 +11,6 @@ import { AthleteDrawer } from '@/features/dashboard/components/athlete/athlete-d
 import { AthleteTable } from '@/features/dashboard/components/athlete/athlete-table';
 import { AthleteEditSheet } from '@/features/dashboard/components/athlete/athlete-table/athlete-edit-sheet';
 import { getAthletesTableColumns } from '@/features/dashboard/components/athlete/athlete-table/athletes-table-columns';
-import { AthleteImportDialog } from '@/features/dashboard/components/athlete/dialogs/athlete-import-dialog';
 import { DeleteAthleteDialog } from '@/features/dashboard/components/athlete/dialogs/delete-athlete-dialog';
 import { athleteProfileToRow } from '@/features/dashboard/lib/athlete/athlete-profile-to-row';
 import { SiteHeader } from '@/features/dashboard/components/sidebar/site-header';
@@ -29,7 +28,6 @@ export function AthletesPage() {
 
   const [rowAction, setRowAction] =
     React.useState<DataTableRowAction<AthleteProfileData> | null>(null);
-  const [importOpen, setImportOpen] = React.useState(false);
 
   const columns = React.useMemo(
     () =>
@@ -74,7 +72,6 @@ export function AthletesPage() {
               columns={columns}
               className="pt-6"
               onAdd={openCreateDrawer}
-              onImport={() => setImportOpen(true)}
               enableQueryFilter={enableQueryFilter}
               onBulkEdit={(profiles, onComplete) => {
                 setDrawerSeedRows(profiles.map(athleteProfileToRow));
@@ -101,7 +98,6 @@ export function AthletesPage() {
         }
         onOpenChange={() => setRowAction(null)}
       />
-      <AthleteImportDialog open={importOpen} onOpenChange={setImportOpen} />
       <DeleteAthleteDialog
         athlete={
           rowAction?.variant === 'delete' ? rowAction.row.original : null
