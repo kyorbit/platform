@@ -12,7 +12,7 @@ import { MatchSheetStatus } from './match-sheet-status';
 import { ParticipantRow } from './participant-row';
 import { ScoreControl } from './score-control';
 import type { MatchStatus } from '@/contracts/tournament/match';
-import { useStatusButton } from '@/components/async/use-status-button';
+import { useButtonStatus } from '@/hooks/use-button-status';
 import { StatusButton } from '@/components/async/status-button';
 import { useMatchDetailPanel } from '@/features/dashboard/hooks/use-match-detail-panel';
 import { formatMatchHeaderLine } from '@/lib/tournament/arena/match-label';
@@ -47,7 +47,7 @@ const MATCH_STATUS_LABEL: Record<MatchStatus, string> = {
 
 export function MatchDetailPanel() {
   const position = useMatchDetailPanel();
-  const positionResetMatchScoreButton = useStatusButton(
+  const positionResetMatchScoreButton = useButtonStatus(
     position.resetMatchScore.status
   );
   if (!position.match) return null;

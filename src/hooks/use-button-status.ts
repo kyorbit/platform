@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import type { ButtonStatus } from './status-button';
+import type { ButtonStatus } from '@/components/async/status-button';
 
 /** Follow a mutation without clearing its data when success feedback expires. */
-export function useStatusButton(
+export function useButtonStatus(
   mutationStatus: 'idle' | 'pending' | 'success' | 'error'
 ) {
   const [previousStatus, setPreviousStatus] = useState(mutationStatus);

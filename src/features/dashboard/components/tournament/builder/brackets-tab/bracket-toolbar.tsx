@@ -9,7 +9,7 @@ import {
 } from '@/queries/match';
 import { Button } from '@/components/ui/button';
 import { StatusButton } from '@/components/async/status-button';
-import { useStatusButton } from '@/components/async/use-status-button';
+import { useButtonStatus } from '@/hooks/use-button-status';
 import { DialogTrigger } from '@/components/ui/dialog';
 import {
   Tooltip,
@@ -30,9 +30,9 @@ export function BracketToolbar() {
   const shuffle = useShuffleBracket();
   const regenerate = useRegenerateBracket();
   const reset = useResetBracket();
-  const shuffleButton = useStatusButton(shuffle.status);
-  const regenerateButton = useStatusButton(regenerate.status);
-  const resetButton = useStatusButton(reset.status);
+  const shuffleButton = useButtonStatus(shuffle.status);
+  const regenerateButton = useButtonStatus(regenerate.status);
+  const resetButton = useButtonStatus(reset.status);
 
   const draftOnly = tournamentStatus !== 'draft';
   const blocked = disabled || readOnly || draftOnly || !divisionId;

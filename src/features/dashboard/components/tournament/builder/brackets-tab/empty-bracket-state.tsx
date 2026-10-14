@@ -1,7 +1,7 @@
 import { Dices } from 'lucide-react';
 import { toast } from 'sonner';
 import { StatusButton } from '@/components/async/status-button';
-import { useStatusButton } from '@/components/async/use-status-button';
+import { useButtonStatus } from '@/hooks/use-button-status';
 import { useGenerateBracket } from '@/queries/match';
 import {
   Empty,
@@ -26,7 +26,7 @@ export function EmptyBracketState({
   athleteCount,
 }: EmptyBracketStateProps) {
   const generate = useGenerateBracket();
-  const generateButton = useStatusButton(generate.status);
+  const generateButton = useButtonStatus(generate.status);
 
   const hidden = readOnly || tournamentStatus !== 'draft';
   if (hidden) {

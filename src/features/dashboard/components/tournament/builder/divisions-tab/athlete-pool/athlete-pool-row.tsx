@@ -5,7 +5,7 @@ import type { TournamentAthleteData } from '@/contracts/tournament/division';
 import { getBeltLabel } from '@/config/athlete';
 import { Badge } from '@/components/ui/badge';
 import { StatusButton } from '@/components/async/status-button';
-import { useStatusButton } from '@/components/async/use-status-button';
+import { useButtonStatus } from '@/hooks/use-button-status';
 import {
   Tooltip,
   TooltipContent,
@@ -26,7 +26,7 @@ export function AthletePoolRow({
   readOnly,
 }: AthletePoolRowProps) {
   const assignAthlete = useAssignAthlete({ suppressErrorToast: true });
-  const assignButton = useStatusButton(assignAthlete.status);
+  const assignButton = useButtonStatus(assignAthlete.status);
   const { setNodeRef, attributes, listeners, isDragging } = useDraggable({
     id: athlete.id,
     data: { type: 'pool-athlete', athleteId: athlete.id },

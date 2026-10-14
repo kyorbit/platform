@@ -1,7 +1,7 @@
 import { ArrowRight, UserPlus } from 'lucide-react';
 import type { DivisionData } from '@/contracts/tournament/division';
 import { StatusButton } from '@/components/async/status-button';
-import { useStatusButton } from '@/components/async/use-status-button';
+import { useButtonStatus } from '@/hooks/use-button-status';
 import { useAutoAssignDivision } from '@/queries/division';
 
 interface DivisionRosterEmptyStateProps {
@@ -18,7 +18,7 @@ export function DivisionRosterEmptyState({
   readOnly,
 }: DivisionRosterEmptyStateProps) {
   const autoAssign = useAutoAssignDivision();
-  const autoAssignButton = useStatusButton(autoAssign.status);
+  const autoAssignButton = useButtonStatus(autoAssign.status);
 
   if (variant === 'no-division-selected') {
     return (
