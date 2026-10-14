@@ -8,6 +8,7 @@ import { tournamentsAllQueryOptions } from '@/queries/tournament';
 import { NotFound } from '@/components/not-found';
 
 export const Route = createFileRoute('/dashboard/athletes/')({
+  staticData: { breadcrumb: 'Athletes' },
   loaderDeps: ({ search }) => ({
     input: parseAthletesListInput(search as Record<string, unknown>),
   }),

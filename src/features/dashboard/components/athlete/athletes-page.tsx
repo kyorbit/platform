@@ -13,7 +13,7 @@ import { AthleteEditSheet } from '@/features/dashboard/components/athlete/athlet
 import { getAthletesTableColumns } from '@/features/dashboard/components/athlete/athlete-table/athletes-table-columns';
 import { DeleteAthleteDialog } from '@/features/dashboard/components/athlete/dialogs/delete-athlete-dialog';
 import { athleteProfileToRow } from '@/features/dashboard/lib/athlete/athlete-profile-to-row';
-import { SiteHeader } from '@/features/dashboard/components/sidebar/site-header';
+import { DashboardHeaderContent } from '@/features/dashboard/components/sidebar/dashboard-header';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { Button } from '@/components/ui/button';
 
@@ -56,14 +56,14 @@ export function AthletesPage() {
 
   return (
     <div className="flex h-full flex-col">
-      <SiteHeader title="Athletes">
+      <DashboardHeaderContent>
         <div className="ml-auto pr-4">
           <Button size="sm" onClick={openCreateDrawer}>
             <Plus className="mr-1 size-4" />
             Add Athlete
           </Button>
         </div>
-      </SiteHeader>
+      </DashboardHeaderContent>
 
       <div className="mx-auto w-full max-w-7xl overflow-auto p-6">
         <FeatureFlagsProvider>

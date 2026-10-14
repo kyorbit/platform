@@ -12,7 +12,6 @@ import { DeleteTournamentDialog } from './dialogs/delete-tournament-dialog';
 import type { TournamentListItem } from '@/contracts/tournament/list';
 import type { DataTableRowAction } from '@/lib/data-table/features';
 import { useTournamentsManagerQuery } from '@/features/dashboard/hooks/use-tournaments-manager-query';
-import { SiteHeader } from '@/features/dashboard/components/sidebar/site-header';
 import { ErrorBoundary } from '@/components/error-boundary';
 
 export function TournamentsOverview() {
@@ -37,8 +36,6 @@ export function TournamentsOverview() {
 
   return (
     <div className="flex h-full flex-col">
-      <SiteHeader title="Tournaments" />
-
       <div className="mx-auto w-full max-w-7xl flex-1 overflow-auto p-6">
         <CreateTournamentDialog>
           <TournamentsToolbar />

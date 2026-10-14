@@ -5,6 +5,8 @@ import LoadingScreen from '@/components/navigation/loading';
 import { requireSession } from '@/queries/session';
 import { ThemeProvider } from '@/contexts/themes';
 import { Toaster } from '@/components/ui/sonner';
+import { DashboardHeaderProvider } from '@/features/dashboard/components/sidebar/dashboard-header';
+import { SiteHeader } from '@/features/dashboard/components/sidebar/site-header';
 
 export const Route = createFileRoute('/dashboard')({
   beforeLoad: ({ context: { queryClient } }) => requireSession(queryClient),
@@ -19,7 +21,12 @@ function DashboardLayout() {
         <SidebarProvider className="relative h-svh">
           <AppSidebar />
           <SidebarInset>
-            <Outlet />
+            <DashboardHeaderProvider>
+              <SiteHeader />
+              <div className="min-h-0 flex-1 overflow-hidden">
+                <Outlet />
+              </div>
+            </DashboardHeaderProvider>
           </SidebarInset>
         </SidebarProvider>
       </div>

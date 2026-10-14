@@ -11,7 +11,6 @@ import { KpiStrip } from '@/features/dashboard/components/home/kpi-strip';
 import { RecentTournamentsSection } from '@/features/dashboard/components/home/recent-tournaments-section';
 import { StatusPipeline } from '@/features/dashboard/components/home/status-pipeline';
 import { useDashboardStats } from '@/features/dashboard/hooks/use-dashboard-stats';
-import { SiteHeader } from '@/features/dashboard/components/sidebar/site-header';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { Button } from '@/components/ui/button';
 import { DialogTrigger } from '@/components/ui/dialog';
@@ -22,8 +21,6 @@ export function DashboardHome() {
 
   return (
     <div className="flex h-full flex-col">
-      <SiteHeader title="Dashboard" />
-
       <div className="relative flex-1 overflow-auto py-6">
         <main className="relative mx-auto flex max-w-7xl flex-col gap-6 px-6">
           <div className="flex items-center justify-between">

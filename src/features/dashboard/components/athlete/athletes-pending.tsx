@@ -1,4 +1,3 @@
-import { SiteHeader } from '@/features/dashboard/components/sidebar/site-header';
 import { DataTableSkeleton } from '@/components/data-table/data-table-skeleton';
 
 const ATHLETE_TABLE_COLUMN_COUNT = 8;
@@ -7,7 +6,6 @@ const ATHLETE_TABLE_COLUMN_COUNT = 8;
 export function AthletesPending() {
   return (
     <div className="flex h-full flex-col">
-      <SiteHeader title="Athletes" />
       <div className="mx-auto w-full max-w-7xl p-6">
         <DataTableSkeleton
           className="pt-6"

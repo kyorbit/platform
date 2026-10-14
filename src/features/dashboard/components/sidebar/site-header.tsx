@@ -1,52 +1,38 @@
+import { useMatches } from '@tanstack/react-router';
+import { useDashboardHeader } from './dashboard-header';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Separator } from '@/components/ui/separator';
-import { cn } from '@/lib/utils';
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbList,
-  BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 
-interface HeaderProps {
-  children?: React.ReactNode;
-  className?: string;
-  action?: React.ReactNode;
-  title?: React.ReactNode;
-}
+export const SiteHeader = () => {
+  const { setBreadcrumb, setActions } = useDashboardHeader();
+  const breadcrumb = useMatches({
+    select: (matches) =>
+      [...matches]
+        .reverse()
+        .find((match) => match.staticData.breadcrumb !== undefined)?.staticData
+        .breadcrumb ?? 'Dashboard',
+  });
 
-export const SiteHeader = ({
-  children,
-  title,
-  className,
-  action,
-}: HeaderProps) => {
   return (
-    <div
-      className={cn(
-        'flex h-12 shrink-0 items-center gap-2 border-b px-4',
-        className
-      )}
-    >
+    <header className="flex h-12 shrink-0 items-center gap-2 border-b px-4">
       <SidebarTrigger className="-ml-2" />
       <Separator
         orientation="vertical"
         className="bg-muted-foreground/50 my-auto h-4"
       />
       <Breadcrumb>
-        <BreadcrumbList>
+        <BreadcrumbList ref={setBreadcrumb}>
           <BreadcrumbItem className="text-primary mx-1 ml-2 text-lg font-semibold">
-            {title}
+            {breadcrumb}
           </BreadcrumbItem>
-          {action && <BreadcrumbSeparator />}
-          {action && (
-            <BreadcrumbItem className="text-primary text-lg font-semibold">
-              {action}
-            </BreadcrumbItem>
-          )}
         </BreadcrumbList>
       </Breadcrumb>
-      {children}
-    </div>
+      <div ref={setActions} className="ml-auto flex items-center gap-2" />
+    </header>
   );
 };
