@@ -144,8 +144,13 @@ function renderPage(
     path: '/dashboard/tournaments/$id/builder',
     component: () => <h1>Tournament builder</h1>,
   });
+  const detail = createRoute({
+    getParentRoute: () => root,
+    path: '/dashboard/tournaments/$id',
+    component: () => <h1>Tournament details</h1>,
+  });
   const router = createRouter({
-    routeTree: root.addChildren([dashboard, overview, builder]),
+    routeTree: root.addChildren([dashboard, overview, builder, detail]),
     history: createMemoryHistory({ initialEntries: [path] }),
   });
   const queryClient = new QueryClient({
@@ -255,7 +260,7 @@ describe('Create Tournament workflow', () => {
     ).toBe('In-progress name');
   });
 
-  it('creates once with a trimmed name, refreshes queries, and opens the returned ID builder despite filters', async () => {
+  it('creates once with a trimmed name, refreshes queries, and opens the created tournament details despite filters', async () => {
     const { router, invalidate } = renderPage(
       '/dashboard/tournaments',
       '?view=grid&status=active&query=Existing'
@@ -272,7 +277,7 @@ describe('Create Tournament workflow', () => {
       target: { value: '  New tournament  ' },
     });
     submitForm(dialog);
-    await screen.findByRole('heading', { name: 'Tournament builder' });
+    await screen.findByRole('heading', { name: 'Tournament details' });
     expect(mocks.create).toHaveBeenCalledExactlyOnceWith({
       name: 'New tournament',
     });
@@ -281,8 +286,30 @@ describe('Create Tournament workflow', () => {
       'Tournament created successfully'
     );
     expect(router.state.location.pathname).toBe(
-      '/dashboard/tournaments/created-tournament/builder'
+      '/dashboard/tournaments/created-tournament'
     );
+  });
+
+  it('opens the created tournament details from the dashboard', async () => {
+    const { router } = renderPage('/dashboard');
+    const trigger = await screen.findByRole('button', {
+      name: 'Create Tournament',
+    });
+    activate(trigger);
+    const dialog = await screen.findByRole('dialog', {
+      name: 'Create Tournament',
+    });
+    fireEvent.change(within(dialog).getByPlaceholderText('Tournament name'), {
+      target: { value: 'Dashboard tournament' },
+    });
+    submitForm(dialog);
+    await screen.findByRole('heading', { name: 'Tournament details' });
+    expect(router.state.location.pathname).toBe(
+      '/dashboard/tournaments/created-tournament'
+    );
+    expect(mocks.create).toHaveBeenCalledExactlyOnceWith({
+      name: 'Dashboard tournament',
+    });
   });
 
   it('retains the name and stays open after failure so the user can retry', async () => {
@@ -307,7 +334,10 @@ describe('Create Tournament workflow', () => {
     ).toBe('Retry this name');
     expect(router.state.location.pathname).toBe('/dashboard/tournaments');
     submitForm(dialog);
-    await screen.findByRole('heading', { name: 'Tournament builder' });
+    await screen.findByRole('heading', { name: 'Tournament details' });
+    expect(router.state.location.pathname).toBe(
+      '/dashboard/tournaments/created-tournament'
+    );
     expect(mocks.create).toHaveBeenCalledTimes(2);
   });
 
@@ -317,7 +347,7 @@ describe('Create Tournament workflow', () => {
       finishCreation = () => resolve(mocks.created);
     });
     mocks.create.mockReturnValueOnce(completion);
-    renderPage();
+    const { router } = renderPage();
     await screen.findByText('No tournaments yet');
     const [trigger] = screen.getAllByRole('button', { name: 'New tournament' });
     if (!trigger) throw new Error('Toolbar trigger is missing');
@@ -328,7 +358,11 @@ describe('Create Tournament workflow', () => {
     const input = within(dialog).getByPlaceholderText('Tournament name');
     fireEvent.change(input, { target: { value: 'Pending tournament' } });
     submitForm(dialog);
-    await screen.findByRole('button', { name: /Creating/ });
+    const pendingButton = await within(dialog).findByRole('button', {
+      name: /Loading/,
+    });
+    expect(pendingButton.getAttribute('aria-busy')).toBe('true');
+    expect(pendingButton.hasAttribute('disabled')).toBe(false);
     expect(input.hasAttribute('disabled')).toBe(true);
     expect(within(dialog).queryByRole('button', { name: 'Close' })).toBeNull();
     submitForm(dialog);
@@ -342,11 +376,15 @@ describe('Create Tournament workflow', () => {
       dialog
     );
     expect(mocks.create).toHaveBeenCalledTimes(1);
+    expect(router.state.location.pathname).toBe('/dashboard/tournaments');
     await act(async () => {
       finishCreation();
       await completion;
     });
-    await screen.findByRole('heading', { name: 'Tournament builder' });
+    await screen.findByRole('heading', { name: 'Tournament details' });
+    expect(router.state.location.pathname).toBe(
+      '/dashboard/tournaments/created-tournament'
+    );
   });
 
   it('does not create a tournament with a whitespace-only name', async () => {

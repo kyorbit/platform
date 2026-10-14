@@ -2,6 +2,7 @@ import React from 'react';
 
 import { SaveIcon } from 'lucide-react';
 import type { TournamentListItem } from '@/contracts/tournament/list';
+import { StatusButton } from '@/components/async/status-button';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -12,7 +13,6 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Spinner } from '@/components/ui/spinner';
 import { useUpdateTournament } from '@/queries/tournament';
 
 interface RenameTournamentDialogProps {
@@ -70,22 +70,14 @@ export function RenameTournamentDialog({
             <Button type="button" variant="outline" onClick={onOpenChange}>
               Cancel
             </Button>
-            <Button
+            <StatusButton
+              disabled={!trimmed || isUnchanged}
+              status={mutation.isPending ? 'loading' : 'idle'}
               type="submit"
-              disabled={!trimmed || isUnchanged || mutation.isPending}
             >
-              {mutation.isPending ? (
-                <>
-                  <Spinner />
-                  Saving...
-                </>
-              ) : (
-                <>
-                  <SaveIcon />
-                  Save
-                </>
-              )}
-            </Button>
+              <SaveIcon />
+              Save
+            </StatusButton>
           </DialogFooter>
         </form>
       </DialogContent>

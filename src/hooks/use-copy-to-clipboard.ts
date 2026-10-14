@@ -25,10 +25,12 @@ export function useCopyToClipboard({
   resetDelay = 1500,
 }: UseCopyToClipboardOptions = {}) {
   const [state, setState] = useState<CopyState>('idle');
+  const [isCopying, setIsCopying] = useState(false);
   const resetTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const copy = useCallback(
     async (input: CopyInput) => {
+      setIsCopying(true);
       if (resetTimeoutRef.current) {
         clearTimeout(resetTimeoutRef.current);
       }
@@ -55,6 +57,7 @@ export function useCopyToClipboard({
           error instanceof Error ? error : new Error('Copy failed')
         );
       } finally {
+        setIsCopying(false);
         resetTimeoutRef.current = setTimeout(() => {
           setState('idle');
         }, resetDelay);
@@ -63,5 +66,5 @@ export function useCopyToClipboard({
     [onCopySuccess, onCopyError, resetDelay]
   );
 
-  return { state, copy } as const;
+  return { state, copy, isCopying } as const;
 }

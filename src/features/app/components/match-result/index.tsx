@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { StatusButton } from '@/components/async/status-button';
 import { assetUrl } from '@/config/assets';
 import { cn } from '@/lib/utils';
 import { Ring } from '@/components/ui/ring';
@@ -19,7 +20,7 @@ interface ResultDialogProps {
   blueWon: number;
   className?: string;
   onAccept: () => void | Promise<void>;
-  onCancel: () => void;
+  onCancel: () => void | Promise<void>;
 }
 
 export const ResultDialog = ({
@@ -104,14 +105,14 @@ export const ResultDialog = ({
 
       {/* Actions */}
       <DialogFooter className="flex w-full max-w-7xl items-center justify-center! gap-6">
-        <Button
+        <StatusButton
           type="button"
           variant="outline"
           className="action-btn action-btn-cancel"
           onClick={onCancel}
         >
           CANCEL RESULT
-        </Button>
+        </StatusButton>
         <Button
           type="button"
           variant="outline"

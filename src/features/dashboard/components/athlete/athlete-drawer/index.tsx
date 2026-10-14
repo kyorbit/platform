@@ -22,7 +22,7 @@ import {
   SortableItemHandle,
   SortableOverlay,
 } from '@/components/ui/sortable';
-import { Spinner } from '@/components/ui/spinner';
+import { StatusButton } from '@/components/async/status-button';
 import { client } from '@/orpc/client';
 
 export type AthleteDrawerMode = 'create' | 'bulk-edit';
@@ -326,40 +326,17 @@ function SubmitButton({
   state: { isSubmitting: boolean; isBulkEdit: boolean };
   rows: Array<AthleteRow>;
 }) {
-  type ButtonState = 'submitting' | 'bulkEdit' | 'create';
-
-  const buttonState: ButtonState = state.isSubmitting
-    ? 'submitting'
-    : state.isBulkEdit
-      ? 'bulkEdit'
-      : 'create';
-
   const athleteLabel = `${rows.length} ${rows.length === 1 ? 'Athlete' : 'Athletes'}`;
 
-  const buttonContent: Record<
-    ButtonState,
-    { icon: React.ReactNode; label: string }
-  > = {
-    submitting: {
-      icon: <Spinner />,
-      label: state.isBulkEdit ? 'Saving…' : 'Creating…',
-    },
-    bulkEdit: {
-      icon: <SaveIcon />,
-      label: `Save ${athleteLabel}`,
-    },
-    create: {
-      icon: <PlusIcon />,
-      label: `Create ${athleteLabel}`,
-    },
-  };
-
-  const { icon, label } = buttonContent[buttonState];
-
   return (
-    <Button onClick={onSubmit} disabled={state.isSubmitting}>
-      {icon}
-      <span>{label}</span>
-    </Button>
+    <StatusButton
+      onClick={onSubmit}
+      status={state.isSubmitting ? 'loading' : 'idle'}
+    >
+      {state.isBulkEdit ? <SaveIcon /> : <PlusIcon />}
+      <span>
+        {state.isBulkEdit ? 'Save' : 'Create'} {athleteLabel}
+      </span>
+    </StatusButton>
   );
 }

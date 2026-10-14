@@ -1,4 +1,5 @@
 import { Trash2 } from 'lucide-react';
+import { StatusButton } from '@/components/async/status-button';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -8,7 +9,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Spinner } from '@/components/ui/spinner';
 
 interface DeleteCustomMatchDialogProps {
   open: boolean;
@@ -43,26 +43,14 @@ export function DeleteCustomMatchDialog({
           >
             Cancel
           </Button>
-          <Button
+          <StatusButton
+            status={isPending ? 'loading' : 'idle'}
             variant="destructive"
             onClick={onConfirm}
-            disabled={isPending}
           >
-            {isPending ? (
-              <>
-                <Spinner
-                  data-icon="inline-start"
-                  className="text-destructive"
-                />
-                Deleting…
-              </>
-            ) : (
-              <>
-                <Trash2 data-icon="inline-start" />
-                Delete match
-              </>
-            )}
-          </Button>
+            <Trash2 data-icon="inline-start" />
+            Delete match
+          </StatusButton>
         </DialogFooter>
       </DialogContent>
     </Dialog>

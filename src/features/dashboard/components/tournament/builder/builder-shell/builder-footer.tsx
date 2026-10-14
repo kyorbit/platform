@@ -14,6 +14,7 @@ import type {
 } from '@/contracts/tournament/list';
 import { TOURNAMENT_STATUSES } from '@/contracts/tournament/list';
 import { Button } from '@/components/ui/button';
+import { StatusButton } from '@/components/async/status-button';
 import { Separator } from '@/components/ui/separator';
 import {
   Select,
@@ -33,9 +34,8 @@ import {
 interface BuilderFooterProps {
   tournament: TournamentData;
   readOnly: boolean;
-  isRefreshing?: boolean;
   isSettingTournamentStatus?: boolean;
-  onRefresh?: () => void;
+  onRefresh?: () => void | Promise<void>;
   onAutoAssignAll?: () => void;
   onAdminStatusIntent: (next: TournamentStatus) => void;
   onEditTournament: () => void;
@@ -70,7 +70,6 @@ const STATUS_LABEL: Record<TournamentStatus, string> = {
 export function BuilderFooter({
   tournament,
   readOnly,
-  isRefreshing,
   isSettingTournamentStatus,
   onRefresh,
   onAutoAssignAll,
@@ -85,18 +84,16 @@ export function BuilderFooter({
     <TooltipProvider delay={200}>
       <footer className="bg-sidebar/70 supports-backdrop-filter:bg-sidebar/50 flex h-12 items-center gap-2 border-t px-4">
         <div className="flex items-center gap-2">
-          <Button
+          <StatusButton
+            successLabel="Refreshed"
             variant="ghost"
             size="sm"
             onClick={() => onRefresh?.()}
-            disabled={isRefreshing}
             className="gap-2"
           >
-            <RefreshCw
-              className={isRefreshing ? 'size-4 animate-spin' : 'size-4'}
-            />
+            <RefreshCw />
             <span>Refresh</span>
-          </Button>
+          </StatusButton>
 
           <DisabledWhenReadOnly readOnly={readOnly}>
             <Button

@@ -1,7 +1,7 @@
 import React from 'react';
 import { toast } from 'sonner';
-import { Loader2 } from 'lucide-react';
 import type { DivisionData } from '@/contracts/tournament/division';
+import { StatusButton } from '@/components/async/status-button';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -138,19 +138,13 @@ export function AutoAssignAllDialog({
           >
             Cancel
           </Button>
-          <Button
+          <StatusButton
+            status={autoAssignAll.isPending ? 'loading' : 'idle'}
             onClick={handleRun}
-            disabled={isRunning || eligible.length === 0}
+            disabled={eligible.length === 0}
           >
-            {isRunning ? (
-              <>
-                <Loader2 className="size-4 animate-spin" />
-                Running...
-              </>
-            ) : (
-              'Run'
-            )}
-          </Button>
+            Run
+          </StatusButton>
         </DialogFooter>
       </DialogContent>
     </Dialog>

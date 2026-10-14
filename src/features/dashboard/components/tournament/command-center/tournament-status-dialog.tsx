@@ -1,3 +1,4 @@
+import { StatusButton } from '@/components/async/status-button';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -7,7 +8,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Spinner } from '@/components/ui/spinner';
 import { useSetTournamentStatus } from '@/queries/tournament';
 
 export type TournamentStatus = 'active' | 'completed';
@@ -62,7 +62,8 @@ export function TournamentStatusDialog({
           >
             Cancel
           </Button>
-          <Button
+          <StatusButton
+            status={setStatusMutation.isPending ? 'loading' : 'idle'}
             onClick={() => {
               if (!confirmStatus) {
                 return;
@@ -73,17 +74,9 @@ export function TournamentStatusDialog({
                 status: confirmStatus,
               });
             }}
-            disabled={setStatusMutation.isPending}
           >
-            {setStatusMutation.isPending ? (
-              <>
-                <Spinner />
-                <span>Saving…</span>
-              </>
-            ) : (
-              (transitionAction?.label ?? 'Confirm')
-            )}
-          </Button>
+            {transitionAction?.label ?? 'Confirm'}
+          </StatusButton>
         </DialogFooter>
       </DialogContent>
     </Dialog>

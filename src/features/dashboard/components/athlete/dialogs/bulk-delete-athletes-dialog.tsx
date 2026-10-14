@@ -1,5 +1,6 @@
 import React from 'react';
 import { IconTrash } from '@tabler/icons-react';
+import { StatusButton } from '@/components/async/status-button';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -10,7 +11,6 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useBulkDeleteAthleteProfiles } from '@/queries/athlete-profile';
-import { Spinner } from '@/components/ui/spinner';
 
 const PREVIEW_NAME_LIMIT = 8;
 
@@ -69,25 +69,17 @@ export function BulkDeleteAthletesDialog({
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <Button
+          <StatusButton
+            status={mutation.isPending ? 'loading' : 'idle'}
             variant="destructive"
-            disabled={mutation.isPending || ids.length === 0}
+            disabled={ids.length === 0}
             onClick={() => {
               if (ids.length > 0) mutation.mutate({ ids });
             }}
           >
-            {mutation.isPending ? (
-              <>
-                <Spinner className="text-destructive" />
-                <span>'Deleting…'</span>
-              </>
-            ) : (
-              <>
-                <IconTrash />
-                <span>Delete</span>
-              </>
-            )}
-          </Button>
+            <IconTrash />
+            <span>Delete</span>
+          </StatusButton>
         </DialogFooter>
       </DialogContent>
     </Dialog>

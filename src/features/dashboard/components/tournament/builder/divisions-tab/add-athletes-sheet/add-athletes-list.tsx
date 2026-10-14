@@ -4,7 +4,7 @@ import { AddAthleteProfileRow } from './add-athlete-profile-row';
 import type { AddAthletesSheetState } from '@/features/dashboard/hooks/use-add-athletes-sheet';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
-import { LoadMore } from '@/components/interior/load-more';
+import { LoadMore } from '@/components/async/load-more';
 import { cn } from '@/lib/utils';
 import {
   Empty,

@@ -13,7 +13,7 @@ import {
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { AddAthletesList } from '../add-athletes-list';
 import type { AthleteProfileData } from '@/contracts/athlete/profile';
-import { LoadMore } from '@/components/interior/load-more';
+import { LoadMore } from '@/components/async/load-more';
 import { useAddAthletesSheet } from '@/features/dashboard/hooks/use-add-athletes-sheet';
 import { listAthleteProfiles } from '@/queries/api/athlete-profile-api';
 

@@ -4,6 +4,7 @@ import { AlertCircle, ArrowLeft, HomeIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
 import type { ErrorComponentProps } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
+import { StatusButton } from '@/components/async/status-button';
 import {
   Empty,
   EmptyContent,
@@ -95,17 +96,18 @@ function RouteErrorRetry({ error, reset }: ErrorComponentProps) {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button
+          <StatusButton
+            successLabel="Reloaded"
             variant="outline"
             type="button"
-            onClick={() => {
+            onClick={async () => {
               resetQueries();
               reset();
-              void router.invalidate();
+              await router.invalidate();
             }}
           >
             Retry
-          </Button>
+          </StatusButton>
           <Button
             variant="ghost"
             nativeButton={false}

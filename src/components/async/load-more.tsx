@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
+import { StatusButton } from './status-button';
 import type { ReactNode, RefObject } from 'react';
 import { cn } from '@/lib/utils';
 
@@ -350,7 +351,11 @@ export function LoadMore({
         className="pointer-events-none absolute inset-x-0 top-0 h-px"
       />
 
-      <button
+      <StatusButton
+        successLabel="Loaded more"
+        status={status === 'loading' ? 'loading' : 'idle'}
+        variant="ghost"
+        size="sm"
         type="button"
         aria-busy={status === 'loading' || undefined}
         aria-disabled={inert || undefined}
@@ -363,7 +368,7 @@ export function LoadMore({
           load();
         }}
         className={cn(
-          'group focus-visible:bg-accent focus-visible:ring-ring relative inline-flex h-8 items-center justify-center rounded-[9px] px-3 text-[12.5px] font-medium transition-[background-color,box-shadow,transform] duration-150 outline-none select-none focus-visible:ring-1',
+          'group focus-visible:bg-accent focus-visible:ring-ring relative h-8 items-center justify-center rounded-[9px] px-3 text-[12.5px] font-medium transition-[background-color,box-shadow,transform] duration-150 outline-none select-none focus-visible:ring-1',
           inert
             ? 'cursor-default'
             : 'hover:bg-accent cursor-pointer active:translate-y-px'
@@ -397,7 +402,7 @@ export function LoadMore({
             </motion.span>
           ))}
         </motion.span>
-      </button>
+      </StatusButton>
 
       <span
         role="status"

@@ -8,6 +8,8 @@ import {
   useShuffleBracket,
 } from '@/queries/match';
 import { Button } from '@/components/ui/button';
+import { StatusButton } from '@/components/async/status-button';
+import { useStatusButton } from '@/components/async/use-status-button';
 import { DialogTrigger } from '@/components/ui/dialog';
 import {
   Tooltip,
@@ -28,6 +30,9 @@ export function BracketToolbar() {
   const shuffle = useShuffleBracket();
   const regenerate = useRegenerateBracket();
   const reset = useResetBracket();
+  const shuffleButton = useStatusButton(shuffle.status);
+  const regenerateButton = useStatusButton(regenerate.status);
+  const resetButton = useStatusButton(reset.status);
 
   const draftOnly = tournamentStatus !== 'draft';
   const blocked = disabled || readOnly || draftOnly || !divisionId;
@@ -46,8 +51,7 @@ export function BracketToolbar() {
         : undefined;
 
   const resetHasWork = divisionId != null && isResettableMatch(matches);
-  const resetDisabledForCleanBracket =
-    blocked || reset.isPending || !resetHasWork;
+  const resetDisabledForCleanBracket = blocked || !resetHasWork;
   const resetTooltip =
     reason ??
     (!resetHasWork
@@ -112,11 +116,13 @@ export function BracketToolbar() {
           <TooltipTrigger
             render={
               <span className="inline-flex">
-                <Button
+                <StatusButton
+                  successLabel={<span className="sr-only">Shuffled</span>}
+                  {...shuffleButton}
                   type="button"
                   variant="ghost"
                   size="icon"
-                  disabled={blocked || shuffle.isPending}
+                  disabled={blocked}
                   aria-label="Shuffle bracket"
                   className="rounded-sm"
                   onClick={() => {
@@ -128,7 +134,7 @@ export function BracketToolbar() {
                   }}
                 >
                   <Shuffle />
-                </Button>
+                </StatusButton>
               </span>
             }
           />
@@ -141,11 +147,13 @@ export function BracketToolbar() {
           <TooltipTrigger
             render={
               <span className="inline-flex">
-                <Button
+                <StatusButton
+                  successLabel={<span className="sr-only">Regenerated</span>}
+                  {...regenerateButton}
                   type="button"
                   variant="ghost"
                   size="icon"
-                  disabled={blocked || regenerate.isPending}
+                  disabled={blocked}
                   aria-label="Regenerate bracket"
                   onClick={() => {
                     if (!divisionId) return;
@@ -156,7 +164,7 @@ export function BracketToolbar() {
                   }}
                 >
                   <RefreshCw />
-                </Button>
+                </StatusButton>
               </span>
             }
           />
@@ -169,7 +177,9 @@ export function BracketToolbar() {
           <TooltipTrigger
             render={
               <span className="inline-flex">
-                <Button
+                <StatusButton
+                  successLabel={<span className="sr-only">Reset</span>}
+                  {...resetButton}
                   type="button"
                   variant="ghost"
                   size="icon"
@@ -184,7 +194,7 @@ export function BracketToolbar() {
                   }}
                 >
                   <Eraser />
-                </Button>
+                </StatusButton>
               </span>
             }
           />

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { PlusIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { StatusButton } from '@/components/async/status-button';
 import { Input } from '@/components/ui/input';
 import {
   Dialog,
@@ -11,7 +11,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Spinner } from '@/components/ui/spinner';
 import { useCreateTournament } from '@/queries/tournament';
 
 interface CreateTournamentDialogProps {
@@ -38,7 +37,7 @@ export function CreateTournamentDialog({
           setName('');
           setOpen(false);
           void navigate({
-            to: '/dashboard/tournaments/$id/builder',
+            to: '/dashboard/tournaments/$id',
             params: { id: tournament.id },
           });
         },
@@ -69,8 +68,8 @@ export function CreateTournamentDialog({
           <DialogHeader>
             <DialogTitle>Create Tournament</DialogTitle>
             <DialogDescription>
-              Enter a name for your new tournament. You'll be taken to the
-              builder to set up divisions and matches.
+              Enter a name for your new tournament. After creating it, you'll be
+              taken to its detail page.
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">
@@ -84,19 +83,14 @@ export function CreateTournamentDialog({
             />
           </div>
           <DialogFooter>
-            <Button type="submit" disabled={!name.trim() || mutation.isPending}>
-              {mutation.isPending ? (
-                <>
-                  <Spinner data-icon="inline-start" />
-                  Creating...
-                </>
-              ) : (
-                <>
-                  <PlusIcon data-icon="inline-start" />
-                  Create Tournament
-                </>
-              )}
-            </Button>
+            <StatusButton
+              disabled={!name.trim()}
+              status={mutation.isPending ? 'loading' : 'idle'}
+              type="submit"
+            >
+              <PlusIcon data-icon="inline-start" />
+              Create Tournament
+            </StatusButton>
           </DialogFooter>
         </form>
       </DialogContent>

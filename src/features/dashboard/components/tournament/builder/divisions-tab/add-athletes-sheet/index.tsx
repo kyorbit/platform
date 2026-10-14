@@ -6,6 +6,7 @@ import {
   PoolWeightFilter,
 } from '../athlete-pool/filters';
 import { AddAthletesList } from './add-athletes-list';
+import { StatusButton } from '@/components/async/status-button';
 import { useAddAthletesSheet } from '@/features/dashboard/hooks/use-add-athletes-sheet';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -17,7 +18,6 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet';
 import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
 
 interface AddAthletesSheetProps {
   open: boolean;
@@ -134,23 +134,15 @@ export function AddAthletesSheet({
             >
               Cancel
             </Button>
-            <Button
+            <StatusButton
+              status={submit.isPending ? 'loading' : 'idle'}
               onClick={submit.handleSubmit}
-              disabled={!submit.canSubmit}
+              disabled={!submit.canSubmit && !submit.isPending}
               className="cursor-pointer"
             >
-              {submit.isPending ? (
-                <>
-                  <Spinner />
-                  <span>Adding…</span>
-                </>
-              ) : (
-                <>
-                  <UserPlus data-icon="inline-start" />
-                  Add to tournament
-                </>
-              )}
-            </Button>
+              <UserPlus data-icon="inline-start" />
+              Add to tournament
+            </StatusButton>
           </div>
         </div>
       </SheetFooter>

@@ -1,5 +1,6 @@
 import { TrashIcon } from 'lucide-react';
 import type { TournamentListItem } from '@/contracts/tournament/list';
+import { StatusButton } from '@/components/async/status-button';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -9,7 +10,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Spinner } from '@/components/ui/spinner';
 import { useDeleteTournament } from '@/queries/tournament';
 
 interface DeleteTournamentDialogProps {
@@ -52,25 +52,16 @@ export function DeleteTournamentDialog({
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <Button
+          <StatusButton
+            status={mutation.isPending ? 'loading' : 'idle'}
             variant="destructive"
-            disabled={mutation.isPending}
             onClick={() => {
               if (tournament) mutation.mutate({ id: tournament.id });
             }}
           >
-            {mutation.isPending ? (
-              <>
-                <Spinner className="text-destructive" />
-                Deleting...
-              </>
-            ) : (
-              <>
-                <TrashIcon className="text-destructive" />
-                Delete
-              </>
-            )}
-          </Button>
+            <TrashIcon className="text-destructive" />
+            Delete
+          </StatusButton>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -1,4 +1,5 @@
 import type { TournamentStatus } from '@/contracts/tournament/list';
+import { StatusButton } from '@/components/async/status-button';
 import {
   TOURNAMENT_STATUS_LABEL,
   tournamentStatusRiskNotes,
@@ -12,7 +13,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Spinner } from '@/components/ui/spinner';
 
 interface TournamentStatusDialogProps {
   open: boolean;
@@ -74,19 +74,12 @@ export function TournamentStatusDialog({
           >
             Cancel
           </Button>
-          <Button onClick={onConfirm} disabled={isPending}>
-            {isPending ? (
-              <>
-                <Spinner
-                  data-icon="inline-start"
-                  className="text-primary-foreground"
-                />
-                Saving…
-              </>
-            ) : (
-              'Confirm'
-            )}
-          </Button>
+          <StatusButton
+            status={isPending ? 'loading' : 'idle'}
+            onClick={onConfirm}
+          >
+            Confirm
+          </StatusButton>
         </DialogFooter>
       </DialogContent>
     </Dialog>

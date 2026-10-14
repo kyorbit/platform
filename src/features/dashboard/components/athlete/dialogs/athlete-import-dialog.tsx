@@ -2,10 +2,10 @@ import React from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { UserPlus } from 'lucide-react';
+import { StatusButton } from '@/components/async/status-button';
 import { parseImportFile } from '@/lib/data-table/import';
 import { client } from '@/orpc/client';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -15,7 +15,6 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Spinner } from '@/components/ui/spinner';
 
 interface AthleteRowValues {
   athleteCode: string;
@@ -130,22 +129,14 @@ export function AthleteImportDialog({ children }: AthleteImportDialogProps) {
           )}
         </div>
         <DialogFooter>
-          <Button
-            disabled={!preview || preview.length === 0 || isImporting}
+          <StatusButton
+            status={isImporting ? 'loading' : 'idle'}
+            disabled={!preview || preview.length === 0}
             onClick={handleImport}
           >
-            {isImporting ? (
-              <>
-                <Spinner />
-                <span>Importing...</span>
-              </>
-            ) : (
-              <>
-                <UserPlus />
-                <span>Import {preview?.length ?? 0} Athletes</span>
-              </>
-            )}
-          </Button>
+            <UserPlus />
+            <span>Import {preview?.length ?? 0} Athletes</span>
+          </StatusButton>
         </DialogFooter>
       </DialogContent>
     </Dialog>

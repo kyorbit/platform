@@ -129,7 +129,6 @@ function TournamentBuilderActiveBody({
         <BuilderFooter
           tournament={tournament}
           readOnly={b.isReadOnly}
-          isRefreshing={b.isRefreshing}
           isSettingTournamentStatus={setTournamentStatusMutation.isPending}
           onRefresh={b.handleRefresh}
           onAutoAssignAll={() => b.setShowAutoAssignAll(true)}

@@ -11,7 +11,7 @@ import { useSettings } from '@/features/app/contexts/settings';
 import { useAppForm } from '@/components/form/hooks';
 import { AdvanceSettingsSchema } from '@/lib/validations';
 import { FieldGroup, FieldLabel, FieldSet } from '@/components/ui/field';
-import { Button } from '@/components/ui/button';
+import { StatusButton } from '@/components/async/status-button';
 import { authClient } from '@/lib/auth-client';
 import { useDeviceId } from '@/features/app/hooks/use-device-id';
 import {
@@ -154,7 +154,8 @@ export const AdvanceSettings = () => {
         <FieldLabel className="settings-group-label flex w-full items-center">
           <span className="grow text-2xl">TOURNAMENT SETTINGS</span>
           <div className="ml-auto flex items-center gap-2">
-            <Button
+            <StatusButton
+              successLabel={<span className="sr-only">Refreshed</span>}
               variant="outline"
               size="icon-sm"
               onClick={refetchSelection}
@@ -164,7 +165,7 @@ export const AdvanceSettings = () => {
               disabled={catalogQuery.isLoading || matchesQuery.isLoading}
             >
               <IconReload />
-            </Button>
+            </StatusButton>
           </div>
         </FieldLabel>
         {tournamentFields.map((field) => (

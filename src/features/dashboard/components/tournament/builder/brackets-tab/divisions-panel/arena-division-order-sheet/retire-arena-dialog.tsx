@@ -18,7 +18,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Spinner } from '@/components/ui/spinner';
 
 interface RetireArenaDialogProps {
   open: boolean;
@@ -111,20 +110,8 @@ export function RetireArenaDialog({
             disabled={isPending || targetArenaOptions.length === 0}
             onClick={() => onConfirm(toArena)}
           >
-            {isPending ? (
-              <>
-                <Spinner
-                  data-icon="inline-start"
-                  className="text-destructive"
-                />
-                Removing…
-              </>
-            ) : (
-              <>
-                <TrashIcon className="text-destructive" />
-                Remove arena
-              </>
-            )}
+            <TrashIcon className="text-destructive" />
+            Remove arena
           </Button>
         </DialogFooter>
       </DialogContent>

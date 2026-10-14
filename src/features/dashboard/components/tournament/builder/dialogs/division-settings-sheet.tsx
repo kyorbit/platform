@@ -1,5 +1,6 @@
 import { SaveIcon, Trash2 } from 'lucide-react';
 import type { DivisionData } from '@/contracts/tournament/division';
+import { StatusButton } from '@/components/async/status-button';
 import {
   SheetContent,
   SheetDescription,
@@ -15,7 +16,6 @@ import { Button } from '@/components/ui/button';
 import { SelectItem } from '@/components/ui/select';
 import { useAppForm } from '@/components/form/hooks';
 import { useDeleteDivision, useUpdateDivision } from '@/queries/division';
-import { Spinner } from '@/components/ui/spinner';
 import { BELT_LEVELS } from '@/config/athlete';
 
 interface DivisionSettingsSheetProps {
@@ -58,6 +58,7 @@ function DivisionSettingsForm({
   onClose,
 }: DivisionSettingsFormProps) {
   const updateDivision = useUpdateDivision({ onSuccess: onClose });
+
   const deleteDivision = useDeleteDivision({ onSuccess: onClose });
 
   const athleteCount = division._count.tournamentAthletes;
@@ -195,41 +196,26 @@ function DivisionSettingsForm({
       </Tooltip>
 
       <div className="flex items-center gap-2 p-0 pt-6">
-        <Button
+        <StatusButton
+          status={deleteDivision.isPending ? 'loading' : 'idle'}
           type="button"
           variant="destructive"
           onClick={() => deleteDivision.mutate({ id: division.id })}
-          disabled={deleteDivision.isPending}
         >
-          {deleteDivision.isPending ? (
-            <>
-              <Spinner />
-              <span>Deleting...</span>
-            </>
-          ) : (
-            <>
-              <Trash2 className="mr-1 size-3.5" />
-              Delete Division
-            </>
-          )}
-        </Button>
+          <Trash2 className="mr-1 size-3.5" />
+          Delete Division
+        </StatusButton>
         <div className="flex-1" />
         <Button type="button" variant="outline" onClick={onClose}>
           Cancel
         </Button>
-        <Button type="submit" disabled={updateDivision.isPending}>
-          {updateDivision.isPending ? (
-            <>
-              <Spinner />
-              <span>Saving...</span>
-            </>
-          ) : (
-            <>
-              <SaveIcon />
-              <span>Save</span>
-            </>
-          )}
-        </Button>
+        <StatusButton
+          status={updateDivision.isPending ? 'loading' : 'idle'}
+          type="submit"
+        >
+          <SaveIcon />
+          <span>Save</span>
+        </StatusButton>
       </div>
     </form>
   );

@@ -1,5 +1,6 @@
 import React from 'react';
 import { UserPlus, Users } from 'lucide-react';
+import { StatusButton } from '@/components/async/status-button';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -112,22 +113,14 @@ export function BulkAddAthletesDialog({
           <Button variant="outline" onClick={() => onClose(false)}>
             Cancel
           </Button>
-          <Button
-            disabled={!tournamentId || bulkAdd.isPending}
+          <StatusButton
+            disabled={!tournamentId}
+            status={bulkAdd.isPending ? 'loading' : 'idle'}
             onClick={onSubmit}
           >
-            {bulkAdd.isPending ? (
-              <>
-                <Spinner />
-                <span>Adding...</span>
-              </>
-            ) : (
-              <>
-                <UserPlus />
-                <span>Add to Tournament</span>
-              </>
-            )}
-          </Button>
+            <UserPlus />
+            <span>Add to Tournament</span>
+          </StatusButton>
         </DialogFooter>
       </DialogContent>
     </Dialog>
