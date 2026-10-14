@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.1](https://github.com/kyorbit/platform/compare/kyorbit-v1.1.0...kyorbit-v1.1.1) (2026-10-14)
+
+
+### Bug Fixes
+
+* **ui:** make button gradient styling independent of trigger slots ([e2620c2](https://github.com/kyorbit/platform/commit/e2620c2bce47d8928062c0717256e27b814443a9))
+* **ui:** prevent sheet backdrop from flashing on close ([67d891a](https://github.com/kyorbit/platform/commit/67d891aba4241d34445a3f3a7972d04c1589313c))
+
 ## [1.1.0](https://github.com/kyorbit/platform/compare/kyorbit-v1.0.0...kyorbit-v1.1.0) (2026-10-13)
 
 
