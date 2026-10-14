@@ -14,6 +14,7 @@ import { useDashboardStats } from '@/features/dashboard/hooks/use-dashboard-stat
 import { SiteHeader } from '@/features/dashboard/components/sidebar/site-header';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { Button } from '@/components/ui/button';
+import { DialogTrigger } from '@/components/ui/dialog';
 
 export function DashboardHome() {
   const [createOpen, setCreateOpen] = useState(false);
@@ -35,10 +36,20 @@ export function DashboardHome() {
                 Cross-tournament monitoring and setup status
               </p>
             </div>
-            <Button onClick={() => setCreateOpen(true)}>
-              <Plus className="size-4" data-icon="inline-start" />
-              Create Tournament
-            </Button>
+            <CreateTournamentDialog
+              open={createOpen}
+              onOpenChange={setCreateOpen}
+            >
+              <DialogTrigger
+                onClick={() => setCreateOpen(true)}
+                render={
+                  <Button>
+                    <Plus className="size-4" data-icon="inline-start" />
+                    Create Tournament
+                  </Button>
+                }
+              />
+            </CreateTournamentDialog>
           </div>
 
           <ErrorBoundary title="Failed to load dashboard">
@@ -47,7 +58,6 @@ export function DashboardHome() {
         </main>
       </div>
 
-      <CreateTournamentDialog open={createOpen} onOpenChange={setCreateOpen} />
       <RenameTournamentDialog
         tournament={
           rowAction?.variant === 'update' ? rowAction.row.original : null

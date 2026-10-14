@@ -16,11 +16,13 @@ import { useCreateTournament } from '@/queries/tournament';
 interface CreateTournamentDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  children?: React.ReactNode;
 }
 
 export function CreateTournamentDialog({
   open,
   onOpenChange,
+  children,
 }: CreateTournamentDialogProps) {
   const [name, setName] = React.useState('');
 
@@ -42,6 +44,7 @@ export function CreateTournamentDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
+      {children}
       <DialogContent>
         <form onSubmit={handleSubmit}>
           <DialogHeader>

@@ -214,22 +214,6 @@
     cursor: pointer;
   }
 
-  [data-slot='button'] {
-    --btn-radius: var(--radius-md);
-  }
-  [data-slot='button'].rounded {
-    --btn-radius: 0.25rem;
-  }
-  [data-slot='button'].rounded-sm {
-    --btn-radius: var(--radius-sm);
-  }
-  [data-slot='button'].rounded-md {
-    --btn-radius: var(--radius-md);
-  }
-  [data-slot='button'].rounded-lg {
-    --btn-radius: var(--radius-lg);
-  }
-
   ::-webkit-scrollbar {
     width: 5px;
   }
