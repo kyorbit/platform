@@ -201,14 +201,23 @@ function DivisionSettingsForm({
           onClick={() => deleteDivision.mutate({ id: division.id })}
           disabled={deleteDivision.isPending}
         >
-          <Trash2 className="mr-1 size-3.5" />
-          Delete Division
+          {deleteDivision.isPending ? (
+            <>
+              <Spinner />
+              <span>Deleting...</span>
+            </>
+          ) : (
+            <>
+              <Trash2 className="mr-1 size-3.5" />
+              Delete Division
+            </>
+          )}
         </Button>
         <div className="flex-1" />
         <Button type="button" variant="outline" onClick={onClose}>
           Cancel
         </Button>
-        <Button type="submit" size="sm" disabled={updateDivision.isPending}>
+        <Button type="submit" disabled={updateDivision.isPending}>
           {updateDivision.isPending ? (
             <>
               <Spinner />

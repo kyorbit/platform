@@ -78,8 +78,17 @@ export function useAddAthletesSheet({
   });
 
   const scrollRef = React.useRef<HTMLDivElement | null>(null);
+  const listKey = JSON.stringify([
+    tournamentId,
+    query,
+    gender,
+    beltMin,
+    beltMax,
+    weightMin,
+    weightMax,
+  ]);
   const rowVirtualizer = useVirtualizer({
-    count: total,
+    count: items.length,
     getScrollElement: () => scrollRef.current,
     estimateSize: () => ROW_HEIGHT,
     overscan: 8,
@@ -88,30 +97,19 @@ export function useAddAthletesSheet({
 
   React.useLayoutEffect(() => {
     if (!open) return;
+    if (scrollRef.current) scrollRef.current.scrollTop = 0;
     rowVirtualizer.measure();
     const frame = requestAnimationFrame(() => rowVirtualizer.measure());
     return () => cancelAnimationFrame(frame);
-  }, [open, rowVirtualizer]);
+  }, [open, listKey, rowVirtualizer]);
 
   const virtualItems = rowVirtualizer.getVirtualItems();
-  const lastVirtualItem = virtualItems[virtualItems.length - 1];
 
-  React.useEffect(() => {
-    if (!lastVirtualItem) return;
-    if (
-      lastVirtualItem.index >= items.length - 1 &&
-      listQuery.hasNextPage &&
-      !listQuery.isFetchingNextPage
-    ) {
-      void listQuery.fetchNextPage();
-    }
-  }, [
-    lastVirtualItem?.index,
-    items.length,
-    listQuery.hasNextPage,
-    listQuery.isFetchingNextPage,
-    listQuery.fetchNextPage,
-  ]);
+  const loadMore = async () => {
+    const result = await listQuery.fetchNextPage({ cancelRefetch: false });
+    if (result.isError) throw result.error;
+    return result.hasNextPage;
+  };
 
   React.useEffect(() => {
     if (!open) {
@@ -206,6 +204,11 @@ export function useAddAthletesSheet({
       hasFilters,
       emptyLibrary,
       allInTournament,
+      key: listKey,
+      hasMore: listQuery.hasNextPage,
+      isPlaceholderData: listQuery.isPlaceholderData,
+      loadMoreDisabled: !open || listQuery.isFetching,
+      loadMore,
     },
     selection: {
       selectedIds,

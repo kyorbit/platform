@@ -4,6 +4,7 @@ import { AddAthleteProfileRow } from './add-athlete-profile-row';
 import type { AddAthletesSheetState } from '@/features/dashboard/hooks/use-add-athletes-sheet';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
+import { LoadMore } from '@/components/interior/load-more';
 import { cn } from '@/lib/utils';
 import {
   Empty,
@@ -90,6 +91,8 @@ function AthletesRows({
   selectedIds,
   onToggleProfile,
 }: AddAthletesListProps) {
+  'use no memo';
+
   const { rowVirtualizer, virtualItems } = virtual;
 
   return (
@@ -147,7 +150,22 @@ export function AddAthletesList(props: AddAthletesListProps) {
           pending: <AthletesPending />,
           emptyLibrary: <EmptyAthleteLibrary />,
           noResults: <NoAthletesFound description={noResultsCopy(list)} />,
-          ready: <AthletesRows {...props} />,
+          ready: (
+            <>
+              <AthletesRows {...props} />
+              {!list.isPlaceholderData && (
+                <LoadMore
+                  key={list.key}
+                  onLoad={list.loadMore}
+                  hasMore={list.hasMore}
+                  disabled={list.loadMoreDisabled}
+                  rootRef={virtual.scrollRef}
+                  className="px-3 py-4"
+                  labels={{ end: 'No more athletes' }}
+                />
+              )}
+            </>
+          ),
         }[view]
       }
     </div>
