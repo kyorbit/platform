@@ -44,7 +44,7 @@ export function DataTableToolbar<TData extends RowData>({
       role="toolbar"
       aria-orientation="horizontal"
       className={cn(
-        'flex w-full items-start justify-between gap-2 p-1',
+        'flex w-full flex-wrap items-start justify-between gap-2 p-1',
         className
       )}
       {...props}
@@ -71,7 +71,7 @@ export function DataTableToolbar<TData extends RowData>({
           </Button>
         )}
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         {children}
         <DataTableViewOptions table={table} state={state} align="end" />
       </div>
