@@ -44,7 +44,7 @@ export function AddAthletesSheet({
   const { filters, list, selection, virtual, submit } = sheet;
 
   return (
-    <SheetContent className="flex w-full flex-col gap-2 sm:max-w-lg">
+    <SheetContent className="flex flex-col gap-2 data-[side=right]:w-full sm:max-w-lg">
       <SheetHeader>
         <SheetTitle className="text-lg">Add athletes</SheetTitle>
         <SheetDescription>
