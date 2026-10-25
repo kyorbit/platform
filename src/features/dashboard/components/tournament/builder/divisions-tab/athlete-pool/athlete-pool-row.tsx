@@ -29,7 +29,7 @@ export function AthletePoolRow({
   const assignButton = useButtonStatus(assignAthlete.status);
   const { setNodeRef, attributes, listeners, isDragging } = useDraggable({
     id: athlete.id,
-    data: { type: 'pool-athlete', athleteId: athlete.id },
+    data: { type: 'pool-athlete', athleteId: athlete.id, name: athlete.name },
     disabled: readOnly,
   });
 

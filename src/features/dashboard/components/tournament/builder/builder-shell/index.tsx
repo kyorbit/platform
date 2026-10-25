@@ -1,7 +1,7 @@
 import React from 'react';
 import { PanelsTopLeft } from 'lucide-react';
 import { EdgeReveal } from './edge-reveal';
-import { HeaderActionsProvider } from './header-actions';
+import { BuilderFooterProvider } from './footer-portal';
 import { useBracketChrome } from '@/features/dashboard/contexts/bracket-chrome';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -23,7 +23,7 @@ export function BuilderShell({
   const { isFullscreen, chromeOpen, toggleChrome } = useBracketChrome();
 
   return (
-    <HeaderActionsProvider>
+    <BuilderFooterProvider>
       <div
         className={cn('flex h-dvh flex-col', isFullscreen && 'overflow-hidden')}
         data-bracket-fullscreen={isFullscreen || undefined}
@@ -68,6 +68,6 @@ export function BuilderShell({
           </Button>
         )}
       </div>
-    </HeaderActionsProvider>
+    </BuilderFooterProvider>
   );
 }

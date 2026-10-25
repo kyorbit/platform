@@ -2,7 +2,7 @@ import React from 'react';
 import { DndContext, DragOverlay } from '@dnd-kit/core';
 import { GripVertical, List, LockOpen } from 'lucide-react';
 import { EdgeReveal } from '../builder-shell/edge-reveal';
-import { HeaderActions } from '../builder-shell/header-actions';
+import { BuilderFooterPortal } from '../builder-shell/footer-portal';
 import { Pane } from '../builder-shell/pane';
 import { BracketCanvas } from './bracket-canvas';
 import { BracketScreenshotDialog } from './bracket-screenshot-dialog';
@@ -69,7 +69,11 @@ export function BracketsTab() {
   return (
     <DndContext
       sensors={sensors}
-      onDragStart={onDragStart}
+      onDragStart={(event) => {
+        // The panel sheet would cover the bracket; the overlay carries the athlete.
+        setPanelOpen(false);
+        onDragStart(event);
+      }}
       onDragEnd={onDragEnd}
     >
       <div className="canvas-background flex h-full min-h-0 w-full">
@@ -90,22 +94,22 @@ export function BracketsTab() {
             open={panelOpen}
             onOpenChange={setPanelOpen}
           >
-            <DivisionsPanel />
+            <DivisionsPanel onSelect={() => setPanelOpen(false)} />
           </Pane>
         )}
       </div>
 
       {!isDesktop && (
-        <HeaderActions>
+        <BuilderFooterPortal>
           <Button
-            variant="outline"
-            size="sm"
+            variant="ghost"
+            size="icon-sm"
+            aria-label="Divisions"
             onClick={() => setPanelOpen(true)}
           >
-            <List data-icon="inline-start" aria-hidden="true" />
-            <span className="max-md:sr-only">Divisions</span>
+            <List aria-hidden="true" />
           </Button>
-        </HeaderActions>
+        </BuilderFooterPortal>
       )}
 
       <DragOverlay dropAnimation={null}>

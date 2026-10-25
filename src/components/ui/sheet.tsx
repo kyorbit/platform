@@ -50,13 +50,15 @@ function SheetContent({
   children,
   side = 'right',
   showCloseButton = true,
+  keepMounted,
   ...props
 }: React.ComponentProps<typeof SheetPrimitive.Popup> & {
   side?: 'top' | 'right' | 'bottom' | 'left';
   showCloseButton?: boolean;
+  keepMounted?: boolean;
 }) {
   return (
-    <SheetPortal>
+    <SheetPortal keepMounted={keepMounted}>
       <SheetOverlay />
       <SheetPrimitive.Popup
         data-slot="sheet-content"

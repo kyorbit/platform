@@ -1,4 +1,3 @@
-import { HeaderActionsSlot } from './header-actions';
 import type { TournamentData } from '@/contracts/tournament/list';
 import type { User } from '@/lib/auth';
 import { TournamentStatusPill } from '@/features/dashboard/components/tournament/tournament-status-pill';
@@ -57,7 +56,6 @@ export function BuilderHeader({
       </Tabs>
 
       <div className="ml-auto flex shrink-0 items-center gap-2">
-        <HeaderActionsSlot />
         <Button
           variant="ghost"
           size="icon"

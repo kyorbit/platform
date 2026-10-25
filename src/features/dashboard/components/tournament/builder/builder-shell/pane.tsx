@@ -28,9 +28,12 @@ export function Pane({
   return (
     <>
       <Sheet open={open} onOpenChange={onOpenChange}>
+        {/* Kept mounted so closing the sheet on drag start keeps the dragged
+            node: dnd-kit loses the drag data when it unmounts. */}
         <SheetContent
           side={side}
           showCloseButton={false}
+          keepMounted
           className="gap-0 data-[side=left]:w-auto data-[side=right]:w-auto"
         >
           <SheetTitle className="sr-only">{title}</SheetTitle>

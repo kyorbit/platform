@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from '@tanstack/react-router';
 import {
   ArrowLeft,
@@ -9,6 +8,8 @@ import {
   Trash2,
   Zap,
 } from 'lucide-react';
+import { BuilderFooterSlot } from './footer-portal';
+import type { LucideIcon } from 'lucide-react';
 import type {
   TournamentData,
   TournamentStatus,
@@ -38,6 +39,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { cn } from '@/lib/utils';
 
 interface BuilderFooterProps {
   tournament: TournamentData;
@@ -51,19 +53,36 @@ interface BuilderFooterProps {
   onActivity: () => void;
 }
 
-function DisabledWhenReadOnly({
-  readOnly,
-  children,
-}: {
-  readOnly: boolean;
-  children: React.ReactElement;
-}) {
-  if (!readOnly) return children;
+/** A secondary action: an inline button from `lg`, a menu item below it. */
+interface FooterAction {
+  label: string;
+  icon: LucideIcon;
+  onClick: () => void;
+  disabled?: boolean;
+  variant?: 'destructive';
+}
+
+function InlineAction({ action }: { action: FooterAction }) {
+  const button = (
+    <Button
+      variant="ghost"
+      size="sm"
+      disabled={action.disabled}
+      onClick={action.onClick}
+      className={cn(
+        'gap-2',
+        action.variant === 'destructive' &&
+          'text-destructive hover:bg-destructive/10 hover:text-destructive'
+      )}
+    >
+      <action.icon className="size-4" />
+      <span>{action.label}</span>
+    </Button>
+  );
+  if (!action.disabled) return button;
   return (
     <Tooltip>
-      <TooltipTrigger
-        render={<span className="inline-flex">{children}</span>}
-      />
+      <TooltipTrigger render={<span className="inline-flex">{button}</span>} />
       <TooltipContent>Tournament completed</TooltipContent>
     </Tooltip>
   );
@@ -88,6 +107,36 @@ export function BuilderFooter({
 }: BuilderFooterProps) {
   const status = tournament.status;
 
+  const autoAssign: FooterAction = {
+    label: 'Auto-assign all',
+    icon: Zap,
+    onClick: () => onAutoAssignAll?.(),
+    disabled: readOnly,
+  };
+  const manageActions: Array<FooterAction> = [
+    { label: 'Activity', icon: History, onClick: onActivity },
+    {
+      label: 'Edit Tournament',
+      icon: Settings,
+      onClick: onEditTournament,
+      disabled: readOnly,
+    },
+    {
+      label: 'Delete',
+      icon: Trash2,
+      onClick: onDeleteTournament,
+      disabled: readOnly,
+      variant: 'destructive',
+    },
+  ];
+  const commandCenterLink = (
+    <Link
+      to="/dashboard/tournaments/$id"
+      params={{ id: tournament.id }}
+      search={{}}
+    />
+  );
+
   return (
     <TooltipProvider delay={200}>
       <footer className="bg-sidebar/70 supports-backdrop-filter:bg-sidebar/50 flex h-12 items-center gap-2 border-t px-4">
@@ -104,18 +153,7 @@ export function BuilderFooter({
           </StatusButton>
 
           <div className="contents max-lg:hidden">
-            <DisabledWhenReadOnly readOnly={readOnly}>
-              <Button
-                variant="ghost"
-                size="sm"
-                disabled={readOnly}
-                onClick={() => onAutoAssignAll?.()}
-                className="gap-2"
-              >
-                <Zap className="size-4" />
-                <span>Auto-assign all</span>
-              </Button>
-            </DisabledWhenReadOnly>
+            <InlineAction action={autoAssign} />
           </div>
 
           <Select
@@ -150,89 +188,45 @@ export function BuilderFooter({
           className="mx-2 my-auto h-6 max-lg:hidden"
         />
 
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            render={
-              <Button
-                variant="ghost"
-                size="icon-sm"
-                className="ml-auto lg:hidden"
-                aria-label="More actions"
-              >
-                <MoreHorizontal className="size-4" />
-              </Button>
-            }
-          />
-          <DropdownMenuContent align="end" side="top" className="w-48">
-            <DropdownMenuItem
-              disabled={readOnly}
-              onClick={() => onAutoAssignAll?.()}
-            >
-              <Zap />
-              Auto-assign all
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={onActivity}>
-              <History />
-              Activity
-            </DropdownMenuItem>
-            <DropdownMenuItem disabled={readOnly} onClick={onEditTournament}>
-              <Settings />
-              Edit Tournament
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              variant="destructive"
-              disabled={readOnly}
-              onClick={onDeleteTournament}
-            >
-              <Trash2 />
-              Delete
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
+        <div className="ml-auto flex items-center gap-1 lg:hidden">
+          <DropdownMenu>
+            <DropdownMenuTrigger
               render={
-                <Link
-                  to="/dashboard/tournaments/$id"
-                  params={{ id: tournament.id }}
-                  search={{}}
-                />
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label="More actions"
+                >
+                  <MoreHorizontal className="size-4" />
+                </Button>
               }
-            >
-              <ArrowLeft />
-              Command Center
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+            />
+            <DropdownMenuContent align="end" side="top" className="w-48">
+              {[autoAssign, ...manageActions].map((action) => (
+                <DropdownMenuItem
+                  key={action.label}
+                  variant={action.variant}
+                  disabled={action.disabled}
+                  onClick={action.onClick}
+                >
+                  <action.icon />
+                  {action.label}
+                </DropdownMenuItem>
+              ))}
+              <DropdownMenuSeparator />
+              <DropdownMenuItem render={commandCenterLink}>
+                <ArrowLeft />
+                Command Center
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <BuilderFooterSlot />
+        </div>
 
         <div className="ml-auto flex items-center gap-1 max-lg:hidden">
-          <Button variant="ghost" size="sm" type="button" onClick={onActivity}>
-            <History className="mr-1 size-4" />
-            Activity
-          </Button>
-          <DisabledWhenReadOnly readOnly={readOnly}>
-            <Button
-              variant="ghost"
-              size="sm"
-              disabled={readOnly}
-              onClick={onEditTournament}
-              className="gap-2"
-            >
-              <Settings className="size-4" />
-              <span>Edit Tournament</span>
-            </Button>
-          </DisabledWhenReadOnly>
-
-          <DisabledWhenReadOnly readOnly={readOnly}>
-            <Button
-              variant="ghost"
-              size="sm"
-              disabled={readOnly}
-              onClick={onDeleteTournament}
-              className="text-destructive hover:bg-destructive/10 hover:text-destructive gap-2"
-            >
-              <Trash2 className="size-4" />
-              <span>Delete</span>
-            </Button>
-          </DisabledWhenReadOnly>
+          {manageActions.map((action) => (
+            <InlineAction key={action.label} action={action} />
+          ))}
 
           <Separator orientation="vertical" className="mx-2 my-auto h-6" />
 
@@ -241,13 +235,7 @@ export function BuilderFooter({
             size="sm"
             className="gap-2"
             nativeButton={false}
-            render={
-              <Link
-                to="/dashboard/tournaments/$id"
-                params={{ id: tournament.id }}
-                search={{}}
-              />
-            }
+            render={commandCenterLink}
           >
             <ArrowLeft className="size-4" />
             <span>Command Center</span>

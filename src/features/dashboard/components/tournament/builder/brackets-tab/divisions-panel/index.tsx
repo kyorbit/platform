@@ -120,7 +120,7 @@ function EmptyNoAthletesToShow() {
   );
 }
 
-export function DivisionsPanel() {
+export function DivisionsPanel({ onSelect }: { onSelect?: () => void }) {
   const {
     divisions,
     arenaDivisionOrder,
@@ -175,7 +175,10 @@ export function DivisionsPanel() {
       <DivisionsTabsHeader
         divisions={divisions}
         selectedDivisionId={selectedDivisionId}
-        onSelect={setSelectedDivisionId}
+        onSelect={(id) => {
+          setSelectedDivisionId(id);
+          onSelect?.();
+        }}
       />
       <ArenaOrderRailHint
         divisions={divisions}

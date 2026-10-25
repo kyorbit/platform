@@ -104,7 +104,8 @@ export function AthleteTable({
 
   // Pinning moves Name ahead of Athlete ID, so only pin where the table scrolls sideways.
   const isPhone = !useMediaQuery('(min-width: 40rem)');
-  React.useEffect(() => {
+  // Layout effect so client renders pin before paint.
+  React.useLayoutEffect(() => {
     table.setColumnPinning({
       start: isPhone ? ['select', 'name'] : [],
       end: ['actions'],

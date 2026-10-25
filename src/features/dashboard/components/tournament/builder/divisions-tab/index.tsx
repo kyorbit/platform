@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   DndContext,
+  DragOverlay,
   KeyboardSensor,
   MouseSensor,
   TouchSensor,
@@ -12,13 +13,13 @@ import { toast } from 'sonner';
 import { useRouterState } from '@tanstack/react-router';
 import { AddDivisionDialog } from '../dialogs/add-division-dialog';
 import { DivisionSettingsSheet } from '../dialogs/division-settings-sheet';
-import { HeaderActions } from '../builder-shell/header-actions';
+import { BuilderFooterPortal } from '../builder-shell/footer-portal';
 import { Pane } from '../builder-shell/pane';
 import { AddAthletesSheet } from './add-athletes-sheet';
 import { AthletePool } from './athlete-pool';
 import { DivisionRosterTable } from './division-roster-table';
 import { DivisionsRail } from './divisions-rail';
-import type { DragEndEvent } from '@dnd-kit/core';
+import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import type { DivisionData } from '@/contracts/tournament/division';
 import { useBuilderManagerQuery } from '@/features/dashboard/hooks/use-builder-manager-query';
 import { useAssignAthlete } from '@/queries/division';
@@ -59,6 +60,7 @@ export function DivisionsTab({
     React.useState<DivisionData | null>(null);
   const [poolOpen, setPoolOpen] = React.useState(false);
   const [railOpen, setRailOpen] = React.useState(false);
+  const [dragName, setDragName] = React.useState<string | null>(null);
   const isDesktop = useMediaQuery('(min-width: 1024px)');
 
   const sensors = useSensors(
@@ -96,7 +98,16 @@ export function DivisionsTab({
   const selectedDivision =
     divisions.find((d) => d.id === selectedDivisionId) ?? null;
 
+  const handleDragStart = (event: DragStartEvent) => {
+    setDragName(
+      (event.active.data.current?.name as string | undefined) ?? null
+    );
+    // The pool sheet would cover the roster; the overlay carries the athlete.
+    setPoolOpen(false);
+  };
+
   const handleDragEnd = (event: DragEndEvent) => {
+    setDragName(null);
     const athleteId = event.active.data.current?.athleteId as
       | string
       | undefined;
@@ -135,18 +146,31 @@ export function DivisionsTab({
   };
 
   return (
-    <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+    <DndContext
+      sensors={sensors}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+      onDragCancel={() => setDragName(null)}
+    >
       {!isDesktop && (
-        <HeaderActions>
-          <Button variant="outline" size="sm" onClick={() => setPoolOpen(true)}>
-            <Users data-icon="inline-start" aria-hidden="true" />
-            <span className="max-md:sr-only">Athlete pool</span>
+        <BuilderFooterPortal>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            aria-label="Athlete pool"
+            onClick={() => setPoolOpen(true)}
+          >
+            <Users aria-hidden="true" />
           </Button>
-          <Button variant="outline" size="sm" onClick={() => setRailOpen(true)}>
-            <List data-icon="inline-start" aria-hidden="true" />
-            <span className="max-md:sr-only">Division list</span>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            aria-label="Division list"
+            onClick={() => setRailOpen(true)}
+          >
+            <List aria-hidden="true" />
           </Button>
-        </HeaderActions>
+        </BuilderFooterPortal>
       )}
       <div className="flex h-full min-h-0 w-full">
         <Sheet
@@ -197,7 +221,10 @@ export function DivisionsTab({
               divisions={divisions}
               selectedDivisionId={selectedDivisionId}
               readOnly={readOnly}
-              onSelect={(id) => void setSelectedDivision(id)}
+              onSelect={(id) => {
+                void setSelectedDivision(id);
+                setRailOpen(false);
+              }}
               prepareSettingsDivision={prepareSettingsDivision}
               onOpenAddDivision={() => {
                 setRailOpen(false);
@@ -218,6 +245,13 @@ export function DivisionsTab({
           />
         </Dialog>
       </div>
+      <DragOverlay dropAnimation={null}>
+        {dragName && (
+          <div className="bg-card cursor-grabbing truncate rounded-md border px-3 py-2 text-sm font-medium shadow-md">
+            {dragName}
+          </div>
+        )}
+      </DragOverlay>
     </DndContext>
   );
 }
