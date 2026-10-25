@@ -3,11 +3,11 @@ import {
   ArrowLeft,
   History,
   MoreHorizontal,
-  RefreshCw,
   Settings,
   Trash2,
   Zap,
 } from 'lucide-react';
+import { useMemo } from 'react';
 import { BuilderFooterSlot } from './footer-portal';
 import type { LucideIcon } from 'lucide-react';
 import type {
@@ -16,8 +16,6 @@ import type {
 } from '@/contracts/tournament/list';
 import { TOURNAMENT_STATUSES } from '@/contracts/tournament/list';
 import { Button } from '@/components/ui/button';
-import { StatusButton } from '@/components/async/status-button';
-import { Separator } from '@/components/ui/separator';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -45,7 +43,6 @@ interface BuilderFooterProps {
   tournament: TournamentData;
   readOnly: boolean;
   isSettingTournamentStatus?: boolean;
-  onRefresh?: () => void | Promise<void>;
   onAutoAssignAll?: () => void;
   onAdminStatusIntent: (next: TournamentStatus) => void;
   onEditTournament: () => void;
@@ -98,7 +95,6 @@ export function BuilderFooter({
   tournament,
   readOnly,
   isSettingTournamentStatus,
-  onRefresh,
   onAutoAssignAll,
   onAdminStatusIntent,
   onEditTournament,
@@ -107,14 +103,14 @@ export function BuilderFooter({
 }: BuilderFooterProps) {
   const status = tournament.status;
 
-  const autoAssign: FooterAction = {
-    label: 'Auto-assign all',
-    icon: Zap,
-    onClick: () => onAutoAssignAll?.(),
-    disabled: readOnly,
-  };
   const manageActions: Array<FooterAction> = [
     { label: 'Activity', icon: History, onClick: onActivity },
+    {
+      label: 'Auto-assign',
+      icon: Zap,
+      onClick: () => onAutoAssignAll?.(),
+      disabled: readOnly,
+    },
     {
       label: 'Edit Tournament',
       icon: Settings,
@@ -129,32 +125,32 @@ export function BuilderFooter({
       variant: 'destructive',
     },
   ];
-  const commandCenterLink = (
-    <Link
-      to="/dashboard/tournaments/$id"
-      params={{ id: tournament.id }}
-      search={{}}
-    />
+
+  const commandCenterLink = useMemo(
+    () => (
+      <Link
+        to="/dashboard/tournaments/$id"
+        params={{ id: tournament.id }}
+        search={{}}
+      />
+    ),
+    [tournament.id]
   );
 
   return (
     <TooltipProvider delay={200}>
-      <footer className="bg-sidebar/70 supports-backdrop-filter:bg-sidebar/50 flex h-12 items-center gap-2 border-t px-4">
+      <footer className="bg-sidebar/70 supports-backdrop-filter:bg-sidebar/50 flex h-12 items-center gap-2 border-t px-2">
         <div className="flex items-center gap-2">
-          <StatusButton
-            successLabel={<span className="max-sm:sr-only">Refreshed</span>}
-            variant="ghost"
+          <Button
+            variant="outline"
             size="sm"
-            onClick={() => onRefresh?.()}
-            className="gap-2"
+            className="gap-2 max-sm:size-8"
+            nativeButton={false}
+            render={commandCenterLink}
           >
-            <RefreshCw />
-            <span className="max-sm:sr-only">Refresh</span>
-          </StatusButton>
-
-          <div className="contents max-lg:hidden">
-            <InlineAction action={autoAssign} />
-          </div>
+            <ArrowLeft data-icon="inline-start" className="size-4" />
+            <span className="max-md:hidden">Command Center</span>
+          </Button>
 
           <Select
             items={TOURNAMENT_STATUSES.map((s) => ({
@@ -168,10 +164,10 @@ export function BuilderFooter({
               onAdminStatusIntent(v as TournamentStatus);
             }}
           >
-            <SelectTrigger size="sm" className="w-35">
+            <SelectTrigger size="sm" className="w-28 sm:w-36">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="min-w-28">
               <SelectGroup>
                 {TOURNAMENT_STATUSES.map((s) => (
                   <SelectItem key={s} value={s}>
@@ -182,11 +178,6 @@ export function BuilderFooter({
             </SelectContent>
           </Select>
         </div>
-
-        <Separator
-          orientation="vertical"
-          className="mx-2 my-auto h-6 max-lg:hidden"
-        />
 
         <div className="ml-auto flex items-center gap-1 lg:hidden">
           <DropdownMenu>
@@ -202,7 +193,7 @@ export function BuilderFooter({
               }
             />
             <DropdownMenuContent align="end" side="top" className="w-48">
-              {[autoAssign, ...manageActions].map((action) => (
+              {manageActions.map((action) => (
                 <DropdownMenuItem
                   key={action.label}
                   variant={action.variant}
@@ -214,10 +205,6 @@ export function BuilderFooter({
                 </DropdownMenuItem>
               ))}
               <DropdownMenuSeparator />
-              <DropdownMenuItem render={commandCenterLink}>
-                <ArrowLeft />
-                Command Center
-              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
           <BuilderFooterSlot />
@@ -227,19 +214,6 @@ export function BuilderFooter({
           {manageActions.map((action) => (
             <InlineAction key={action.label} action={action} />
           ))}
-
-          <Separator orientation="vertical" className="mx-2 my-auto h-6" />
-
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-2"
-            nativeButton={false}
-            render={commandCenterLink}
-          >
-            <ArrowLeft className="size-4" />
-            <span>Command Center</span>
-          </Button>
         </div>
       </footer>
     </TooltipProvider>

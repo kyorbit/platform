@@ -117,7 +117,7 @@ export function HeaderActions({ actions }: { actions: Array<HeaderAction> }) {
         >
           <MoreHorizontal />
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
+        <DropdownMenuContent align="end" className="w-fit">
           {actions.map((action) => (
             <DropdownMenuItem
               key={action.label}

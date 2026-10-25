@@ -130,7 +130,6 @@ function TournamentBuilderActiveBody({
           tournament={tournament}
           readOnly={b.isReadOnly}
           isSettingTournamentStatus={setTournamentStatusMutation.isPending}
-          onRefresh={b.handleRefresh}
           onAutoAssignAll={() => b.setShowAutoAssignAll(true)}
           onAdminStatusIntent={b.handleAdminStatusIntent}
           onEditTournament={() => {
