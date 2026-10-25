@@ -1,5 +1,28 @@
 # Changelog
 
+## [1.2.0](https://github.com/kyorbit/platform/compare/kyorbit-v1.1.1...kyorbit-v1.2.0) (2026-10-25)
+
+
+### Features
+
+* **bracket:** phone layout for the Brackets tab with tap-to-explain toolbar ([#300](https://github.com/kyorbit/platform/issues/300)) ([83c36ac](https://github.com/kyorbit/platform/commit/83c36ac76fa168edd87f1632775e99195b2cb8f3))
+* **bracket:** touch pan, pinch zoom and touch drag-and-drop on the Brackets tab ([#299](https://github.com/kyorbit/platform/issues/299)) ([078d62e](https://github.com/kyorbit/platform/commit/078d62e0cb26c082c902926a8f9c5ae3c8cd5986))
+* **builder:** tablet layout for Builder shell and Divisions tab ([#298](https://github.com/kyorbit/platform/issues/298)) ([13a484c](https://github.com/kyorbit/platform/commit/13a484c45f0bcc0a41bd32980afc55e32dc15b3e))
+* **dashboard:** fit overview pages on phone and tablet ([#297](https://github.com/kyorbit/platform/issues/297)) ([57e5f4a](https://github.com/kyorbit/platform/commit/57e5f4a6962f9c27058559e9d7d7f7d3dc91a49c))
+* **dashboard:** phone and tablet layouts for the dashboard ([1ceffac](https://github.com/kyorbit/platform/commit/1ceffac9b15fa7ed3063bf77841e2e1a5ee0ef7c))
+* **dashboard:** phone and tablet layouts for the dashboard ([0746067](https://github.com/kyorbit/platform/commit/0746067695c76808c53a5ea4f9defbe94fda31f7))
+
+
+### Bug Fixes
+
+* **bracket:** drop stale pointers when a new primary pointer starts ([#299](https://github.com/kyorbit/platform/issues/299)) ([7899a9d](https://github.com/kyorbit/platform/commit/7899a9ddc24c5f2532de96d4ac2b7ad149eaf478))
+* **builder:** address responsive dashboard review findings ([#296](https://github.com/kyorbit/platform/issues/296)) ([8dde238](https://github.com/kyorbit/platform/commit/8dde238c229a6b15eaeea02e2231c920cf41b23e))
+* **builder:** icon-only Refresh on phones; translate dialog close directly ([#296](https://github.com/kyorbit/platform/issues/296)) ([503a75c](https://github.com/kyorbit/platform/commit/503a75c04ee28b07d7893210856a9a39c0428058))
+* **builder:** mount a Toaster on the Builder route ([#300](https://github.com/kyorbit/platform/issues/300)) ([0c4b0b5](https://github.com/kyorbit/platform/commit/0c4b0b5e964c54018817bfadbc08a7d75b6e2cef))
+* **builder:** rearrange action buttons for better ux ([990dc82](https://github.com/kyorbit/platform/commit/990dc824b7e423571276ee068d3142e93e592d1d))
+* **dashboard:** let right-side sheets take full width on phones ([#300](https://github.com/kyorbit/platform/issues/300)) ([f044eda](https://github.com/kyorbit/platform/commit/f044eda27525e76b3fc1607309250be510a10c56))
+* **dashboard:** wrap data-table toolbar actions on phones ([#297](https://github.com/kyorbit/platform/issues/297)) ([d2bc72d](https://github.com/kyorbit/platform/commit/d2bc72dc6c4d2bc20bd2f221a2da87f7688d9590))
+
 ## [1.1.1](https://github.com/kyorbit/platform/compare/kyorbit-v1.1.0...kyorbit-v1.1.1) (2026-10-14)
 
 
