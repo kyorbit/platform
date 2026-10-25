@@ -3,6 +3,7 @@ import { Link } from '@tanstack/react-router';
 import {
   ArrowLeft,
   History,
+  MoreHorizontal,
   RefreshCw,
   Settings,
   Trash2,
@@ -16,6 +17,13 @@ import { TOURNAMENT_STATUSES } from '@/contracts/tournament/list';
 import { Button } from '@/components/ui/button';
 import { StatusButton } from '@/components/async/status-button';
 import { Separator } from '@/components/ui/separator';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import {
   Select,
   SelectContent,
@@ -95,18 +103,20 @@ export function BuilderFooter({
             <span>Refresh</span>
           </StatusButton>
 
-          <DisabledWhenReadOnly readOnly={readOnly}>
-            <Button
-              variant="ghost"
-              size="sm"
-              disabled={readOnly}
-              onClick={() => onAutoAssignAll?.()}
-              className="gap-2"
-            >
-              <Zap className="size-4" />
-              <span>Auto-assign all</span>
-            </Button>
-          </DisabledWhenReadOnly>
+          <div className="contents max-lg:hidden">
+            <DisabledWhenReadOnly readOnly={readOnly}>
+              <Button
+                variant="ghost"
+                size="sm"
+                disabled={readOnly}
+                onClick={() => onAutoAssignAll?.()}
+                className="gap-2"
+              >
+                <Zap className="size-4" />
+                <span>Auto-assign all</span>
+              </Button>
+            </DisabledWhenReadOnly>
+          </div>
 
           <Select
             items={TOURNAMENT_STATUSES.map((s) => ({
@@ -135,9 +145,65 @@ export function BuilderFooter({
           </Select>
         </div>
 
-        <Separator orientation="vertical" className="mx-2 my-auto h-6" />
+        <Separator
+          orientation="vertical"
+          className="mx-2 my-auto h-6 max-lg:hidden"
+        />
 
-        <div className="ml-auto flex items-center gap-1">
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                className="ml-auto lg:hidden"
+                aria-label="More actions"
+              >
+                <MoreHorizontal className="size-4" />
+              </Button>
+            }
+          />
+          <DropdownMenuContent align="end" side="top" className="w-48">
+            <DropdownMenuItem
+              disabled={readOnly}
+              onClick={() => onAutoAssignAll?.()}
+            >
+              <Zap />
+              Auto-assign all
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={onActivity}>
+              <History />
+              Activity
+            </DropdownMenuItem>
+            <DropdownMenuItem disabled={readOnly} onClick={onEditTournament}>
+              <Settings />
+              Edit Tournament
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              variant="destructive"
+              disabled={readOnly}
+              onClick={onDeleteTournament}
+            >
+              <Trash2 />
+              Delete
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              render={
+                <Link
+                  to="/dashboard/tournaments/$id"
+                  params={{ id: tournament.id }}
+                  search={{}}
+                />
+              }
+            >
+              <ArrowLeft />
+              Command Center
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        <div className="ml-auto flex items-center gap-1 max-lg:hidden">
           <Button variant="ghost" size="sm" type="button" onClick={onActivity}>
             <History className="mr-1 size-4" />
             Activity

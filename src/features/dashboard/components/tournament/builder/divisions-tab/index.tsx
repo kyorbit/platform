@@ -1,19 +1,31 @@
 import React from 'react';
-import { DndContext } from '@dnd-kit/core';
+import {
+  DndContext,
+  KeyboardSensor,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import { List, Users } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouterState } from '@tanstack/react-router';
 import { AddDivisionDialog } from '../dialogs/add-division-dialog';
 import { DivisionSettingsSheet } from '../dialogs/division-settings-sheet';
+import { HeaderActions } from '../builder-shell/header-actions';
 import { AddAthletesSheet } from './add-athletes-sheet';
 import { AthletePool } from './athlete-pool';
 import { DivisionRosterTable } from './division-roster-table';
 import { DivisionsRail } from './divisions-rail';
+import { Pane } from './pane';
 import type { DragEndEvent } from '@dnd-kit/core';
 import type { DivisionData } from '@/contracts/tournament/division';
 import { useBuilderManagerQuery } from '@/features/dashboard/hooks/use-builder-manager-query';
 import { useAssignAthlete } from '@/queries/division';
 import { Dialog } from '@/components/ui/dialog';
 import { Sheet } from '@/components/ui/sheet';
+import { Button } from '@/components/ui/button';
+import { useMediaQuery } from '@/hooks/use-media-query';
 
 interface DivisionsTabProps {
   tournamentId: string;
@@ -45,6 +57,18 @@ export function DivisionsTab({
   const [settingsOpen, setSettingsOpen] = React.useState(false);
   const [settingsDivision, setSettingsDivision] =
     React.useState<DivisionData | null>(null);
+  const [poolOpen, setPoolOpen] = React.useState(false);
+  const [railOpen, setRailOpen] = React.useState(false);
+  const isDesktop = useMediaQuery('(min-width: 1024px)');
+
+  const sensors = useSensors(
+    // Pool "+" stops pointerdown, not mousedown; the distance keeps its click from dragging.
+    useSensor(MouseSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 150, tolerance: 8 },
+    }),
+    useSensor(KeyboardSensor)
+  );
 
   React.useEffect(() => {
     // Only write while still on the builder
@@ -101,18 +125,47 @@ export function DivisionsTab({
 
   const handleSettingsOpenChange = (open: boolean) => {
     setSettingsOpen(open);
-    if (!open) setSettingsDivision(null);
+    if (open) setRailOpen(false);
+    else setSettingsDivision(null);
+  };
+
+  const handleAddAthletesOpenChange = (open: boolean) => {
+    setAddAthletesOpen(open);
+    if (open) setPoolOpen(false);
   };
 
   return (
-    <DndContext onDragEnd={handleDragEnd}>
+    <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+      {!isDesktop && (
+        <HeaderActions>
+          <Button variant="outline" size="sm" onClick={() => setPoolOpen(true)}>
+            <Users data-icon="inline-start" aria-hidden="true" />
+            <span className="max-md:sr-only">Athlete pool</span>
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => setRailOpen(true)}>
+            <List data-icon="inline-start" aria-hidden="true" />
+            <span className="max-md:sr-only">Division list</span>
+          </Button>
+        </HeaderActions>
+      )}
       <div className="flex h-full min-h-0 w-full">
-        <Sheet open={addAthletesOpen} onOpenChange={setAddAthletesOpen}>
-          <AthletePool
-            tournamentId={tournamentId}
-            selectedDivisionId={selectedDivisionId}
-            readOnly={readOnly}
-          />
+        <Sheet
+          open={addAthletesOpen}
+          onOpenChange={handleAddAthletesOpenChange}
+        >
+          <Pane
+            inline={isDesktop}
+            side="left"
+            title="Athlete pool"
+            open={poolOpen}
+            onOpenChange={setPoolOpen}
+          >
+            <AthletePool
+              tournamentId={tournamentId}
+              selectedDivisionId={selectedDivisionId}
+              readOnly={readOnly}
+            />
+          </Pane>
           <AddAthletesSheet
             open={addAthletesOpen}
             onOpenChange={setAddAthletesOpen}
@@ -133,14 +186,25 @@ export function DivisionsTab({
             readOnly={readOnly}
             prepareSettingsDivision={prepareSettingsDivision}
           />
-          <DivisionsRail
-            divisions={divisions}
-            selectedDivisionId={selectedDivisionId}
-            readOnly={readOnly}
-            onSelect={(id) => void setSelectedDivision(id)}
-            prepareSettingsDivision={prepareSettingsDivision}
-            onOpenAddDivision={() => setShowAddDivision(true)}
-          />
+          <Pane
+            inline={isDesktop}
+            side="right"
+            title="Division list"
+            open={railOpen}
+            onOpenChange={setRailOpen}
+          >
+            <DivisionsRail
+              divisions={divisions}
+              selectedDivisionId={selectedDivisionId}
+              readOnly={readOnly}
+              onSelect={(id) => void setSelectedDivision(id)}
+              prepareSettingsDivision={prepareSettingsDivision}
+              onOpenAddDivision={() => {
+                setRailOpen(false);
+                setShowAddDivision(true);
+              }}
+            />
+          </Pane>
           <DivisionSettingsSheet
             division={settingsDivision}
             onOpenChange={handleSettingsOpenChange}

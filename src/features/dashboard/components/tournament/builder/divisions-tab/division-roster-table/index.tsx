@@ -130,7 +130,7 @@ function DivisionRosterActive({
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="size-7"
+                    className="size-7 pointer-coarse:size-9"
                     onClick={() => prepareSettingsDivision(division)}
                   >
                     <Settings className="size-4" />
