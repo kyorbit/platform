@@ -189,6 +189,8 @@ export function usePanZoom(contentWidth: number, contentHeight: number) {
       if (e.pointerType === 'mouse' && e.button !== 0) return;
       const target = e.target as HTMLElement | null;
       if (target?.closest('[data-bracket-slot]')) return;
+      // A new primary pointer means no others are down; drop any whose end event was lost.
+      if (e.isPrimary) pointersRef.current.clear();
       pointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
       startGesture();
     },
