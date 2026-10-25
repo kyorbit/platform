@@ -69,10 +69,11 @@ function DialogContent({
         {...props}
         onScroll={(event) => {
           // The popup scrolls, so the absolute X shifts down by the scroll to stay put.
-          event.currentTarget.style.setProperty(
-            '--dialog-scroll',
-            `${event.currentTarget.scrollTop}px`
+          const close = event.currentTarget.querySelector<HTMLElement>(
+            ':scope > [data-slot=dialog-close]'
           );
+          if (close)
+            close.style.translate = `0 ${event.currentTarget.scrollTop}px`;
           props.onScroll?.(event);
         }}
       >
@@ -83,10 +84,7 @@ function DialogContent({
             render={
               <Button
                 variant="ghost"
-                className={cn(
-                  'absolute top-4 right-4 translate-y-[var(--dialog-scroll,0px)]',
-                  closeButtonClassName
-                )}
+                className={cn('absolute top-4 right-4', closeButtonClassName)}
                 size="icon-sm"
               >
                 <IconX />

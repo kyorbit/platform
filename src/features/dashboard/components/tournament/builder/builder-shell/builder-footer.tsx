@@ -142,14 +142,14 @@ export function BuilderFooter({
       <footer className="bg-sidebar/70 supports-backdrop-filter:bg-sidebar/50 flex h-12 items-center gap-2 border-t px-4">
         <div className="flex items-center gap-2">
           <StatusButton
-            successLabel="Refreshed"
+            successLabel={<span className="max-sm:sr-only">Refreshed</span>}
             variant="ghost"
             size="sm"
             onClick={() => onRefresh?.()}
             className="gap-2"
           >
             <RefreshCw />
-            <span>Refresh</span>
+            <span className="max-sm:sr-only">Refresh</span>
           </StatusButton>
 
           <div className="contents max-lg:hidden">
