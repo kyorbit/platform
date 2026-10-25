@@ -1,6 +1,9 @@
+import React from 'react';
 import { DndContext, DragOverlay } from '@dnd-kit/core';
-import { GripVertical, LockOpen } from 'lucide-react';
+import { GripVertical, List, LockOpen } from 'lucide-react';
 import { EdgeReveal } from '../builder-shell/edge-reveal';
+import { HeaderActions } from '../builder-shell/header-actions';
+import { Pane } from '../builder-shell/pane';
 import { BracketCanvas } from './bracket-canvas';
 import { BracketScreenshotDialog } from './bracket-screenshot-dialog';
 import { BracketToolbar } from './bracket-toolbar';
@@ -14,6 +17,8 @@ import { useBracketChrome } from '@/features/dashboard/contexts/bracket-chrome';
 import { useBuilderWorkspace } from '@/features/dashboard/contexts/builder-workspace';
 import { useTournamentBracket } from '@/features/dashboard/contexts/tournament-bracket';
 import { getBeltLabel } from '@/config/athlete';
+import { Button } from '@/components/ui/button';
+import { useMediaQuery } from '@/hooks/use-media-query';
 
 function canvasView(isPending: boolean, matchCount: number) {
   if (isPending) return 'loading';
@@ -41,6 +46,8 @@ export function BracketsTab() {
 
   const { divisions: builderDivisions } = useBuilderWorkspace();
   const { isFullscreen } = useBracketChrome();
+  const isDesktop = useMediaQuery('(min-width: 1024px)');
+  const [panelOpen, setPanelOpen] = React.useState(false);
 
   if (builderDivisions.length === 0) {
     return <EmptyDivisionsPlaceholder />;
@@ -71,14 +78,35 @@ export function BracketsTab() {
           <BracketToolbar />
         </div>
 
-        {isFullscreen ? (
+        {isFullscreen && isDesktop ? (
           <EdgeReveal edge="right">
             <DivisionsPanel />
           </EdgeReveal>
         ) : (
-          <DivisionsPanel />
+          <Pane
+            inline={isDesktop}
+            side="right"
+            title="Divisions"
+            open={panelOpen}
+            onOpenChange={setPanelOpen}
+          >
+            <DivisionsPanel />
+          </Pane>
         )}
       </div>
+
+      {!isDesktop && (
+        <HeaderActions>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setPanelOpen(true)}
+          >
+            <List data-icon="inline-start" aria-hidden="true" />
+            <span className="max-md:sr-only">Divisions</span>
+          </Button>
+        </HeaderActions>
+      )}
 
       <DragOverlay dropAnimation={null}>
         {dragLabel && (
