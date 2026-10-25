@@ -13,16 +13,25 @@ export function BracketChromeProvider({
   const [captureTarget, setCaptureTarget] =
     React.useState<BracketCaptureTarget | null>(null);
 
+  const [chromeOpen, setChromeOpen] = React.useState(false);
+
   const enterFullscreen = React.useCallback(() => {
     setIsFullscreen(true);
+    setChromeOpen(false);
   }, []);
 
   const exitFullscreen = React.useCallback(() => {
     setIsFullscreen(false);
+    setChromeOpen(false);
   }, []);
 
   const toggleFullscreen = React.useCallback(() => {
     setIsFullscreen((prev) => !prev);
+    setChromeOpen(false);
+  }, []);
+
+  const toggleChrome = React.useCallback(() => {
+    setChromeOpen((prev) => !prev);
   }, []);
 
   React.useEffect(() => {
@@ -44,6 +53,8 @@ export function BracketChromeProvider({
       enterFullscreen,
       exitFullscreen,
       toggleFullscreen,
+      chromeOpen,
+      toggleChrome,
       screenshotOpen,
       setScreenshotOpen,
       captureTarget,
@@ -54,6 +65,8 @@ export function BracketChromeProvider({
       enterFullscreen,
       exitFullscreen,
       toggleFullscreen,
+      chromeOpen,
+      toggleChrome,
       screenshotOpen,
       captureTarget,
     ]

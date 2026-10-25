@@ -8,6 +8,13 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ButtonGroupSeparator } from '@/components/ui/button-group';
 import { Button } from '@/components/ui/button';
 import { GithubIcon } from '@/components/icons/github';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface BuilderHeaderProps {
   tournament: TournamentData;
@@ -24,38 +31,75 @@ export function BuilderHeader({
 }: BuilderHeaderProps) {
   return (
     <header className="bg-sidebar/70 supports-backdrop-filter:bg-sidebar/50 sticky top-0 z-10 flex h-14 items-center gap-2 border-b px-4">
-      <div className="flex items-center gap-2">
-        <BrandIcon className="size-8" />
-        <h1 className="text-lg font-semibold">{tournament.name}</h1>
-        <TournamentStatusPill status={tournament.status} className="ml-1" />
+      <div
+        className="hidden min-w-0 flex-1 items-center gap-2 lg:flex"
+        aria-label="Tournament info"
+      >
+        <BrandIcon className="size-8 shrink-0" />
+        <h1 className="truncate text-lg font-semibold">{tournament.name}</h1>
+        <TournamentStatusPill
+          status={tournament.status}
+          className="ml-1 shrink-0 max-sm:hidden"
+        />
       </div>
+
+      <DropdownMenu>
+        <div className="flex items-center">
+          <DropdownMenuTrigger
+            className="lg:hidden"
+            render={
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="Touranment info"
+              />
+            }
+          >
+            <BrandIcon className="size-8" />
+          </DropdownMenuTrigger>
+          <TournamentStatusPill
+            status={tournament.status}
+            showLabel={false}
+            className="shrink-0 bg-transparent"
+          />
+        </div>
+        <DropdownMenuContent>
+          <DropdownMenuGroup>
+            <DropdownMenuLabel>{tournament.name}</DropdownMenuLabel>
+            <DropdownMenuLabel>
+              Status: <span className="capitalize">{tournament.status}</span>
+            </DropdownMenuLabel>
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
 
       <Tabs
         value={tab}
         onValueChange={(t) => onTabChange(t as typeof tab)}
-        className="absolute top-2.5 left-1/2 h-10 -translate-x-1/2"
+        className="absolute top-2.5 left-1/2 h-10 shrink-0 -translate-x-1/2"
       >
         <TabsList className="bg-sidebar border-2 p-0">
           <TabsTrigger
             value="divisions"
-            className="w-32 rounded-r-none border-none px-4 text-lg"
+            className="rounded-r-none border-none px-3 lg:w-32 lg:px-4 lg:text-lg"
           >
             Divisions
           </TabsTrigger>
           <ButtonGroupSeparator />
           <TabsTrigger
             value="brackets"
-            className="w-32 rounded-l-none border-none px-4 text-lg"
+            className="rounded-l-none border-none px-3 lg:w-32 lg:px-4 lg:text-lg"
           >
             Brackets
           </TabsTrigger>
         </TabsList>
       </Tabs>
 
-      <div className="ml-auto flex items-center gap-2">
+      <div className="ml-auto flex shrink-0 items-center gap-2">
         <Button
           variant="ghost"
           size="icon"
+          className="max-sm:hidden"
           nativeButton={false}
           render={
             <a

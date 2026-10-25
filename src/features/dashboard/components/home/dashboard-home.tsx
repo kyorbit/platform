@@ -23,7 +23,7 @@ export function DashboardHome() {
     <div className="flex h-full flex-col">
       <div className="relative flex-1 overflow-auto py-6">
         <main className="relative mx-auto flex max-w-7xl flex-col gap-6 px-6">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
               <h1 className="text-2xl font-bold tracking-tight text-balance">
                 Operations hub

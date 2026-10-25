@@ -47,7 +47,7 @@ export function TournamentsTable({
     filteredRowCount: data?.total ?? 0,
     initialState: {
       sorting: [{ id: 'createdAt', desc: true }],
-      columnPinning: { start: [], end: ['actions'] },
+      columnPinning: { start: ['name'], end: ['actions'] },
     },
     shallow: true,
     clearOnDefault: true,

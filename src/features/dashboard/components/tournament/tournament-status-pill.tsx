@@ -18,11 +18,13 @@ const STATUS_LABEL: Record<TournamentStatus, string> = {
 
 interface TournamentStatusPillProps {
   status: TournamentStatus;
+  showLabel?: boolean;
   className?: string;
 }
 
 export function TournamentStatusPill({
   status,
+  showLabel = true,
   className,
 }: TournamentStatusPillProps) {
   return (
@@ -31,7 +33,7 @@ export function TournamentStatusPill({
       className={cn('font-medium tracking-wide uppercase', className)}
     >
       <StatusIndicator />
-      <StatusLabel>{STATUS_LABEL[status]}</StatusLabel>
+      {showLabel && <StatusLabel>{STATUS_LABEL[status]}</StatusLabel>}
     </Status>
   );
 }

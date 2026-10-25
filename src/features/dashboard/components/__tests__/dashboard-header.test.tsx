@@ -22,6 +22,7 @@ import { SidebarProvider } from '@/components/ui/sidebar';
 import {
   DashboardHeaderContent,
   DashboardHeaderProvider,
+  HeaderActions,
 } from '@/features/dashboard/components/sidebar/dashboard-header';
 import { SiteHeader } from '@/features/dashboard/components/sidebar/site-header';
 
@@ -62,14 +63,30 @@ function AthletePage() {
 
 function TournamentPage() {
   const [name, setName] = useState('Spring Open');
+  const [opened, setOpened] = useState<string | null>(null);
   return (
     <>
       <DashboardHeaderContent breadcrumb={name}>
+        <HeaderActions
+          actions={[
+            {
+              label: 'Activity',
+              icon: null,
+              onClick: () => setOpened('activity'),
+            },
+            {
+              label: 'Open Builder',
+              icon: null,
+              onClick: () => setOpened('builder'),
+            },
+          ]}
+        />
         <button onClick={() => setName('Summer Open')}>
           Rename tournament
         </button>
       </DashboardHeaderContent>
       <main>Tournament details</main>
+      {opened && <div role="status">{opened}</div>}
     </>
   );
 }
@@ -148,6 +165,36 @@ describe('shared dashboard header', () => {
     await act(() => router.navigate({ to: '/dashboard' }));
     expect(within(breadcrumb).queryByText('Summer Open')).toBeNull();
     expect(screen.queryByText('Rename tournament')).toBeNull();
+  });
+
+  it('keeps the primary action visible and offers secondary actions in the "⋯" menu', async () => {
+    const router = await renderDashboard();
+    await act(() =>
+      router.navigate({
+        to: '/dashboard/tournaments/$id',
+        params: { id: 'one' },
+      })
+    );
+    const header = screen.getByRole('banner');
+    expect(
+      within(header).getByRole('button', { name: 'Rename tournament' })
+    ).toBeTruthy();
+
+    fireEvent.click(
+      within(header).getByRole('button', { name: 'More actions' })
+    );
+    const menu = await screen.findByRole('menu');
+    expect(
+      within(menu)
+        .getAllByRole('menuitem')
+        .map((item) => item.textContent)
+    ).toEqual(['Activity', 'Open Builder']);
+    expect(within(menu).queryByText('Rename tournament')).toBeNull();
+
+    fireEvent.click(
+      within(menu).getByRole('menuitem', { name: 'Open Builder' })
+    );
+    expect(screen.getByRole('status').textContent).toBe('builder');
   });
 
   it('shows the destination breadcrumb during pending and error states without stale actions', async () => {

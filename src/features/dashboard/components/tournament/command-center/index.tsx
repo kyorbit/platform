@@ -20,7 +20,10 @@ import type { MatchData } from '@/contracts/tournament/match';
 import type { TournamentData } from '@/contracts/tournament/list';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { useTournamentCommandCenter } from '@/features/dashboard/hooks/use-tournament-command-center';
-import { DashboardHeaderContent } from '@/features/dashboard/components/sidebar/dashboard-header';
+import {
+  DashboardHeaderContent,
+  HeaderActions,
+} from '@/features/dashboard/components/sidebar/dashboard-header';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { useDivisions } from '@/queries/division';
@@ -67,36 +70,33 @@ export function TournamentCommandCenter({
       <DashboardHeaderContent breadcrumb={tournament.name}>
         <div className="ml-auto flex items-center gap-2">
           <TournamentStatusPill status={tournament.status} />
-          <Button
-            variant="outline"
-            size="sm"
-            type="button"
-            onClick={() => setActivityOpen(true)}
-          >
-            <History data-icon="inline-start" />
-            Activity
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            nativeButton={false}
-            render={
-              <Link
-                to="/dashboard/tournaments/$id/builder"
-                params={{ id: tournamentId }}
-              />
-            }
-          >
-            <Edit data-icon="inline-start" />
-            Open Builder
-          </Button>
+          <HeaderActions
+            actions={[
+              {
+                label: 'Activity',
+                icon: <History data-icon="inline-start" />,
+                onClick: () => setActivityOpen(true),
+              },
+              {
+                label: 'Open Builder',
+                icon: <Edit data-icon="inline-start" />,
+                render: (
+                  <Link
+                    to="/dashboard/tournaments/$id/builder"
+                    params={{ id: tournamentId }}
+                  />
+                ),
+              },
+            ]}
+          />
           {transitionAction && (
             <Button
               size="sm"
               onClick={() => setConfirmStatus(transitionAction.status)}
             >
               <ZapIcon aria-hidden="true" />
-              {transitionAction.label}
+              {/* Icon-only on phones so the tournament name keeps room; the confirm dialog names the action. */}
+              <span className="max-sm:sr-only">{transitionAction.label}</span>
             </Button>
           )}
         </div>

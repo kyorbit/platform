@@ -39,10 +39,11 @@ export function AthleteRowFields({
   return (
     <div
       className={cn(
-        'grid min-w-0 flex-1 items-center gap-2',
+        // Below lg the fixed single-row grid no longer fits, so fields flow over a 6-column grid.
+        'grid min-w-0 flex-1 grid-cols-6 items-center gap-2 *:max-lg:col-span-2',
         showRemoveColumn
-          ? 'grid-cols-[7.5rem_10rem_6.25rem_8rem_5.25rem_minmax(0,1fr)_minmax(0,1fr)_auto]'
-          : 'grid-cols-[7.5rem_10rem_6.25rem_8rem_5.25rem_minmax(0,1fr)_minmax(0,1fr)]'
+          ? 'lg:grid-cols-[7.5rem_10rem_6.25rem_8rem_5.25rem_minmax(0,1fr)_minmax(0,1fr)_auto]'
+          : 'lg:grid-cols-[7.5rem_10rem_6.25rem_8rem_5.25rem_minmax(0,1fr)_minmax(0,1fr)]'
       )}
     >
       <Input
@@ -54,7 +55,10 @@ export function AthleteRowFields({
       />
 
       <Input
-        className="w-full min-w-0"
+        className={cn(
+          'w-full min-w-0',
+          showRemoveColumn ? 'max-lg:col-span-3!' : 'max-lg:col-span-4!'
+        )}
         placeholder="Athlete full name"
         value={row.name}
         disabled={readOnly}
@@ -124,7 +128,7 @@ export function AthleteRowFields({
       />
 
       <Input
-        className="w-full min-w-0"
+        className="w-full min-w-0 max-lg:col-span-3!"
         placeholder="Affiliation"
         value={row.affiliation}
         disabled={readOnly}
@@ -132,7 +136,7 @@ export function AthleteRowFields({
       />
 
       <Input
-        className="w-full min-w-0"
+        className="w-full min-w-0 max-lg:col-span-3!"
         placeholder="Photo URL"
         title={row.image}
         value={row.image}
@@ -142,13 +146,16 @@ export function AthleteRowFields({
 
       {showRemoveColumn &&
         (readOnly ? (
-          <div className="size-8 shrink-0" aria-hidden />
+          <div
+            className="size-8 shrink-0 max-lg:col-span-1! max-lg:col-start-6 max-lg:row-start-1"
+            aria-hidden
+          />
         ) : (
           <Button
             variant="ghost"
             size="icon-sm"
             type="button"
-            className="shrink-0"
+            className="shrink-0 max-lg:col-span-1! max-lg:col-start-6 max-lg:row-start-1 max-lg:justify-self-end"
             onClick={() => onRemove(index)}
           >
             <IconX />

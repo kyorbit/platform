@@ -292,7 +292,7 @@ export function AthleteDrawer({
           </Sortable>
         </div>
 
-        <DrawerFooter className="flex-row justify-between">
+        <DrawerFooter className="flex-row flex-wrap justify-between">
           {!isBulkEdit ? (
             <Button variant="outline" onClick={addRow} disabled={isSubmitting}>
               <IconPlus />
@@ -301,7 +301,7 @@ export function AthleteDrawer({
           ) : (
             <div />
           )}
-          <div className="flex items-center gap-2">
+          <div className="ml-auto flex flex-wrap items-center gap-2">
             <Button variant="outline" onClick={() => setOpen(false)}>
               Cancel
             </Button>

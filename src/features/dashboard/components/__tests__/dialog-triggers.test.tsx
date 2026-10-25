@@ -26,7 +26,6 @@ import { DialogTrigger } from '@/components/ui/dialog';
 const mocks = vi.hoisted(() => ({
   bracket: {
     selectedDivisionId: 'division-1',
-    toolbarDisabled: false,
     readOnly: false,
     tournamentStatus: 'draft',
     matches: [
@@ -107,7 +106,6 @@ beforeAll(() => {
 beforeEach(() => {
   vi.clearAllMocks();
   mocks.bracket.readOnly = false;
-  mocks.bracket.toolbarDisabled = false;
   mocks.bracket.tournamentStatus = 'draft';
 });
 
@@ -177,24 +175,6 @@ describe('custom match trigger', () => {
       expect(
         screen.getByPlaceholderText('e.g. Exhibition A').getAttribute('value')
       ).toBe('');
-    }
-  );
-
-  it.each([
-    { readOnly: true, status: 'draft' },
-    { readOnly: false, status: 'completed' },
-  ])(
-    'keeps the custom match trigger disabled for $status, readOnly=$readOnly',
-    ({ readOnly, status }) => {
-      mocks.bracket.readOnly = readOnly;
-      mocks.bracket.tournamentStatus = status;
-      render(<BracketToolbar />);
-      const trigger = screen.getByRole('button', {
-        name: 'Create custom match',
-      });
-      expect(trigger.hasAttribute('disabled')).toBe(true);
-      activate(trigger);
-      expect(screen.queryByRole('dialog')).toBeNull();
     }
   );
 

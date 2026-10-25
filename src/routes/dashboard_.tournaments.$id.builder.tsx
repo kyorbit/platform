@@ -8,6 +8,7 @@ import { tournamentMatchesQueryOptions } from '@/queries/match';
 import { tournamentQueryOptions } from '@/queries/tournament';
 import { requireSession } from '@/queries/session';
 import { ThemeProvider } from '@/contexts/themes';
+import { Toaster } from '@/components/ui/sonner';
 
 export const Route = createFileRoute('/dashboard_/tournaments/$id/builder')({
   beforeLoad: ({ context: { queryClient } }) => requireSession(queryClient),
@@ -28,6 +29,7 @@ function TournamentBuilderPage() {
   return (
     <ThemeProvider defaultTheme="system" storageKey="start-theme">
       <TournamentBuilder id={id} />
+      <Toaster richColors closeButton />
     </ThemeProvider>
   );
 }

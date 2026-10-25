@@ -177,7 +177,10 @@ export function BracketSlot({
                 onToggleLock();
               }}
               aria-label={locked ? 'Unlock slot' : 'Lock slot'}
-              className={cn(locked && 'hover:bg-amber-500/10!')}
+              className={cn(
+                'relative pointer-coarse:after:absolute pointer-coarse:after:-inset-1.5',
+                locked && 'hover:bg-amber-500/10!'
+              )}
             >
               {locked ? (
                 <Lock data-icon="inline-start" className="text-amber-500" />

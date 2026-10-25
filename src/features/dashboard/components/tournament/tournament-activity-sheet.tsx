@@ -152,7 +152,7 @@ export function TournamentActivitySheet({
     <Sheet modal={false} open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
-        className="flex w-full flex-col gap-0 p-0 sm:max-w-md"
+        className="flex flex-col gap-0 p-0 data-[side=right]:w-full sm:max-w-md"
         showCloseButton
       >
         <SheetHeader className="border-b p-4 text-left">

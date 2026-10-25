@@ -113,7 +113,6 @@ export function useBracketsTabQueries({
 
   const isPoolLoading = matchesQuery.isPending || athletesQuery.isPending;
   const athleteCount = selectedDivision?._count.tournamentAthletes ?? 0;
-  const toolbarDisabled = matches.length === 0;
   const maxBracketRound = React.useMemo(() => {
     const bracketOnly = matches.filter((m) => m.kind !== 'custom');
     return bracketOnly.length > 0
@@ -144,7 +143,6 @@ export function useBracketsTabQueries({
     panelPoolAthletes,
     isPoolLoading,
     athleteCount,
-    toolbarDisabled,
     maxBracketRound,
     showArenaOrderEntry,
     arenaOrderEditBlocked,
