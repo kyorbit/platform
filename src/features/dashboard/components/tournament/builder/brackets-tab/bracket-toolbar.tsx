@@ -88,7 +88,7 @@ function Tool({ label, hint, reason, icon, children }: ToolProps) {
 }
 
 const GROUP_CLASS =
-  'bg-popover flex flex-col gap-1 rounded-md border p-1 shadow-md max-sm:flex-row max-sm:border-0 max-sm:p-0 max-sm:shadow-none max-sm:ring-0';
+  'bg-popover flex flex-col gap-1 rounded-md border p-1 shadow-md max-sm:flex-row max-sm:p-0';
 
 export function BracketToolbar() {
   const {
@@ -134,7 +134,7 @@ export function BracketToolbar() {
 
   return (
     // Below sm it docks along the canvas bottom instead of covering the bracket.
-    <div className="max-sm:bg-popover fixed top-1/3 left-3 z-10 -translate-y-1/4 space-y-2 max-sm:absolute max-sm:inset-x-0 max-sm:top-auto max-sm:bottom-0 max-sm:flex max-sm:translate-y-0 max-sm:justify-center max-sm:gap-2 max-sm:space-y-0 max-sm:border-t max-sm:p-1">
+    <div className="fixed top-1/3 left-3 z-10 -translate-y-1/4 space-y-2 max-sm:absolute max-sm:top-auto max-sm:bottom-0 max-sm:left-1/2 max-sm:flex max-sm:-translate-x-1/2 max-sm:justify-center max-sm:gap-2 max-sm:space-y-0">
       <Card className={GROUP_CLASS}>
         <CreateCustomMatchDialog>
           <Tool
