@@ -25,12 +25,30 @@ function centerForScale(
   };
 }
 
+type Transform = { x: number; y: number; scale: number };
+type Point = { x: number; y: number };
+type Gesture =
+  | { kind: 'pan'; start: Point; origin: Transform }
+  | { kind: 'pinch'; dist: number; mid: Point; origin: Transform };
+
+function clampScale(scale: number): number {
+  return Math.min(SCALE_MAX, Math.max(SCALE_MIN, scale));
+}
+
+function distance(a: Point, b: Point): number {
+  return Math.hypot(a.x - b.x, a.y - b.y);
+}
+
+function midpoint(a: Point, b: Point): Point {
+  return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+}
+
 function zoomAtPoint(
-  t: { x: number; y: number; scale: number },
+  t: Transform,
   focalX: number,
   focalY: number,
   nextScale: number
-): { x: number; y: number; scale: number } {
+): Transform {
   const k = nextScale / t.scale;
   return {
     x: focalX - (focalX - t.x) * k,
@@ -44,7 +62,7 @@ function zoomAtPoint(
  * @param contentHeight - Bracket layout height (px)
  */
 export function usePanZoom(contentWidth: number, contentHeight: number) {
-  const [transform, setTransform] = React.useState({
+  const [transform, setTransform] = React.useState<Transform>({
     x: 0,
     y: 0,
     scale: 1,
@@ -59,13 +77,8 @@ export function usePanZoom(contentWidth: number, contentHeight: number) {
   contentDimsRef.current = { w: contentWidth, h: contentHeight };
 
   const containerRef = React.useRef<HTMLDivElement>(null);
-  const panRef = React.useRef<{
-    active: boolean;
-    startX: number;
-    startY: number;
-    originX: number;
-    originY: number;
-  } | null>(null);
+  const pointersRef = React.useRef(new Map<number, Point>());
+  const gestureRef = React.useRef<Gesture | null>(null);
 
   const applyFitTransform = React.useCallback(() => {
     const node = containerRef.current;
@@ -118,10 +131,7 @@ export function usePanZoom(contentWidth: number, contentHeight: number) {
       const cx = rect.width / 2;
       const cy = rect.height / 2;
       setTransform((t) => {
-        const nextScale = Math.min(
-          SCALE_MAX,
-          Math.max(SCALE_MIN, scaleFn(t.scale))
-        );
+        const nextScale = clampScale(scaleFn(t.scale));
         if (nextScale === t.scale) return t;
         return zoomAtPoint(t, cx, cy, nextScale);
       });
@@ -146,10 +156,7 @@ export function usePanZoom(contentWidth: number, contentHeight: number) {
     const my = e.clientY - rect.top;
     const delta = -e.deltaY * 0.001;
     setTransform((prev) => {
-      const nextScale = Math.min(
-        SCALE_MAX,
-        Math.max(SCALE_MIN, prev.scale * (1 + delta))
-      );
+      const nextScale = clampScale(prev.scale * (1 + delta));
       if (nextScale === prev.scale) return prev;
       return zoomAtPoint(prev, mx, my, nextScale);
     });
@@ -162,50 +169,81 @@ export function usePanZoom(contentWidth: number, contentHeight: number) {
     return () => el.removeEventListener('wheel', onWheel);
   }, [onWheel]);
 
-  const onMouseDown = React.useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      if (e.button !== 0) return;
+  // Re-baselines whenever the pointer set changes, so 2 -> 1 pointers continues as a pan without a jump.
+  const startGesture = React.useCallback(() => {
+    const [a, b] = [...pointersRef.current.values()];
+    const origin = transformRef.current;
+    if (!a) gestureRef.current = null;
+    else if (!b) gestureRef.current = { kind: 'pan', start: a, origin };
+    else
+      gestureRef.current = {
+        kind: 'pinch',
+        dist: distance(a, b),
+        mid: midpoint(a, b),
+        origin,
+      };
+  }, []);
+
+  const onPointerDown = React.useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
       const target = e.target as HTMLElement | null;
       if (target?.closest('[data-bracket-slot]')) return;
-      const t = transformRef.current;
-      panRef.current = {
-        active: true,
-        startX: e.clientX,
-        startY: e.clientY,
-        originX: t.x,
-        originY: t.y,
-      };
+      pointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      startGesture();
     },
-    []
+    [startGesture]
   );
 
   React.useEffect(() => {
-    function onMove(e: MouseEvent) {
-      const p = panRef.current;
-      if (!p?.active) return;
-      setTransform((t) => ({
-        ...t,
-        x: p.originX + (e.clientX - p.startX),
-        y: p.originY + (e.clientY - p.startY),
-      }));
+    function onMove(e: PointerEvent) {
+      const pointers = pointersRef.current;
+      const g = gestureRef.current;
+      if (!g || !pointers.has(e.pointerId)) return;
+      pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      const [a, b] = [...pointers.values()];
+      let next: Transform;
+      if (g.kind === 'pan') {
+        next = {
+          ...g.origin,
+          x: g.origin.x + (a.x - g.start.x),
+          y: g.origin.y + (a.y - g.start.y),
+        };
+      } else {
+        const rect = containerRef.current?.getBoundingClientRect();
+        const mid = midpoint(a, b);
+        const scale = clampScale(
+          (g.origin.scale * distance(a, b)) / Math.max(g.dist, 1)
+        );
+        const moved = {
+          ...g.origin,
+          x: g.origin.x + (mid.x - g.mid.x),
+          y: g.origin.y + (mid.y - g.mid.y),
+        };
+        next = zoomAtPoint(
+          moved,
+          mid.x - (rect?.left ?? 0),
+          mid.y - (rect?.top ?? 0),
+          scale
+        );
+      }
+      transformRef.current = next;
+      setTransform(next);
     }
-    function onUp() {
-      if (panRef.current) panRef.current.active = false;
+    function onUp(e: PointerEvent) {
+      if (pointersRef.current.delete(e.pointerId)) startGesture();
     }
-    window.addEventListener('mousemove', onMove);
-    window.addEventListener('mouseup', onUp);
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+    window.addEventListener('pointercancel', onUp);
     return () => {
-      window.removeEventListener('mousemove', onMove);
-      window.removeEventListener('mouseup', onUp);
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      window.removeEventListener('pointercancel', onUp);
     };
-  }, []);
+  }, [startGesture]);
 
-  const handlers = React.useMemo(
-    () => ({
-      onMouseDown,
-    }),
-    [onMouseDown]
-  );
+  const handlers = React.useMemo(() => ({ onPointerDown }), [onPointerDown]);
 
   return { containerRef, transform, handlers, reset, zoomIn, zoomOut };
 }
