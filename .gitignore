@@ -23,8 +23,8 @@ routeTree.gen.ts
 # docs
 .cursor/docs
 .cursor/plans
-
-scripts/migration-id-map.json
+.claude
+GLOSSARY.md
 
 # Local Netlify folder
 .netlify
