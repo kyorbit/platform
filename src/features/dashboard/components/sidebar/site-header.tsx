@@ -25,14 +25,17 @@ export const SiteHeader = () => {
         orientation="vertical"
         className="bg-muted-foreground/50 my-auto h-4"
       />
-      <Breadcrumb>
-        <BreadcrumbList ref={setBreadcrumb}>
-          <BreadcrumbItem className="text-primary mx-1 ml-2 text-lg font-semibold">
-            {breadcrumb}
+      <Breadcrumb className="min-w-0">
+        <BreadcrumbList ref={setBreadcrumb} className="flex-nowrap">
+          <BreadcrumbItem className="text-primary mx-1 ml-2 min-w-0 text-lg font-semibold max-sm:not-last:hidden">
+            <span className="truncate">{breadcrumb}</span>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <div ref={setActions} className="ml-auto flex items-center gap-2" />
+      <div
+        ref={setActions}
+        className="ml-auto flex shrink-0 items-center gap-2"
+      />
     </header>
   );
 };

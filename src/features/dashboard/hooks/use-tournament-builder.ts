@@ -1,12 +1,10 @@
 import React from 'react';
-import { useQueryClient } from '@tanstack/react-query';
 import { useBuilderManagerQuery } from './use-builder-manager-query';
 import type { DivisionData } from '@/contracts/tournament/division';
 import type {
   TournamentData,
   TournamentStatus,
 } from '@/contracts/tournament/list';
-import { invalidateDivisionListQueries } from '@/queries/division';
 import { useTournamentReadOnly } from '@/hooks/use-tournament-read-only';
 import { authClient } from '@/lib/auth-client';
 
@@ -25,7 +23,6 @@ export function useTournamentBuilder({
 
   const isReadOnly = useTournamentReadOnly(tournamentId);
   const { tab, setTab } = useBuilderManagerQuery();
-  const queryClient = useQueryClient();
 
   const [activityOpen, setActivityOpen] = React.useState(false);
   const [showEditTournament, setShowEditTournament] = React.useState(false);
@@ -47,15 +44,6 @@ export function useTournamentBuilder({
 
   const { data: sessionData } = authClient.useSession();
   const user = sessionData?.user;
-
-  const handleRefresh = React.useCallback(async () => {
-    await Promise.all([
-      queryClient.invalidateQueries({ queryKey: ['tournament'] }),
-      invalidateDivisionListQueries(queryClient),
-      queryClient.invalidateQueries({ queryKey: ['match'] }),
-      queryClient.invalidateQueries({ queryKey: ['tournamentAthlete'] }),
-    ]);
-  }, [queryClient]);
 
   const handleAdminStatusIntent = React.useCallback(
     (target: TournamentStatus) => {
@@ -80,7 +68,6 @@ export function useTournamentBuilder({
     pendingAdminStatus,
     setPendingAdminStatus,
     user,
-    handleRefresh,
     handleAdminStatusIntent,
   };
 }

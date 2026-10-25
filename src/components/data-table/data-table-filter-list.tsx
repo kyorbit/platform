@@ -402,7 +402,7 @@ function DataTableFilterItem<TData extends RowData>({
           role="listitem"
           id={filterItemId}
           tabIndex={-1}
-          className="flex items-center gap-2"
+          className="flex flex-wrap items-center gap-2"
           onKeyDown={onItemKeyDown}
         >
           <div className="min-w-18 text-center">

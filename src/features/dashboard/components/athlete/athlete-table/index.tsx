@@ -14,6 +14,7 @@ import { useAthleteTableQuery } from '@/features/dashboard/hooks/use-athlete-man
 import { useAthleteProfiles } from '@/queries/athlete-profile';
 import { useFeatureFlags } from '@/contexts/feature-flags';
 import { useDataTable } from '@/hooks/use-data-table';
+import { useMediaQuery } from '@/hooks/use-media-query';
 import { DEFAULT_SORTING } from '@/config/athlete';
 import { cn } from '@/lib/utils';
 
@@ -100,6 +101,16 @@ export function AthleteTable({
     clearOnDefault: true,
     filterQueryKeys: enableQueryFilter ? { name: 'query' } : {},
   });
+
+  // Pinning moves Name ahead of Athlete ID, so only pin where the table scrolls sideways.
+  const isPhone = !useMediaQuery('(min-width: 40rem)');
+  // Layout effect so client renders pin before paint.
+  React.useLayoutEffect(() => {
+    table.setColumnPinning({
+      start: isPhone ? ['select', 'name'] : [],
+      end: ['actions'],
+    });
+  }, [isPhone, table]);
 
   function handleBulkAddToTournament() {
     setBulkAddAthleteIds(

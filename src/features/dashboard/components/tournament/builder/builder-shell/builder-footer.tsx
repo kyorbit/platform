@@ -1,21 +1,28 @@
-import React from 'react';
 import { Link } from '@tanstack/react-router';
 import {
   ArrowLeft,
   History,
-  RefreshCw,
+  MoreHorizontal,
   Settings,
   Trash2,
   Zap,
 } from 'lucide-react';
+import { useMemo } from 'react';
+import { BuilderFooterSlot } from './footer-portal';
+import type { LucideIcon } from 'lucide-react';
 import type {
   TournamentData,
   TournamentStatus,
 } from '@/contracts/tournament/list';
 import { TOURNAMENT_STATUSES } from '@/contracts/tournament/list';
 import { Button } from '@/components/ui/button';
-import { StatusButton } from '@/components/async/status-button';
-import { Separator } from '@/components/ui/separator';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import {
   Select,
   SelectContent,
@@ -30,12 +37,12 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { cn } from '@/lib/utils';
 
 interface BuilderFooterProps {
   tournament: TournamentData;
   readOnly: boolean;
   isSettingTournamentStatus?: boolean;
-  onRefresh?: () => void | Promise<void>;
   onAutoAssignAll?: () => void;
   onAdminStatusIntent: (next: TournamentStatus) => void;
   onEditTournament: () => void;
@@ -43,19 +50,36 @@ interface BuilderFooterProps {
   onActivity: () => void;
 }
 
-function DisabledWhenReadOnly({
-  readOnly,
-  children,
-}: {
-  readOnly: boolean;
-  children: React.ReactElement;
-}) {
-  if (!readOnly) return children;
+/** A secondary action: an inline button from `lg`, a menu item below it. */
+interface FooterAction {
+  label: string;
+  icon: LucideIcon;
+  onClick: () => void;
+  disabled?: boolean;
+  variant?: 'destructive';
+}
+
+function InlineAction({ action }: { action: FooterAction }) {
+  const button = (
+    <Button
+      variant="ghost"
+      size="sm"
+      disabled={action.disabled}
+      onClick={action.onClick}
+      className={cn(
+        'gap-2',
+        action.variant === 'destructive' &&
+          'text-destructive hover:bg-destructive/10 hover:text-destructive'
+      )}
+    >
+      <action.icon className="size-4" />
+      <span>{action.label}</span>
+    </Button>
+  );
+  if (!action.disabled) return button;
   return (
     <Tooltip>
-      <TooltipTrigger
-        render={<span className="inline-flex">{children}</span>}
-      />
+      <TooltipTrigger render={<span className="inline-flex">{button}</span>} />
       <TooltipContent>Tournament completed</TooltipContent>
     </Tooltip>
   );
@@ -71,7 +95,6 @@ export function BuilderFooter({
   tournament,
   readOnly,
   isSettingTournamentStatus,
-  onRefresh,
   onAutoAssignAll,
   onAdminStatusIntent,
   onEditTournament,
@@ -80,33 +103,54 @@ export function BuilderFooter({
 }: BuilderFooterProps) {
   const status = tournament.status;
 
+  const manageActions: Array<FooterAction> = [
+    { label: 'Activity', icon: History, onClick: onActivity },
+    {
+      label: 'Auto-assign',
+      icon: Zap,
+      onClick: () => onAutoAssignAll?.(),
+      disabled: readOnly,
+    },
+    {
+      label: 'Edit Tournament',
+      icon: Settings,
+      onClick: onEditTournament,
+      disabled: readOnly,
+    },
+    {
+      label: 'Delete',
+      icon: Trash2,
+      onClick: onDeleteTournament,
+      disabled: readOnly,
+      variant: 'destructive',
+    },
+  ];
+
+  const commandCenterLink = useMemo(
+    () => (
+      <Link
+        to="/dashboard/tournaments/$id"
+        params={{ id: tournament.id }}
+        search={{}}
+      />
+    ),
+    [tournament.id]
+  );
+
   return (
     <TooltipProvider delay={200}>
-      <footer className="bg-sidebar/70 supports-backdrop-filter:bg-sidebar/50 flex h-12 items-center gap-2 border-t px-4">
+      <footer className="bg-sidebar/70 supports-backdrop-filter:bg-sidebar/50 flex h-12 items-center gap-2 border-t px-2">
         <div className="flex items-center gap-2">
-          <StatusButton
-            successLabel="Refreshed"
-            variant="ghost"
+          <Button
+            variant="outline"
             size="sm"
-            onClick={() => onRefresh?.()}
-            className="gap-2"
+            className="gap-2 max-sm:size-8"
+            nativeButton={false}
+            render={commandCenterLink}
           >
-            <RefreshCw />
-            <span>Refresh</span>
-          </StatusButton>
-
-          <DisabledWhenReadOnly readOnly={readOnly}>
-            <Button
-              variant="ghost"
-              size="sm"
-              disabled={readOnly}
-              onClick={() => onAutoAssignAll?.()}
-              className="gap-2"
-            >
-              <Zap className="size-4" />
-              <span>Auto-assign all</span>
-            </Button>
-          </DisabledWhenReadOnly>
+            <ArrowLeft data-icon="inline-start" className="size-4" />
+            <span className="max-md:hidden">Command Center</span>
+          </Button>
 
           <Select
             items={TOURNAMENT_STATUSES.map((s) => ({
@@ -120,10 +164,10 @@ export function BuilderFooter({
               onAdminStatusIntent(v as TournamentStatus);
             }}
           >
-            <SelectTrigger size="sm" className="w-35">
+            <SelectTrigger size="sm" className="w-28 sm:w-36">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="min-w-28">
               <SelectGroup>
                 {TOURNAMENT_STATUSES.map((s) => (
                   <SelectItem key={s} value={s}>
@@ -135,57 +179,41 @@ export function BuilderFooter({
           </Select>
         </div>
 
-        <Separator orientation="vertical" className="mx-2 my-auto h-6" />
+        <div className="ml-auto flex items-center gap-1 lg:hidden">
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label="More actions"
+                >
+                  <MoreHorizontal className="size-4" />
+                </Button>
+              }
+            />
+            <DropdownMenuContent align="end" side="top" className="w-48">
+              {manageActions.map((action) => (
+                <DropdownMenuItem
+                  key={action.label}
+                  variant={action.variant}
+                  disabled={action.disabled}
+                  onClick={action.onClick}
+                >
+                  <action.icon />
+                  {action.label}
+                </DropdownMenuItem>
+              ))}
+              <DropdownMenuSeparator />
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <BuilderFooterSlot />
+        </div>
 
-        <div className="ml-auto flex items-center gap-1">
-          <Button variant="ghost" size="sm" type="button" onClick={onActivity}>
-            <History className="mr-1 size-4" />
-            Activity
-          </Button>
-          <DisabledWhenReadOnly readOnly={readOnly}>
-            <Button
-              variant="ghost"
-              size="sm"
-              disabled={readOnly}
-              onClick={onEditTournament}
-              className="gap-2"
-            >
-              <Settings className="size-4" />
-              <span>Edit Tournament</span>
-            </Button>
-          </DisabledWhenReadOnly>
-
-          <DisabledWhenReadOnly readOnly={readOnly}>
-            <Button
-              variant="ghost"
-              size="sm"
-              disabled={readOnly}
-              onClick={onDeleteTournament}
-              className="text-destructive hover:bg-destructive/10 hover:text-destructive gap-2"
-            >
-              <Trash2 className="size-4" />
-              <span>Delete</span>
-            </Button>
-          </DisabledWhenReadOnly>
-
-          <Separator orientation="vertical" className="mx-2 my-auto h-6" />
-
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-2"
-            nativeButton={false}
-            render={
-              <Link
-                to="/dashboard/tournaments/$id"
-                params={{ id: tournament.id }}
-                search={{}}
-              />
-            }
-          >
-            <ArrowLeft className="size-4" />
-            <span>Command Center</span>
-          </Button>
+        <div className="ml-auto flex items-center gap-1 max-lg:hidden">
+          {manageActions.map((action) => (
+            <InlineAction key={action.label} action={action} />
+          ))}
         </div>
       </footer>
     </TooltipProvider>

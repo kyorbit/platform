@@ -322,7 +322,7 @@ function DataTableSortItem({
           role="listitem"
           id={sortItemId}
           tabIndex={-1}
-          className="flex items-center gap-2"
+          className="flex flex-wrap items-center gap-2"
           onKeyDown={onItemKeyDown}
         >
           <Combobox
@@ -337,7 +337,7 @@ function DataTableSortItem({
               aria-controls={fieldListboxId}
               className={cn(
                 buttonVariants({ variant: 'outline', size: 'sm' }),
-                'w-44 justify-between rounded font-normal'
+                'w-32 justify-between rounded font-normal sm:w-44'
               )}
             >
               <span className="truncate">{columnLabels.get(sort.id)}</span>

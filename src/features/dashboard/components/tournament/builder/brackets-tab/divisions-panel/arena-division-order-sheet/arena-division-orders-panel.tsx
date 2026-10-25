@@ -3,6 +3,7 @@ import {
   DndContext,
   DragOverlay,
   MouseSensor,
+  TouchSensor,
   closestCenter,
   useSensor,
   useSensors,
@@ -85,7 +86,10 @@ export function ArenaDivisionOrdersPanel({
   }, [arenaIndices, divisions, arenaOrderRaw]);
 
   const sensors = useSensors(
-    useSensor(MouseSensor, { activationConstraint: { distance: 6 } })
+    useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 150, tolerance: 8 },
+    })
   );
 
   const [activeArenaOrderLabel, setActiveArenaOrderLabel] = React.useState<

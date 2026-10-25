@@ -1,5 +1,5 @@
 import React from 'react';
-import { MouseSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { toast } from 'sonner';
 import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import type { TournamentAthleteData } from '@/contracts/tournament/division';
@@ -26,7 +26,10 @@ export function useBracketsTabDnd(athletes: Array<TournamentAthleteData>) {
   const swapParticipants = useSwapParticipants();
 
   const sensors = useSensors(
-    useSensor(MouseSensor, { activationConstraint: { distance: 4 } })
+    useSensor(MouseSensor, { activationConstraint: { distance: 4 } }),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 150, tolerance: 8 },
+    })
   );
 
   const athleteById = React.useMemo(() => {

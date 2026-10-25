@@ -171,7 +171,7 @@ export function HubSection({
 }: HubSectionProps) {
   return (
     <section className={cn('flex flex-col gap-3', className)}>
-      <div className="flex items-end justify-between gap-4">
+      <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="flex min-w-0 flex-col gap-1">
           <h2 className="font-medium">{title}</h2>
           {description ? (

@@ -96,7 +96,7 @@ function SetupStepRow({
       className={cn('relative flex gap-3', !isLast && 'pb-3')}
       aria-current={isCurrent ? 'step' : undefined}
     >
-      <div className="relative flex w-5 shrink-0 translate-y-[25px] flex-col items-center">
+      <div className="relative flex w-5 shrink-0 translate-y-[15px] flex-col items-center">
         <div
           aria-hidden
           className={cn(
@@ -135,7 +135,7 @@ function SetupStepRow({
         )}
       >
         <div className="flex items-start justify-between gap-3">
-          <div className="flex min-w-0 items-center gap-3">
+          <div className="flex min-w-0 items-start gap-3">
             <div className="border-muted-foreground/15 bg-muted ring-border ring-offset-background [&_svg]:text-muted-foreground flex size-6 shrink-0 items-center justify-center rounded-md border ring-1 ring-offset-1 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-3.5">
               <Icon aria-hidden="true" />
             </div>

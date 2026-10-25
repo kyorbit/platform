@@ -11,6 +11,9 @@ export interface BracketChromeContextValue {
   enterFullscreen: () => void;
   exitFullscreen: () => void;
   toggleFullscreen: () => void;
+  /** Touch toggle for the edge-revealed fullscreen chrome (no hover on touch). */
+  chromeOpen: boolean;
+  toggleChrome: () => void;
   screenshotOpen: boolean;
   setScreenshotOpen: (open: boolean) => void;
   captureTarget: BracketCaptureTarget | null;

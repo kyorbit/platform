@@ -1,4 +1,5 @@
 import React from 'react';
+import { useBracketChrome } from '@/features/dashboard/contexts/bracket-chrome';
 import { cn } from '@/lib/utils';
 
 const HIDE_DELAY_MS = 250;
@@ -55,17 +56,19 @@ export function EdgeReveal({
   children,
   contentClassName,
 }: EdgeRevealProps) {
-  const [open, setOpen] = React.useState(false);
+  const [hovered, setHovered] = React.useState(false);
+  const { chromeOpen } = useBracketChrome();
+  const open = hovered || chromeOpen;
   const hideTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const show = React.useCallback(() => {
     if (hideTimer.current) clearTimeout(hideTimer.current);
-    setOpen(true);
+    setHovered(true);
   }, []);
 
   const scheduleHide = React.useCallback(() => {
     if (hideTimer.current) clearTimeout(hideTimer.current);
-    hideTimer.current = setTimeout(() => setOpen(false), HIDE_DELAY_MS);
+    hideTimer.current = setTimeout(() => setHovered(false), HIDE_DELAY_MS);
   }, []);
 
   React.useEffect(() => {

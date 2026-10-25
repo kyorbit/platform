@@ -63,7 +63,7 @@ export function MatchDetailPanel() {
       >
         <SheetContent
           side="right"
-          className="flex w-full flex-col gap-0 p-0 sm:max-w-md"
+          className="flex flex-col gap-0 p-0 data-[side=right]:w-full sm:max-w-md"
         >
           <SheetHeader className="gap-2 border-b px-6 pt-6 pb-4">
             <SheetTitle className="text-lg">

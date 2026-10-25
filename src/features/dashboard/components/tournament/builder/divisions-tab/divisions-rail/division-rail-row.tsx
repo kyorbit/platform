@@ -58,7 +58,7 @@ export function DivisionRailRow({
               type="button"
               variant="ghost"
               size="icon"
-              className="mr-1 size-6 shrink-0"
+              className="mr-1 size-6 shrink-0 pointer-coarse:size-9"
               aria-label="Division settings"
               disabled={!active}
               onClick={(e) => {
