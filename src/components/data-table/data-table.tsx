@@ -74,12 +74,7 @@ export function DataTable<TData extends RowData>({
                     ...getColumnPinningStyle({ column: header.column }),
                     width: `var(--col-${header.column.id}-size)`,
                   }}
-                  className={cn(
-                    'relative border-x bg-transparent! select-none first:border-l-0 last:border-r-0',
-                    // Opaque copy of the row tint, so columns scrolling under a pinned header stay hidden.
-                    header.column.getIsPinned() &&
-                      'bg-background! from-muted-foreground/8 to-muted-foreground/8 dark:from-muted/8 dark:to-muted/8 bg-linear-to-r'
-                  )}
+                  className="relative border-x bg-transparent! select-none first:border-l-0 last:border-r-0"
                 >
                   {flexRender(
                     header.column.columnDef.header,
