@@ -44,9 +44,8 @@ export function BuilderHeader({
       </div>
 
       <DropdownMenu>
-        <div className="flex items-center">
+        <div className="flex items-center lg:hidden">
           <DropdownMenuTrigger
-            className="lg:hidden"
             render={
               <Button
                 variant="ghost"

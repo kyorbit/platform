@@ -13,6 +13,7 @@ export const auth = betterAuth({
   advanced: {
     database: {
       generateId: 'uuid',
+      joins: true,
     },
   },
   emailAndPassword: {
@@ -64,7 +65,6 @@ export const auth = betterAuth({
     ...(process.env.NODE_ENV === 'development' ? [openAPI()] : []),
     tanstackStartCookies(),
   ],
-  experimental: { joins: true },
 });
 
 export type Session = typeof auth.$Infer.Session;
