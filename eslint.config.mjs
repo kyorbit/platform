@@ -11,6 +11,7 @@ export default [
       'eslint.config.js',
       '.agents/**',
       '**/server.js',
+      '**/.vercel/**',
     ],
   },
   {
