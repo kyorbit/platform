@@ -97,17 +97,18 @@ describe('tournament lifecycle use cases', () => {
     expect(fixture.updated).toBeNull();
   });
 
-  it('updateTournament rejects completed tournaments', async () => {
+  it('updateTournament allows renaming completed tournaments', async () => {
     const fixture = fakeStore(
       { ...baseLifecycle, status: 'completed' },
       { status: 'completed' }
     );
 
-    await expect(
-      updateTournament({ id: 'tournament-1', name: 'Renamed' }, fixture.store)
-    ).rejects.toThrow(PolicyViolationError);
+    await updateTournament(
+      { id: 'tournament-1', name: 'Renamed' },
+      fixture.store
+    );
 
-    expect(fixture.updated).toBeNull();
+    expect(fixture.updated).toMatchObject({ name: 'Renamed' });
   });
 
   it('setTournamentStatus rejects skipping from draft to completed', async () => {
@@ -174,29 +175,41 @@ describe('tournament lifecycle use cases', () => {
     });
   });
 
-  it('setTournamentStatus rejects forced changes from completed tournaments', async () => {
+  it('setTournamentStatus allows forced changes from completed tournaments', async () => {
     const fixture = fakeStore({
       ...baseLifecycle,
       status: 'completed',
       lifecycle: { canComplete: true },
     });
 
-    await expect(
-      setTournamentStatus(
-        {
-          id: 'tournament-1',
-          status: 'active',
-          adminId: 'admin-1',
-          force: true,
-        },
-        fixture.store
-      )
-    ).rejects.toThrow(PolicyViolationError);
+    await setTournamentStatus(
+      {
+        id: 'tournament-1',
+        status: 'active',
+        adminId: 'admin-1',
+        force: true,
+      },
+      fixture.store
+    );
 
-    expect(fixture.applied).toBeNull();
+    expect(fixture.applied).toMatchObject({
+      status: 'active',
+      fromStatus: 'completed',
+    });
   });
 
-  it('deleteTournament rejects non-draft tournaments', async () => {
+  it('deleteTournament allows completed tournaments', async () => {
+    const fixture = fakeStore(baseLifecycle, { status: 'completed' });
+
+    await deleteTournament(
+      { id: 'tournament-1', adminId: 'admin-1' },
+      fixture.store
+    );
+
+    expect(fixture.deleted).not.toBeNull();
+  });
+
+  it('deleteTournament rejects active tournaments', async () => {
     const fixture = fakeStore(baseLifecycle, { status: 'active' });
 
     await expect(

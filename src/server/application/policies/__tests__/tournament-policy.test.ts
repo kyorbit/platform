@@ -29,9 +29,19 @@ describe('assertTournamentAction', () => {
     );
   });
 
-  it('rejects all actions in completed tournaments', () => {
+  it('rejects workspace actions in completed tournaments', () => {
     expect(() => assertTournamentAction('completed', 'match.score')).toThrow(
       'Completed tournaments are read-only'
     );
+  });
+
+  it('allows tournament management in completed tournaments', () => {
+    for (const action of [
+      'tournament.update',
+      'tournament.delete',
+      'tournament.status.force',
+    ] as const) {
+      expect(() => assertTournamentAction('completed', action)).not.toThrow();
+    }
   });
 });

@@ -43,6 +43,13 @@ const draftOnly = new Set<TournamentAction>([
   'tournament.delete',
 ]);
 
+// Completed freezes the workspace, but the tournament itself stays manageable.
+const completedAllowed = new Set<TournamentAction>([
+  'tournament.update',
+  'tournament.delete',
+  'tournament.status.force',
+]);
+
 export function assertTournamentAction(
   status: TournamentStatusValue | string,
   action: TournamentAction
@@ -50,6 +57,7 @@ export function assertTournamentAction(
   const parsedStatus = TournamentStatusSchema.parse(status);
 
   if (parsedStatus === 'completed') {
+    if (completedAllowed.has(action)) return;
     throw new PolicyViolationError('Completed tournaments are read-only');
   }
   if (draftOnly.has(action) && parsedStatus !== 'draft') {

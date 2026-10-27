@@ -115,13 +115,11 @@ export function BuilderFooter({
       label: 'Edit Tournament',
       icon: Settings,
       onClick: onEditTournament,
-      disabled: readOnly,
     },
     {
       label: 'Delete',
       icon: Trash2,
       onClick: onDeleteTournament,
-      disabled: readOnly,
       variant: 'destructive',
     },
   ];

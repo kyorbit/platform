@@ -132,12 +132,8 @@ function TournamentBuilderActiveBody({
           isSettingTournamentStatus={setTournamentStatusMutation.isPending}
           onAutoAssignAll={() => b.setShowAutoAssignAll(true)}
           onAdminStatusIntent={b.handleAdminStatusIntent}
-          onEditTournament={() => {
-            if (!b.isReadOnly) b.setShowEditTournament(true);
-          }}
-          onDeleteTournament={() => {
-            if (!b.isReadOnly) b.setShowDeleteTournament(true);
-          }}
+          onEditTournament={() => b.setShowEditTournament(true)}
+          onDeleteTournament={() => b.setShowDeleteTournament(true)}
           onActivity={() => b.setActivityOpen(true)}
         />
       }
