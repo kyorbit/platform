@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.2.1](https://github.com/kyorbit/platform/compare/kyorbit-v1.2.0...kyorbit-v1.2.1) (2026-10-27)
+
+
+### Bug Fixes
+
+* **tournament:** allow tournament-level CRUD on completed tournaments ([f3a03a5](https://github.com/kyorbit/platform/commit/f3a03a58f652c2cf2f2dfec8f6f7e1a791c4b290))
+
+
+### Chores
+
+* **deps:** upgrade better-auth to 1.7.14 ([f389f03](https://github.com/kyorbit/platform/commit/f389f034233f574d605e2f4fd4ba37354ef3b775))
+* **deps:** upgrade in-range dependencies ([c412745](https://github.com/kyorbit/platform/commit/c4127458e0b12876044cef0d9ef2b3340eb8a9b8))
+* **deps:** upgrade major dependencies ([e17b324](https://github.com/kyorbit/platform/commit/e17b324666e2a4e739c26f552c6a2e6a452ee409))
+* **deps:** upgrade major deps; allow CRUD on completed tournaments ([eee2a3f](https://github.com/kyorbit/platform/commit/eee2a3f3131d0e49fd3438960e37c5d627405860))
+* **shadcn:** migrate to custom cn() to cn lib ([9fe6f24](https://github.com/kyorbit/platform/commit/9fe6f247a591355c115fd3fa3ee12d151ff13d32))
+
 ## [1.2.0](https://github.com/kyorbit/platform/compare/kyorbit-v1.1.1...kyorbit-v1.2.0) (2026-10-25)
 
 
