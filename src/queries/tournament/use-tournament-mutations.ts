@@ -1,11 +1,13 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { toast } from 'sonner';
+import type { ContractInputs } from '@/contracts/rpc/router';
 import type {
   EnsureArenaSlotDTO,
   RetireArenaDTO,
 } from '@/contracts/rpc/tournaments/dto';
 import type { TournamentStatus } from '@/contracts/tournament/list';
+import { client } from '@/orpc/client';
 import {
   mergeArenaDivisionOrderAfterCrossArenaMove,
   mergeArenaDivisionOrderAfterRetireArena,
@@ -19,16 +21,6 @@ import {
   invalidateTournamentQueries,
 } from '@/queries/tournament/invalidate-tournament-cache';
 import { tournamentQueryOptions } from '@/queries/tournament/tournament-query-options';
-import {
-  createTournament,
-  deleteTournament,
-  ensureArenaSlot,
-  moveDivisionArena,
-  retireArena,
-  setArenaDivisionOrder,
-  setTournamentStatus,
-  updateTournament,
-} from '@/queries/api/tournament-api';
 
 function useInvalidateTournaments() {
   const queryClient = useQueryClient();
@@ -39,7 +31,8 @@ export function useCreateTournament() {
   const invalidate = useInvalidateTournaments();
 
   return useMutation({
-    mutationFn: createTournament,
+    mutationFn: (input: ContractInputs['tournament']['create']) =>
+      client.tournament.create(input),
     onSuccess: () => {
       invalidate();
       toast.success('Tournament created successfully');
@@ -54,7 +47,8 @@ export function useUpdateTournament(options?: { onSuccess?: () => void }) {
   const invalidate = useInvalidateTournaments();
 
   return useMutation({
-    mutationFn: updateTournament,
+    mutationFn: (input: ContractInputs['tournament']['update']) =>
+      client.tournament.update(input),
     onSuccess: () => {
       invalidate();
       toast.success('Tournament updated');
@@ -68,7 +62,9 @@ export function useSetArenaDivisionOrder() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: setArenaDivisionOrder,
+    mutationFn: (
+      input: ContractInputs['tournament']['setArenaDivisionOrder']
+    ) => client.tournament.setArenaDivisionOrder(input),
     onMutate: async (variables) => {
       const key = tournamentQueryOptions(variables.tournamentId).queryKey;
       await queryClient.cancelQueries({ queryKey: key });
@@ -105,7 +101,8 @@ export function useMoveDivisionBetweenArenas() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: moveDivisionArena,
+    mutationFn: (input: ContractInputs['tournament']['moveDivisionArena']) =>
+      client.tournament.moveDivisionArena(input),
     onMutate: async (variables) => {
       const tKey = tournamentQueryOptions(variables.tournamentId).queryKey;
       const dKey = divisionListQueryOptions(variables.tournamentId).queryKey;
@@ -188,7 +185,8 @@ export function useEnsureArenaSlot() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (input: EnsureArenaSlotDTO) => ensureArenaSlot(input),
+    mutationFn: (input: EnsureArenaSlotDTO) =>
+      client.tournament.ensureArenaSlot(input),
     onMutate: async (variables) => {
       const tKey = tournamentQueryOptions(variables.tournamentId).queryKey;
       await queryClient.cancelQueries({ queryKey: tKey });
@@ -224,7 +222,7 @@ export function useRetireArena() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (input: RetireArenaDTO) => retireArena(input),
+    mutationFn: (input: RetireArenaDTO) => client.tournament.retireArena(input),
     onMutate: async (variables) => {
       const tKey = tournamentQueryOptions(variables.tournamentId).queryKey;
       const dKey = divisionListQueryOptions(variables.tournamentId).queryKey;
@@ -314,7 +312,7 @@ export function useSetTournamentStatus(options?: {
       id: string;
       status: TournamentStatus;
       force?: boolean;
-    }) => setTournamentStatus(data),
+    }) => client.tournament.setStatus(data),
     onSuccess: (tournament, variables) => {
       invalidate();
       invalidateAfterTournamentStatusChange(queryClient, tournament.id);
@@ -350,7 +348,8 @@ export function useDeleteTournament(options?: UseDeleteTournamentOptions) {
   const navigateAway = options?.navigateAway ?? true;
 
   return useMutation({
-    mutationFn: deleteTournament,
+    mutationFn: (input: ContractInputs['tournament']['delete']) =>
+      client.tournament.delete(input),
     onSuccess: () => {
       toast.success('Tournament deleted');
       invalidate();

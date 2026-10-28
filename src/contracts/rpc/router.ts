@@ -7,7 +7,10 @@ import { divisionContract } from './divisions/contract';
 import { bracketContract, matchContract } from './matches/contract';
 import { tournamentAthleteContract } from './tournament-athletes/contract';
 import { tournamentContract } from './tournaments/contract';
-import type { RouterContractClient } from '@orpc/contract';
+import type {
+  InferRouterContractInputs,
+  RouterContractClient,
+} from '@orpc/contract';
 
 /** Client ↔ server interface. `src/orpc` implements it; clients type off it. */
 export const contract = {
@@ -26,3 +29,4 @@ export const contract = {
 };
 
 export type ContractClient = RouterContractClient<typeof contract>;
+export type ContractInputs = InferRouterContractInputs<typeof contract>;

@@ -1,10 +1,10 @@
 import { queryOptions } from '@tanstack/react-query';
+import { client } from '@/orpc/client';
 import { divisionKeys } from '@/queries/keys';
-import { listDivisions } from '@/queries/api/division-api';
 
 export function divisionListQueryOptions(tournamentId: string) {
   return queryOptions({
     queryKey: divisionKeys.list(tournamentId),
-    queryFn: () => listDivisions(tournamentId),
+    queryFn: () => client.division.list({ tournamentId }),
   });
 }

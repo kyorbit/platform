@@ -1,16 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import type { ContractInputs } from '@/contracts/rpc/router';
 import type {
   BulkAddAthletesDTO,
   BulkRemoveTournamentAthletesDTO,
   UpdateTournamentAthleteDTO,
 } from '@/contracts/rpc/tournament-athletes/dto';
-import {
-  bulkAddTournamentAthletes,
-  bulkRemoveTournamentAthletes,
-  removeTournamentAthlete,
-  updateTournamentAthlete,
-} from '@/queries/api/tournament-athlete-api';
+import { client } from '@/orpc/client';
 import {
   invalidateOnBulkAdd,
   invalidateOnRemove,
@@ -32,7 +28,8 @@ export function useBulkAddAthletes(options?: {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: BulkAddAthletesDTO) => bulkAddTournamentAthletes(data),
+    mutationFn: (data: BulkAddAthletesDTO) =>
+      client.tournamentAthlete.bulkAdd(data),
     onSuccess: (result, variables) => {
       invalidateOnBulkAdd(queryClient, variables);
       options?.onSuccess?.(result);
@@ -48,7 +45,7 @@ export function useUpdateTournamentAthlete(options?: {
 
   return useMutation({
     mutationFn: (data: UpdateTournamentAthleteDTO) =>
-      updateTournamentAthlete(data),
+      client.tournamentAthlete.update(data),
     onSuccess: () => {
       invalidate();
       options?.onSuccess?.();
@@ -63,7 +60,8 @@ export function useRemoveTournamentAthlete(options?: {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: removeTournamentAthlete,
+    mutationFn: (input: ContractInputs['tournamentAthlete']['remove']) =>
+      client.tournamentAthlete.remove(input),
     onSuccess: () => {
       invalidateOnRemove(queryClient);
       toast.success('Athlete removed from tournament');
@@ -80,7 +78,7 @@ export function useBulkRemoveTournamentAthletes(options?: {
 
   return useMutation({
     mutationFn: (data: BulkRemoveTournamentAthletesDTO) =>
-      bulkRemoveTournamentAthletes(data),
+      client.tournamentAthlete.bulkRemove(data),
     onSuccess: ({ removed }) => {
       invalidateOnRemove(queryClient);
       toast.success(

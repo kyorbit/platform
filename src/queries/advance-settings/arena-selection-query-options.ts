@@ -1,9 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
+import { client } from '@/orpc/client';
 import { advanceSettingsKeys } from '@/queries/keys';
-import {
-  selectionCatalog,
-  selectionMatches,
-} from '@/queries/api/advance-settings-api';
 
 export function arenaSelectionCatalogQueryOptions(args: {
   deviceId: string | undefined;
@@ -19,7 +16,7 @@ export function arenaSelectionCatalogQueryOptions(args: {
       catalogTournamentId
     ),
     queryFn: () =>
-      selectionCatalog({
+      client.advanceSettings.selectionCatalog({
         deviceId: deviceId!,
         tournamentId: catalogTournamentId ?? undefined,
       }),
@@ -42,7 +39,7 @@ export function arenaSelectionMatchesQueryOptions(args: {
   return queryOptions({
     queryKey: advanceSettingsKeys.selectionMatches(deviceId ?? null, tid, did),
     queryFn: () =>
-      selectionMatches({
+      client.advanceSettings.selectionMatches({
         deviceId: deviceId!,
         tournamentId: tid!,
         divisionId: did!,

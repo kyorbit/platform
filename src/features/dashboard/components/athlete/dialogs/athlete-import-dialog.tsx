@@ -1,10 +1,9 @@
 import React from 'react';
-import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { UserPlus } from 'lucide-react';
 import { StatusButton } from '@/components/async/status-button';
 import { parseImportFile } from '@/lib/data-table/import';
-import { client } from '@/orpc/client';
+import { useBulkSaveAthleteProfiles } from '@/queries/athlete-profile/use-athlete-profile-mutations';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   Dialog,
@@ -37,7 +36,7 @@ export function AthleteImportDialog({ children }: AthleteImportDialogProps) {
   );
   const [error, setError] = React.useState<string | null>(null);
   const [isImporting, setIsImporting] = React.useState(false);
-  const queryClient = useQueryClient();
+  const bulkSave = useBulkSaveAthleteProfiles();
 
   function resetState() {
     setPreview(null);
@@ -66,11 +65,12 @@ export function AthleteImportDialog({ children }: AthleteImportDialogProps) {
   async function handleImport() {
     if (!preview) return;
     setIsImporting(true);
-    const results = await Promise.allSettled(
-      preview.map((row) => {
+    const { successCount, failCount } = await bulkSave.mutateAsync({
+      kind: 'create',
+      rows: preview.map((row) => {
         const trimmedImage =
           typeof row.image === 'string' ? row.image.trim() : '';
-        return client.athleteProfile.create({
+        return {
           athleteCode: row.athleteCode.trim(),
           name: row.name,
           gender: row.gender?.trim().toUpperCase() === 'F' ? 'F' : 'M',
@@ -79,13 +79,9 @@ export function AthleteImportDialog({ children }: AthleteImportDialogProps) {
           affiliation: row.affiliation,
           ...(trimmedImage ? { image: trimmedImage } : {}),
           confirmDuplicate: true,
-        });
-      })
-    );
-    const successCount = results.filter((r) => r.status === 'fulfilled').length;
-    const failCount = results.length - successCount;
-
-    await queryClient.invalidateQueries({ queryKey: ['athleteProfile'] });
+        };
+      }),
+    });
     setIsImporting(false);
     setOpen(false);
     resetState();

@@ -1,20 +1,17 @@
 import { queryOptions } from '@tanstack/react-query';
+import { client } from '@/orpc/client';
 import { matchKeys } from '@/queries/keys';
-import {
-  listMatchesByDivision,
-  listMatchesByTournament,
-} from '@/queries/api/match-api';
 
 export function matchesByDivisionQueryOptions(divisionId: string) {
   return queryOptions({
     queryKey: matchKeys.listByDivision(divisionId),
-    queryFn: () => listMatchesByDivision(divisionId),
+    queryFn: () => client.match.list({ divisionId }),
   });
 }
 
 export function tournamentMatchesQueryOptions(tournamentId: string) {
   return queryOptions({
     queryKey: matchKeys.listByTournament(tournamentId),
-    queryFn: () => listMatchesByTournament(tournamentId),
+    queryFn: () => client.match.list({ tournamentId }),
   });
 }

@@ -4,9 +4,9 @@ import {
   useQuery,
 } from '@tanstack/react-query';
 import type { AthleteProfilesDTO } from '@/contracts/rpc/athlete-profiles/dto';
+import { client } from '@/orpc/client';
 import { athleteProfilesQueryOptions } from '@/queries/athlete-profile/athlete-profile-query-options';
 import { athleteProfileKeys } from '@/queries/keys';
-import { listAthleteProfiles } from '@/queries/api/athlete-profile-api';
 
 /** keepPreviousData: sort/filter keep prior rows (dimmed) instead of suspending to a skeleton. */
 export function useAthleteProfiles(input: AthleteProfilesDTO) {
@@ -22,7 +22,7 @@ export function useAthleteProfilesInfinite(
   return useInfiniteQuery({
     queryKey: athleteProfileKeys.listInfinite(input),
     queryFn: ({ pageParam }: { pageParam: number }) =>
-      listAthleteProfiles({ ...input, page: pageParam }),
+      client.athleteProfile.list({ ...input, page: pageParam }),
     initialPageParam: 1,
     getNextPageParam: (last, allPages) => {
       const fetched = allPages.reduce((acc, p) => acc + p.items.length, 0);

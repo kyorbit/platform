@@ -1,6 +1,6 @@
 import type { TournamentActivityEventType } from '@/contracts/activity/event-types';
+import { client } from '@/orpc/client';
 import { activityKeys } from '@/queries/keys';
-import { listTournamentActivity } from '@/queries/api/activity-api';
 
 export function activityListInfiniteQueryOptions(input: {
   tournamentId: string;
@@ -11,7 +11,7 @@ export function activityListInfiniteQueryOptions(input: {
   return {
     queryKey: activityKeys.listForTournament(tournamentId, eventTypes),
     queryFn: ({ pageParam }: { pageParam: { id: string } | undefined }) =>
-      listTournamentActivity({
+      client.activity.listForTournament({
         tournamentId,
         eventTypes:
           eventTypes && eventTypes.length > 0 ? eventTypes : undefined,
