@@ -7,7 +7,7 @@ import { type } from '@orpc/contract';
 import { z } from 'zod';
 import type { RouterContractClient } from '@orpc/contract';
 
-import { base as contractBase } from '@/contracts/rpc/base';
+import { access, base as contractBase, getAccess } from '@/contracts/rpc/base';
 import { errorStatusMap } from '@/orpc/base';
 import { toOrpcError } from '@/orpc/map-app-error';
 import { NotFoundError } from '@/server/application/errors';
@@ -17,6 +17,7 @@ const contract = {
   missing: contractBase,
   limited: contractBase,
   unauth: contractBase,
+  open: contractBase.meta(access('member')),
 };
 
 const impl = implement(contract);
@@ -27,7 +28,11 @@ const mw = impl.middleware(async ({ next }) => {
     throw toOrpcError(e);
   }
 });
-const p = impl.use(mw);
+const seen: Record<string, unknown> = {};
+const p = impl.use(mw).use(({ path, procedure, next }) => {
+  seen[path.join('.')] = getAccess(procedure);
+  return next();
+});
 const router = impl.router({
   ok: p.ok.handler(({ input }) => ({ d: input.d })),
   missing: p.missing.handler(() => {
@@ -39,6 +44,7 @@ const router = impl.router({
   unauth: p.unauth.handler(() => {
     throw new ORPCError('UNAUTHORIZED', { message: 'x' });
   }),
+  open: p.open.handler(() => 'ok'),
 });
 
 const handler = new RPCHandler(router, { errorStatusMap });
@@ -66,5 +72,11 @@ describe('rpc transport', () => {
       expect(definedError).toBe(error);
     }
     expect(statuses).toEqual([200, 404, 429, 401]);
+  });
+
+  it('exposes contract access meta to middleware', async () => {
+    await client.open();
+    await safe(client.missing());
+    expect(seen).toMatchObject({ open: 'member', missing: 'admin' });
   });
 });

@@ -1,5 +1,4 @@
 import { authorized } from '@/orpc/middleware';
-import { assertSystemAdmin } from '@/orpc/policies/auth';
 import { bulkAddAthletes as runBulkAddAthletes } from '@/server/application/tournament-athletes/use-cases/bulk-add';
 import { bulkRemoveTournamentAthletes as runBulkRemove } from '@/server/application/tournament-athletes/use-cases/bulk-remove';
 import { listTournamentAthletes as runList } from '@/server/application/tournament-athletes/use-cases/list';
@@ -14,7 +13,6 @@ export const listTournamentAthletes = authorized.tournamentAthlete.list.handler(
 
 export const bulkAddAthletes = authorized.tournamentAthlete.bulkAdd.handler(
   async ({ input, context }) => {
-    assertSystemAdmin(context.user);
     return runBulkAddAthletes(
       { ...input, adminId: context.user.id },
       context.repos.tournamentAthlete,
@@ -25,20 +23,17 @@ export const bulkAddAthletes = authorized.tournamentAthlete.bulkAdd.handler(
 
 export const updateTournamentAthleteRecord =
   authorized.tournamentAthlete.update.handler(async ({ input, context }) => {
-    assertSystemAdmin(context.user);
     return runUpdate(input, context.repos.tournamentAthlete);
   });
 
 export const removeTournamentAthleteRecord =
   authorized.tournamentAthlete.remove.handler(async ({ input, context }) => {
-    assertSystemAdmin(context.user);
     return runRemove({ id: input.id }, context.repos.tournamentAthlete);
   });
 
 export const bulkRemoveTournamentAthleteRecords =
   authorized.tournamentAthlete.bulkRemove.handler(
     async ({ input, context }) => {
-      assertSystemAdmin(context.user);
       return runBulkRemove(input, context.repos.tournamentAthlete);
     }
   );

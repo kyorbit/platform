@@ -6,10 +6,11 @@ import {
   UpdateTournamentAthleteSchema,
 } from './dto';
 import type { ListTournamentAthletesResult, TournamentAthleteRow } from './dto';
-import { ByIdSchema, base } from '@/contracts/rpc/base';
+import { ByIdSchema, access, base } from '@/contracts/rpc/base';
 
 export const tournamentAthleteContract = {
   list: base
+    .meta(access('member'))
     .input(ListTournamentAthletesSchema)
     .output(type<ListTournamentAthletesResult>()),
   bulkAdd: base

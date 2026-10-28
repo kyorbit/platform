@@ -1,5 +1,4 @@
 import { authorized } from '@/orpc/middleware';
-import { assertSystemAdmin } from '@/orpc/policies/auth';
 import {
   assignAthleteToDivision as runAssignAthleteToDivision,
   autoAssignAllEligible as runAutoAssignAllEligible,
@@ -28,28 +27,24 @@ export const getDivision = authorized.division.get.handler(
 
 export const createDivision = authorized.division.create.handler(
   async ({ input, context }) => {
-    assertSystemAdmin(context.user);
     return runCreateDivision(input, context.repos.divisionLifecycle);
   }
 );
 
 export const updateDivision = authorized.division.update.handler(
   async ({ input, context }) => {
-    assertSystemAdmin(context.user);
     return runUpdateDivision(input, context.repos.divisionLifecycle);
   }
 );
 
 export const removeDivision = authorized.division.delete.handler(
   async ({ context, input }) => {
-    assertSystemAdmin(context.user);
     return runDeleteDivision({ id: input.id }, context.repos.divisionLifecycle);
   }
 );
 
 export const autoAssignDivision = authorized.division.autoAssign.handler(
   async ({ input, context }) => {
-    assertSystemAdmin(context.user);
     return runAutoAssignDivision(
       { ...input, adminId: context.user.id },
       context.repos.divisionAssign
@@ -59,7 +54,6 @@ export const autoAssignDivision = authorized.division.autoAssign.handler(
 
 export const autoAssignAllDivisions = authorized.division.autoAssignAll.handler(
   async ({ input, context }) => {
-    assertSystemAdmin(context.user);
     return runAutoAssignAllEligible(
       { tournamentId: input.tournamentId, adminId: context.user.id },
       context.repos.divisionAssign
@@ -69,7 +63,6 @@ export const autoAssignAllDivisions = authorized.division.autoAssignAll.handler(
 
 export const assignAthleteToDivision =
   authorized.division.assignAthlete.handler(async ({ input, context }) => {
-    assertSystemAdmin(context.user);
     return runAssignAthleteToDivision(
       { ...input, adminId: context.user.id },
       context.repos.divisionAssign
@@ -78,7 +71,6 @@ export const assignAthleteToDivision =
 
 export const unassignAthleteFromDivision =
   authorized.division.unassignAthlete.handler(async ({ input, context }) => {
-    assertSystemAdmin(context.user);
     return runUnassignAthleteFromDivision(
       { ...input, adminId: context.user.id },
       context.repos.divisionAssign

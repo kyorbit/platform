@@ -16,7 +16,6 @@ import {
   deleteCustomMatch as runDeleteCustomMatch,
 } from '@/server/application/matches/use-cases/custom';
 import { authorized } from '@/orpc/middleware';
-import { assertSystemAdmin } from '@/orpc/policies/auth';
 import {
   adminSetMatchStatus as runAdminSetMatchStatus,
   setMatchWinner as runSetMatchWinner,
@@ -49,7 +48,6 @@ export const getMatch = authorized.match.get.handler(
 
 export const createCustomMatch = authorized.match.createCustom.handler(
   async ({ input, context }) => {
-    assertSystemAdmin(context.user);
     return runCreateCustomMatch(
       { ...input, adminId: context.user.id },
       context.repos.customMatch
@@ -59,7 +57,6 @@ export const createCustomMatch = authorized.match.createCustom.handler(
 
 export const adminSetMatchStatus = authorized.match.adminSetMatchStatus.handler(
   async ({ input, context }) => {
-    assertSystemAdmin(context.user);
     return runAdminSetMatchStatus(
       { ...input, adminId: context.user.id },
       context.repos.matchTransition
@@ -69,7 +66,6 @@ export const adminSetMatchStatus = authorized.match.adminSetMatchStatus.handler(
 
 export const removeMatch = authorized.match.delete.handler(
   async ({ input, context }) => {
-    assertSystemAdmin(context.user);
     return runDeleteCustomMatch(
       { matchId: input.id, adminId: context.user.id },
       context.repos.customMatch
@@ -79,7 +75,6 @@ export const removeMatch = authorized.match.delete.handler(
 
 export const generateBracket = authorized.bracket.generate.handler(
   async ({ input, context }) => {
-    assertSystemAdmin(context.user);
     return runGenerateBracket(
       { ...input, adminId: context.user.id },
       context.repos.bracketLifecycle
@@ -89,7 +84,6 @@ export const generateBracket = authorized.bracket.generate.handler(
 
 export const shuffleBracket = authorized.bracket.shuffle.handler(
   async ({ input, context }) => {
-    assertSystemAdmin(context.user);
     return runShuffleBracket(
       { ...input, adminId: context.user.id },
       context.repos.bracketLifecycle
@@ -99,7 +93,6 @@ export const shuffleBracket = authorized.bracket.shuffle.handler(
 
 export const regenerateBracket = authorized.bracket.regenerate.handler(
   async ({ input, context }) => {
-    assertSystemAdmin(context.user);
     return runRegenerateBracket(
       { ...input, adminId: context.user.id },
       context.repos.bracketLifecycle
@@ -109,7 +102,6 @@ export const regenerateBracket = authorized.bracket.regenerate.handler(
 
 export const resetBracket = authorized.bracket.reset.handler(
   async ({ input, context }) => {
-    assertSystemAdmin(context.user);
     return runResetBracket(
       { ...input, adminId: context.user.id },
       context.repos.bracketLifecycle
@@ -119,14 +111,12 @@ export const resetBracket = authorized.bracket.reset.handler(
 
 export const setLock = authorized.match.setLock.handler(
   async ({ input, context }) => {
-    assertSystemAdmin(context.user);
     return runSetLock(input, context.repos.round0Slot);
   }
 );
 
 export const updateScore = authorized.match.updateScore.handler(
   async ({ input, context }) => {
-    assertSystemAdmin(context.user);
     return runUpdateMatchScore(
       { ...input, adminId: context.user.id },
       context.repos.matchTransition
@@ -136,7 +126,6 @@ export const updateScore = authorized.match.updateScore.handler(
 
 export const setWinner = authorized.match.setWinner.handler(
   async ({ input, context }) => {
-    assertSystemAdmin(context.user);
     return runSetMatchWinner(
       { ...input, adminId: context.user.id },
       context.repos.matchTransition
@@ -146,7 +135,6 @@ export const setWinner = authorized.match.setWinner.handler(
 
 export const swapParticipants = authorized.match.swapParticipants.handler(
   async ({ input, context }) => {
-    assertSystemAdmin(context.user);
     return runSwapParticipants(
       { ...input, adminId: context.user.id },
       context.repos.matchParticipant
@@ -156,7 +144,6 @@ export const swapParticipants = authorized.match.swapParticipants.handler(
 
 export const assignSlot = authorized.match.assignSlot.handler(
   async ({ input, context }) => {
-    assertSystemAdmin(context.user);
     return runAssignSlot(
       { ...input, adminId: context.user.id },
       context.repos.round0Slot
@@ -166,7 +153,6 @@ export const assignSlot = authorized.match.assignSlot.handler(
 
 export const swapSlots = authorized.match.swapSlots.handler(
   async ({ input, context }) => {
-    assertSystemAdmin(context.user);
     return runSwapSlots(
       { ...input, adminId: context.user.id },
       context.repos.round0Slot

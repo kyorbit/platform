@@ -1,7 +1,15 @@
-import { oc } from '@orpc/contract';
+import { defineMeta, oc } from '@orpc/contract';
 import { z } from 'zod';
 
-export const base = oc.errors({
+/** Who may call a procedure. `admin` unless a procedure opts out. */
+export type Access = 'admin' | 'member';
+
+export const [access, getAccess] = defineMeta(
+  'access',
+  (incoming: Access) => incoming
+);
+
+export const base = oc.meta(access('admin')).errors({
   RATE_LIMITED: {
     message: 'Too many requests. Please try again later.',
   },

@@ -11,16 +11,20 @@ import type {
   DedupResult,
   ListAthleteProfilesResult,
 } from './dto';
-import { ByIdSchema, base } from '@/contracts/rpc/base';
+import { ByIdSchema, access, base } from '@/contracts/rpc/base';
 
 export const athleteProfileContract = {
   list: base
+    .meta(access('member'))
     .input(AthleteProfilesSchema)
     .output(type<ListAthleteProfilesResult>()),
   create: base
     .input(CreateAthleteProfileSchema)
     .output(type<AthleteProfileRow>()),
-  checkDuplicate: base.input(CheckDuplicateSchema).output(type<DedupResult>()),
+  checkDuplicate: base
+    .meta(access('member'))
+    .input(CheckDuplicateSchema)
+    .output(type<DedupResult>()),
   update: base
     .input(UpdateAthleteProfileSchema)
     .output(type<AthleteProfileRow>()),

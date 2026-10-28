@@ -1,5 +1,4 @@
 import { authorized } from '@/orpc/middleware';
-import { assertSystemAdmin } from '@/orpc/policies/auth';
 import { NotFoundError } from '@/server/application/errors';
 import {
   createTournament as runCreateTournament,
@@ -32,14 +31,12 @@ export const getTournament = authorized.tournament.get.handler(
 
 export const createTournament = authorized.tournament.create.handler(
   async ({ input, context }) => {
-    assertSystemAdmin(context.user);
     return runCreateTournament(input, context.repos.tournamentLifecycle);
   }
 );
 
 export const updateTournament = authorized.tournament.update.handler(
   async ({ input, context }) => {
-    assertSystemAdmin(context.user);
     const { id, ...data } = input;
     return runUpdateTournament(
       { id, ...data },
@@ -50,7 +47,6 @@ export const updateTournament = authorized.tournament.update.handler(
 
 export const setTournamentStatus = authorized.tournament.setStatus.handler(
   async ({ input, context }) => {
-    assertSystemAdmin(context.user);
     return runSetTournamentStatus(
       { ...input, adminId: context.user.id },
       context.repos.tournamentLifecycle
@@ -61,7 +57,6 @@ export const setTournamentStatus = authorized.tournament.setStatus.handler(
 export const setArenaDivisionOrder =
   authorized.tournament.setArenaDivisionOrder.handler(
     async ({ input, context }) => {
-      assertSystemAdmin(context.user);
       return runSetArenaDivisionOrder(
         input,
         context.repos.tournamentArenaOrder
@@ -72,7 +67,6 @@ export const setArenaDivisionOrder =
 export const moveDivisionArena =
   authorized.tournament.moveDivisionArena.handler(
     async ({ input, context }) => {
-      assertSystemAdmin(context.user);
       return runMoveDivisionBetweenArenas(
         input,
         context.repos.tournamentArenaOrder
@@ -82,21 +76,18 @@ export const moveDivisionArena =
 
 export const ensureArenaSlot = authorized.tournament.ensureArenaSlot.handler(
   async ({ input, context }) => {
-    assertSystemAdmin(context.user);
     return runEnsureArenaSlot(input, context.repos.tournamentArenaOrder);
   }
 );
 
 export const retireArena = authorized.tournament.retireArena.handler(
   async ({ input, context }) => {
-    assertSystemAdmin(context.user);
     return runRetireArena(input, context.repos.tournamentArenaOrder);
   }
 );
 
 export const removeTournament = authorized.tournament.delete.handler(
   async ({ input, context }) => {
-    assertSystemAdmin(context.user);
     return runDeleteTournament(
       { id: input.id, adminId: context.user.id },
       context.repos.tournamentLifecycle

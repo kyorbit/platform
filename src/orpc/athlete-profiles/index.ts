@@ -1,5 +1,4 @@
 import { authorized } from '@/orpc/middleware';
-import { assertSystemAdmin } from '@/orpc/policies/auth';
 import { bulkRemoveProfiles } from '@/server/application/athlete-profiles/use-cases/bulk-remove';
 import { createProfile } from '@/server/application/athlete-profiles/use-cases/create';
 import { runDedupCheck } from '@/server/application/athlete-profiles/use-cases/dedup';
@@ -14,7 +13,6 @@ export const listAthleteProfiles = authorized.athleteProfile.list.handler(
 
 export const createAthleteProfile = authorized.athleteProfile.create.handler(
   async ({ input, context }) => {
-    assertSystemAdmin(context.user);
     return createProfile(input, context.repos.athleteProfile);
   }
 );
@@ -36,7 +34,6 @@ export const checkDuplicate = authorized.athleteProfile.checkDuplicate.handler(
 
 export const updateAthleteProfile = authorized.athleteProfile.update.handler(
   async ({ input, context }) => {
-    assertSystemAdmin(context.user);
     const { id, ...data } = input;
     return updateProfile(id, data, context.repos.athleteProfile);
   }
@@ -44,13 +41,11 @@ export const updateAthleteProfile = authorized.athleteProfile.update.handler(
 
 export const removeAthleteProfile = authorized.athleteProfile.delete.handler(
   async ({ context, input }) => {
-    assertSystemAdmin(context.user);
     return removeProfile(input.id, context.repos.athleteProfile);
   }
 );
 
 export const bulkDeleteAthleteProfiles =
   authorized.athleteProfile.bulkDelete.handler(async ({ context, input }) => {
-    assertSystemAdmin(context.user);
     return bulkRemoveProfiles({ ids: input.ids }, context.repos.athleteProfile);
   });

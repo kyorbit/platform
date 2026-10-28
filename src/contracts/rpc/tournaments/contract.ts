@@ -10,11 +10,17 @@ import {
   UpdateTournamentSchema,
 } from './dto';
 import type { TournamentDetail, TournamentRow, TournamentsPage } from './dto';
-import { ByIdSchema, base } from '@/contracts/rpc/base';
+import { ByIdSchema, access, base } from '@/contracts/rpc/base';
 
 export const tournamentContract = {
-  list: base.input(ListTournamentsSchema).output(type<TournamentsPage>()),
-  get: base.input(ByIdSchema).output(type<TournamentDetail>()),
+  list: base
+    .meta(access('member'))
+    .input(ListTournamentsSchema)
+    .output(type<TournamentsPage>()),
+  get: base
+    .meta(access('member'))
+    .input(ByIdSchema)
+    .output(type<TournamentDetail>()),
   create: base.input(CreateTournamentSchema).output(type<TournamentRow>()),
   update: base.input(UpdateTournamentSchema).output(type<TournamentRow>()),
   setStatus: base

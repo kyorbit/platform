@@ -15,13 +15,14 @@ import {
   UpdateScoreSchema,
 } from './dto';
 import type { MatchRead } from './dto';
-import { ByIdSchema, base } from '@/contracts/rpc/base';
+import { ByIdSchema, access, base } from '@/contracts/rpc/base';
 
 const match = type<MatchRead>();
 const matches = type<Array<MatchRead>>();
 
 export const matchContract = {
   list: base
+    .meta(access('member'))
     .input(
       z.object({
         divisionId: z.string().optional(),
@@ -29,7 +30,7 @@ export const matchContract = {
       })
     )
     .output(matches),
-  get: base.input(ByIdSchema).output(match),
+  get: base.meta(access('member')).input(ByIdSchema).output(match),
   createCustom: base.input(CreateCustomMatchSchema).output(match),
   adminSetMatchStatus: base.input(AdminSetMatchStatusSchema).output(match),
   delete: base.input(ByIdSchema).output(match),

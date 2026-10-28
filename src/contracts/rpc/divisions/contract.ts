@@ -14,13 +14,17 @@ import type {
   DivisionListRow,
   DivisionRow,
 } from './dto';
-import { ByIdSchema, base } from '@/contracts/rpc/base';
+import { ByIdSchema, access, base } from '@/contracts/rpc/base';
 
 export const divisionContract = {
   list: base
+    .meta(access('member'))
     .input(z.object({ tournamentId: z.string() }))
     .output(type<Array<DivisionListRow>>()),
-  get: base.input(ByIdSchema).output(type<DivisionDetailRow>()),
+  get: base
+    .meta(access('member'))
+    .input(ByIdSchema)
+    .output(type<DivisionDetailRow>()),
   create: base.input(CreateDivisionSchema).output(type<DivisionRow>()),
   update: base.input(UpdateDivisionSchema).output(type<DivisionRow>()),
   delete: base.input(ByIdSchema).output(type<DivisionRow>()),

@@ -3,6 +3,8 @@ import { ORPCError } from '@orpc/server';
 import { base } from '@/orpc/base';
 import { auth } from '@/lib/auth';
 import { toOrpcError } from '@/orpc/map-app-error';
+import { getAccess } from '@/contracts/rpc/base';
+import { assertSystemAdmin } from '@/orpc/policies/auth';
 
 export const authed = base.middleware(async ({ context, next }) => {
   const headers = context.headers;
@@ -38,4 +40,13 @@ export const catchAppErrors = base.middleware(async ({ next }) => {
   }
 });
 
-export const authorized = base.use(catchAppErrors).use(authed);
+export const authorized = base
+  .use(catchAppErrors)
+  .use(authed)
+  .use(({ context, procedure, next }) => {
+    // Fail closed: anything not explicitly `member` is admin-only.
+    if (getAccess(procedure) !== 'member') {
+      assertSystemAdmin(context.user);
+    }
+    return next();
+  });
