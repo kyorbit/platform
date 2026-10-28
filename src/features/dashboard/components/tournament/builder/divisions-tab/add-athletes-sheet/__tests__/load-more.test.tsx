@@ -15,7 +15,7 @@ import { AddAthletesList } from '../add-athletes-list';
 import type { AthleteProfileData } from '@/contracts/athlete/profile';
 import { LoadMore } from '@/components/async/load-more';
 import { useAddAthletesSheet } from '@/features/dashboard/hooks/use-add-athletes-sheet';
-import { client } from '@/orpc/client';
+import { client as rpc } from '@/orpc/client';
 
 vi.mock('@/orpc/client', () => ({
   client: {
@@ -24,7 +24,7 @@ vi.mock('@/orpc/client', () => ({
   },
 }));
 
-const listAthleteProfiles = client.athleteProfile.list;
+const listAthleteProfiles = rpc.athleteProfile.list;
 
 const observers = new Set<TestIntersectionObserver>();
 
