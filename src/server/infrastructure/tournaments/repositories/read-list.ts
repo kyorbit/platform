@@ -1,7 +1,5 @@
-import type {
-  ListTournamentsQuery,
-  TournamentsPage,
-} from '@/server/application/tournaments/repositories/read';
+import type { ListTournamentsQuery } from '@/server/application/tournaments/repositories/read';
+import type { TournamentsPage } from '@/contracts/rpc/tournaments/dto';
 import type { Prisma } from '@/generated/prisma/client';
 import { TournamentStatusSchema } from '@/lib/tournament/tournament-status';
 import { countActionableMatchesByTournamentId } from '@/lib/tournament/bracket/bracket-action-queue';

@@ -6,7 +6,7 @@ import {
   parseAsStringEnum,
 } from 'nuqs/server';
 import type { AthleteProfileData } from '@/contracts/athlete/profile';
-import type { AthleteProfilesDTO } from '@/orpc/athlete-profiles/dto';
+import type { AthleteProfilesDTO } from '@/contracts/rpc/athlete-profiles/dto';
 import { ATHLETE_PROFILE_SORT_IDS } from '@/contracts/athlete/profile';
 import { searchRecordToURLSearchParams } from '@/integrations/nuqs/tanstack-router-adapter';
 import {

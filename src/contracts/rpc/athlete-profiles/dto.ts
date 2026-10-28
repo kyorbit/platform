@@ -115,3 +115,46 @@ export const BulkDeleteAthleteProfilesSchema = z.object({
 export type BulkDeleteAthleteProfilesDTO = z.infer<
   typeof BulkDeleteAthleteProfilesSchema
 >;
+
+export type AthleteProfileRow = {
+  id: string;
+  athleteCode: string | null;
+  name: string;
+  gender: string;
+  beltLevel: number;
+  weight: number;
+  affiliation: string;
+  image: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type AthleteProfileListItem = {
+  id: string;
+  athleteCode: string;
+  name: string;
+  gender: string;
+  beltLevel: number;
+  weight: number;
+  affiliation: string;
+  image: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type ListAthleteProfilesResult = {
+  items: Array<AthleteProfileListItem>;
+  total: number;
+};
+
+export type DedupMatch = {
+  id: string;
+  name: string;
+  affiliation: string;
+};
+
+export type DedupResult = {
+  isDuplicate: boolean;
+  isHardBlock: boolean;
+  matches: Array<DedupMatch>;
+};

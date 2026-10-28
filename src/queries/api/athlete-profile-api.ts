@@ -3,7 +3,7 @@ import type {
   CheckDuplicateDTO,
   CreateAthleteProfileDTO,
   UpdateAthleteProfileDTO,
-} from '@/orpc/athlete-profiles/dto';
+} from '@/contracts/rpc/athlete-profiles/dto';
 import { client } from '@/orpc/client';
 
 export function listAthleteProfiles(input: AthleteProfilesDTO) {

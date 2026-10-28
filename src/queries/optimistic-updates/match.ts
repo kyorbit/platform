@@ -5,7 +5,7 @@ import type {
   SwapParticipantsDTO,
   SwapSlotsDTO,
   UpdateScoreDTO,
-} from '@/orpc/matches/dto';
+} from '@/contracts/rpc/matches/dto';
 import type { MatchData } from '@/contracts/tournament/match';
 import {
   getSuccessorSlot,

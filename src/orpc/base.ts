@@ -1,34 +1,11 @@
-import { COMMON_ERROR_STATUS_MAP, os } from '@orpc/server';
+import { COMMON_ERROR_STATUS_MAP, implement } from '@orpc/server';
 import type { ServerRepos } from '@/server/composition';
+import { contract } from '@/contracts/rpc/router';
 
-export const base = os
-  .$context<{
-    headers: Headers;
-    repos: ServerRepos;
-  }>()
-  .errors({
-    RATE_LIMITED: {
-      message: 'Too many requests. Please try again later.',
-    },
-    BAD_REQUEST: {
-      message: 'Bad request.',
-    },
-    NOT_FOUND: {
-      message: 'Not found.',
-    },
-    FORBIDDEN: {
-      message: 'This is forbidden.',
-    },
-    UNAUTHORIZED: {
-      message: 'You are Unauthorized.',
-    },
-    INTERNAL_SERVER_ERROR: {
-      message: 'Internal Server Error.',
-    },
-    CONFLICT: {
-      message: 'Conflict.',
-    },
-  });
+export const base = implement(contract).$context<{
+  headers: Headers;
+  repos: ServerRepos;
+}>();
 
 // v2 has no `status` on errors; handlers map codes, unmapped ones fall back to 400.
 export const errorStatusMap = { ...COMMON_ERROR_STATUS_MAP, RATE_LIMITED: 429 };

@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 import type {
   EnsureArenaSlotDTO,
   RetireArenaDTO,
-} from '@/orpc/tournaments/dto';
+} from '@/contracts/rpc/tournaments/dto';
 import type { TournamentStatus } from '@/contracts/tournament/list';
 import {
   mergeArenaDivisionOrderAfterCrossArenaMove,
@@ -129,8 +129,7 @@ export function useMoveDivisionBetweenArenas() {
         arenaIndex: number;
       }>;
       const tournament = previousTournament as
-        | Record<string, unknown>
-        | undefined;
+        Record<string, unknown> | undefined;
       const arenaDivisionOrder = tournament?.arenaDivisionOrder;
 
       const nextJson = mergeArenaDivisionOrderAfterCrossArenaMove({
@@ -249,8 +248,7 @@ export function useRetireArena() {
         arenaIndex: number;
       }>;
       const tournament = previousTournament as
-        | Record<string, unknown>
-        | undefined;
+        Record<string, unknown> | undefined;
       const arenaDivisionOrder = tournament?.arenaDivisionOrder;
 
       const nextJson = mergeArenaDivisionOrderAfterRetireArena({

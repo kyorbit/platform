@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { TournamentStatusValue } from '@/lib/tournament/tournament-status';
 import { TournamentStatusSchema } from '@/lib/tournament/tournament-status';
 
 export { TournamentStatusSchema };
@@ -99,3 +100,55 @@ export type RetireArenaDTO = z.infer<typeof RetireArenaSchema>;
 export type ListTournamentsDTO = z.infer<typeof ListTournamentsSchema>;
 export type TournamentListItemDTO = z.infer<typeof TournamentListItemSchema>;
 export type TournamentsPageDTO = z.infer<typeof TournamentsPageSchema>;
+
+export type TournamentLifecycleFlags = {
+  canComplete: boolean;
+};
+
+export type TournamentDivisionSummary = {
+  id: string;
+  name: string;
+  _count: { tournamentAthletes: number; matches: number };
+};
+
+export type TournamentDetail = {
+  id: string;
+  name: string;
+  status: string;
+  createdAt: Date;
+  updatedAt: Date;
+  nameSortKey: string;
+  arenaDivisionOrder: unknown;
+  divisions: Array<TournamentDivisionSummary>;
+  _count: { divisions: number; matches: number; tournamentAthletes: number };
+  lifecycle: TournamentLifecycleFlags;
+};
+
+export type TournamentListItem = {
+  id: string;
+  name: string;
+  status: TournamentStatusValue;
+  createdAt: Date;
+  updatedAt: Date;
+  nameSortKey: string;
+  arenaDivisionOrder: unknown;
+  _count: {
+    divisions: number;
+    matches: number;
+    tournamentAthletes: number;
+    actionableMatches: number;
+  };
+};
+
+export type TournamentsPage = {
+  items: Array<TournamentListItem>;
+  total: number;
+};
+
+export type TournamentRow = {
+  id: string;
+  name: string;
+  status: string;
+  createdAt: Date;
+  updatedAt: Date;
+};

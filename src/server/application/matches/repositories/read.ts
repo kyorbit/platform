@@ -1,4 +1,4 @@
-import type { MatchRead } from '@/server/domain/tournament/match/match-read';
+import type { MatchRead } from '@/contracts/rpc/matches/dto';
 
 export type MatchReadStore = {
   findByDivisionId: (divisionId: string) => Promise<Array<MatchRead>>;

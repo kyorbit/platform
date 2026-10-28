@@ -9,7 +9,7 @@ import type {
   TournamentListItem,
   TournamentSortField,
 } from '@/contracts/tournament/list';
-import type { ListTournamentsDTO } from '@/orpc/tournaments/dto';
+import type { ListTournamentsDTO } from '@/contracts/rpc/tournaments/dto';
 import { searchRecordToURLSearchParams } from '@/integrations/nuqs/tanstack-router-adapter';
 import { getSortingStateParser } from '@/lib/data-table/parsers';
 

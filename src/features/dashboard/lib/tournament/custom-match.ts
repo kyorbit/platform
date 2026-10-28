@@ -1,5 +1,5 @@
 import React from 'react';
-import type { CustomSlotDTO } from '@/orpc/matches/dto';
+import type { CustomSlotDTO } from '@/contracts/rpc/matches/dto';
 import type { MatchData } from '@/contracts/tournament/match';
 import type { CreateCustomMatchFormValues } from '@/lib/validations';
 import { formatArenaMatchTitle } from '@/lib/tournament/arena/match-label';

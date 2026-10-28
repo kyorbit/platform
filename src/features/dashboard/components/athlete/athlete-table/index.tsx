@@ -8,7 +8,7 @@ import { AthletesActionBar } from './athletes-action-bar';
 
 import type { AthleteProfileData } from '@/contracts/athlete/profile';
 import type { DataTableColumnDef } from '@/lib/data-table/features';
-import type { AthleteProfilesDTO } from '@/orpc/athlete-profiles/dto';
+import type { AthleteProfilesDTO } from '@/contracts/rpc/athlete-profiles/dto';
 import { exportAthletesTableToCSV } from '@/features/dashboard/lib/athlete/export-athletes-csv';
 import { useAthleteTableQuery } from '@/features/dashboard/hooks/use-athlete-manager-query';
 import { useAthleteProfiles } from '@/queries/athlete-profile';

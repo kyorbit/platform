@@ -1,7 +1,5 @@
-import type {
-  MatchLoadRow,
-  MatchRead,
-} from '@/server/domain/tournament/match/match-read';
+import type { MatchLoadRow } from '@/server/domain/tournament/match/match-read';
+import type { MatchRead } from '@/contracts/rpc/matches/dto';
 import type {
   AssignSlotCommand,
   SetLockCommand,

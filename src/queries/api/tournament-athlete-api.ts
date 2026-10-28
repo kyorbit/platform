@@ -3,7 +3,7 @@ import type {
   BulkRemoveTournamentAthletesDTO,
   ListTournamentAthletesDTO,
   UpdateTournamentAthleteDTO,
-} from '@/orpc/tournament-athletes/dto';
+} from '@/contracts/rpc/tournament-athletes/dto';
 import { client } from '@/orpc/client';
 
 /**

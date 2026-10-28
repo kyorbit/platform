@@ -2,36 +2,44 @@ import { describe, expect, it } from 'vitest';
 import { RPCHandler } from '@orpc/server/fetch';
 import { createORPCClient, isDefinedError, safe } from '@orpc/client';
 import { RPCLink } from '@orpc/client/fetch';
-import { ORPCError } from '@orpc/server';
+import { ORPCError, implement } from '@orpc/server';
+import { type } from '@orpc/contract';
 import { z } from 'zod';
-import type { RouterClient } from '@orpc/server';
+import type { RouterContractClient } from '@orpc/contract';
 
-import { base, errorStatusMap } from '@/orpc/base';
+import { base as contractBase } from '@/contracts/rpc/base';
+import { errorStatusMap } from '@/orpc/base';
 import { toOrpcError } from '@/orpc/map-app-error';
 import { NotFoundError } from '@/server/application/errors';
 
-const mw = base.middleware(async ({ next }) => {
+const contract = {
+  ok: contractBase.input(z.object({ d: z.date() })).output(type<{ d: Date }>()),
+  missing: contractBase,
+  limited: contractBase,
+  unauth: contractBase,
+};
+
+const impl = implement(contract);
+const mw = impl.middleware(async ({ next }) => {
   try {
     return await next();
   } catch (e) {
     throw toOrpcError(e);
   }
 });
-const p = base.use(mw);
-const router = {
-  ok: p
-    .input(z.object({ d: z.date() }))
-    .handler(({ input }) => ({ d: input.d })),
-  missing: p.handler(() => {
+const p = impl.use(mw);
+const router = impl.router({
+  ok: p.ok.handler(({ input }) => ({ d: input.d })),
+  missing: p.missing.handler(() => {
     throw new NotFoundError('nope');
   }),
-  limited: p.handler(({ errors }) => {
+  limited: p.limited.handler(({ errors }) => {
     throw errors.RATE_LIMITED();
   }),
-  unauth: p.handler(() => {
+  unauth: p.unauth.handler(() => {
     throw new ORPCError('UNAUTHORIZED', { message: 'x' });
   }),
-};
+});
 
 const handler = new RPCHandler(router, { errorStatusMap });
 const statuses: Array<number> = [];
@@ -41,13 +49,12 @@ const link = new RPCLink({
   fetch: async (url, init) => {
     const { response } = await handler.handle(new Request(url, init), {
       prefix: '/api/rpc',
-      context: { headers: new Headers(), repos: {} as never },
     });
     statuses.push(response!.status);
     return response!;
   },
 });
-const client: RouterClient<typeof router> = createORPCClient(link);
+const client: RouterContractClient<typeof contract> = createORPCClient(link);
 
 describe('rpc transport', () => {
   it('round-trips, maps statuses, and keeps errors defined', async () => {

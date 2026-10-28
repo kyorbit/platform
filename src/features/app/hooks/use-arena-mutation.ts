@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type { ReleaseMatchClaimDTO } from '@/orpc/arena-match-claim/dto';
+import type { ReleaseMatchClaimDTO } from '@/contracts/rpc/arena-match-claim/dto';
 
 import type { ArenaMutation } from '@/features/app/lib/offline-queue/types';
 import { enqueue } from '@/features/app/lib/offline-queue/queue';

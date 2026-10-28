@@ -1,3 +1,4 @@
+import type { DivisionAssignmentRow } from '@/contracts/rpc/divisions/dto';
 import type { MutationActivityInput } from '@/server/application/activity/activity-types';
 import type {
   AssignAthleteCommand,
@@ -17,14 +18,6 @@ export type DivisionAssignContext = {
   weightMax: number | null;
 };
 
-export type TournamentAthleteRow = {
-  id: string;
-  tournamentId: string;
-  divisionId: string | null;
-  name: string;
-  status: string;
-};
-
 export type TournamentAthleteAssignContext = {
   id: string;
   tournamentId: string;
@@ -37,10 +30,10 @@ export type DivisionAssignmentStore = {
   ) => Promise<TournamentAthleteAssignContext | null>;
   assignAthlete: (
     input: AssignAthleteCommand & { activity: MutationActivityInput }
-  ) => Promise<TournamentAthleteRow>;
+  ) => Promise<DivisionAssignmentRow>;
   unassignAthlete: (
     input: UnassignAthleteCommand & { activity: MutationActivityInput }
-  ) => Promise<TournamentAthleteRow>;
+  ) => Promise<DivisionAssignmentRow>;
   autoAssign: (
     input: AutoAssignCommand & { activity: MutationActivityInput }
   ) => Promise<{ assigned: number }>;

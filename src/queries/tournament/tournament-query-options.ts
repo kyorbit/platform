@@ -1,5 +1,5 @@
 import { queryOptions } from '@tanstack/react-query';
-import type { ListTournamentsDTO } from '@/orpc/tournaments/dto';
+import type { ListTournamentsDTO } from '@/contracts/rpc/tournaments/dto';
 import { tournamentKeys } from '@/queries/keys';
 import { getTournament, listTournaments } from '@/queries/api/tournament-api';
 

@@ -7,7 +7,7 @@ import type {
   SetArenaDivisionOrderDTO,
   SetTournamentStatusDTO,
   UpdateTournamentDTO,
-} from '@/orpc/tournaments/dto';
+} from '@/contracts/rpc/tournaments/dto';
 import { client } from '@/orpc/client';
 
 export function listTournaments(input: ListTournamentsDTO) {

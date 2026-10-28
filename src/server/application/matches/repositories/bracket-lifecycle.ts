@@ -1,4 +1,4 @@
-import type { MatchRead } from '@/server/domain/tournament/match/match-read';
+import type { MatchRead } from '@/contracts/rpc/matches/dto';
 import type { MutationActivityInput } from '@/server/application/activity/activity-types';
 import type {
   GenerateBracketCommand,

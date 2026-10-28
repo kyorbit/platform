@@ -1,16 +1,12 @@
 import type {
   TournamentListItemDTO,
   TournamentStatusDTO,
-} from '@/orpc/tournaments/dto';
+} from '@/contracts/rpc/tournaments/dto';
 
 export type TournamentStatus = TournamentStatusDTO;
 
 export type TournamentSortField =
-  | 'name'
-  | 'status'
-  | 'athletes'
-  | 'createdAt'
-  | undefined;
+  'name' | 'status' | 'athletes' | 'createdAt' | undefined;
 
 export const TOURNAMENT_STATUSES: ReadonlyArray<TournamentStatus> = [
   'draft',

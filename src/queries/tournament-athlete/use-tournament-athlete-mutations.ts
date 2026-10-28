@@ -4,7 +4,7 @@ import type {
   BulkAddAthletesDTO,
   BulkRemoveTournamentAthletesDTO,
   UpdateTournamentAthleteDTO,
-} from '@/orpc/tournament-athletes/dto';
+} from '@/contracts/rpc/tournament-athletes/dto';
 import {
   bulkAddTournamentAthletes,
   bulkRemoveTournamentAthletes,

@@ -65,3 +65,27 @@ export type UpdateTournamentAthleteDTO = z.infer<
 export type ListTournamentAthletesDTO = z.infer<
   typeof ListTournamentAthletesSchema
 >;
+
+export type TournamentAthleteRow = {
+  id: string;
+  tournamentId: string;
+  athleteProfileId: string;
+  name: string;
+  gender: string;
+  beltLevel: number;
+  weight: number;
+  affiliation: string;
+  image: string | null;
+  status: string;
+  divisionId: string | null;
+  seed: number | null;
+  locked: boolean;
+  notes: string | null;
+  createdAt: Date;
+  athleteProfile: { id: string; athleteCode: string | null };
+};
+
+export type ListTournamentAthletesResult = {
+  items: Array<TournamentAthleteRow>;
+  total: number;
+};

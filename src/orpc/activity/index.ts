@@ -1,10 +1,8 @@
-import { ListTournamentActivitySchema } from './dto';
 import { authorized } from '@/orpc/middleware';
 import { listActivity as runListActivity } from '@/server/application/activity/use-cases/list';
 
-export const listForTournament = authorized
-  .input(ListTournamentActivitySchema)
-  .handler(async ({ context, input }) =>
+export const listForTournament = authorized.activity.listForTournament.handler(
+  async ({ context, input }) =>
     runListActivity(
       {
         tournamentId: input.tournamentId,
@@ -14,4 +12,4 @@ export const listForTournament = authorized
       },
       context.repos.activityList
     )
-  );
+);

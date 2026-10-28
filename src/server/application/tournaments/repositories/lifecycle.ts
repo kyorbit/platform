@@ -1,3 +1,4 @@
+import type { TournamentRow } from '@/contracts/rpc/tournaments/dto';
 import type {
   CreateTournamentCommand,
   DeleteTournamentCommand,
@@ -5,14 +6,6 @@ import type {
   UpdateTournamentCommand,
 } from '../use-cases/lifecycle-commands';
 import type { TournamentStatusValue } from '@/lib/tournament/tournament-status';
-
-export type TournamentRow = {
-  id: string;
-  name: string;
-  status: string;
-  createdAt: Date;
-  updatedAt: Date;
-};
 
 export type TournamentLifecycleContext = {
   id: string;

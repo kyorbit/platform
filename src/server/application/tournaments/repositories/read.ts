@@ -1,3 +1,7 @@
+import type {
+  TournamentDetail,
+  TournamentsPage,
+} from '@/contracts/rpc/tournaments/dto';
 import type { TournamentStatusValue } from '@/lib/tournament/tournament-status';
 
 export type ListTournamentsQuery = {
@@ -8,50 +12,6 @@ export type ListTournamentsQuery = {
   status?: Array<TournamentStatusValue>;
   sort?: 'name' | 'status' | 'athletes' | 'createdAt';
   sortDir?: 'asc' | 'desc';
-};
-
-export type TournamentLifecycleFlags = {
-  canComplete: boolean;
-};
-
-export type TournamentDivisionSummary = {
-  id: string;
-  name: string;
-  _count: { tournamentAthletes: number; matches: number };
-};
-
-export type TournamentDetail = {
-  id: string;
-  name: string;
-  status: string;
-  createdAt: Date;
-  updatedAt: Date;
-  nameSortKey: string;
-  arenaDivisionOrder: unknown;
-  divisions: Array<TournamentDivisionSummary>;
-  _count: { divisions: number; matches: number; tournamentAthletes: number };
-  lifecycle: TournamentLifecycleFlags;
-};
-
-export type TournamentListItem = {
-  id: string;
-  name: string;
-  status: TournamentStatusValue;
-  createdAt: Date;
-  updatedAt: Date;
-  nameSortKey: string;
-  arenaDivisionOrder: unknown;
-  _count: {
-    divisions: number;
-    matches: number;
-    tournamentAthletes: number;
-    actionableMatches: number;
-  };
-};
-
-export type TournamentsPage = {
-  items: Array<TournamentListItem>;
-  total: number;
 };
 
 export type TournamentReadStore = {

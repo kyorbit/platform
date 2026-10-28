@@ -1,18 +1,3 @@
-import { z } from 'zod';
-import {
-  AdminSetMatchStatusSchema,
-  AssignSlotSchema,
-  CreateCustomMatchSchema,
-  GenerateBracketSchema,
-  RegenerateBracketSchema,
-  ResetBracketSchema,
-  SetLockSchema,
-  SetWinnerSchema,
-  ShuffleBracketSchema,
-  SwapParticipantsSchema,
-  SwapSlotsSchema,
-  UpdateScoreSchema,
-} from './dto';
 import { NotFoundError } from '@/server/application/errors';
 import {
   generateBracket as runGenerateBracket,
@@ -38,14 +23,8 @@ import {
   updateMatchScore as runUpdateMatchScore,
 } from '@/server/application/matches/use-cases/transition';
 
-export const listMatches = authorized
-  .input(
-    z.object({
-      divisionId: z.string().optional(),
-      tournamentId: z.string().optional(),
-    })
-  )
-  .handler(async ({ input, context }) => {
+export const listMatches = authorized.match.list.handler(
+  async ({ input, context }) => {
     if (input.divisionId) {
       return await context.repos.matchRead.findByDivisionId(input.divisionId);
     }
@@ -55,141 +34,142 @@ export const listMatches = authorized
       );
     }
     throw new NotFoundError('Either divisionId or tournamentId is required');
-  });
+  }
+);
 
-export const getMatch = authorized
-  .input(z.object({ id: z.string() }))
-  .handler(async ({ input, context }) => {
+export const getMatch = authorized.match.get.handler(
+  async ({ input, context }) => {
     const match = await context.repos.matchRead.findById(input.id);
     if (!match) {
       throw new NotFoundError('Match not found');
     }
     return match;
-  });
+  }
+);
 
-export const createCustomMatch = authorized
-  .input(CreateCustomMatchSchema)
-  .handler(async ({ input, context }) => {
+export const createCustomMatch = authorized.match.createCustom.handler(
+  async ({ input, context }) => {
     assertSystemAdmin(context.user);
     return runCreateCustomMatch(
       { ...input, adminId: context.user.id },
       context.repos.customMatch
     );
-  });
+  }
+);
 
-export const adminSetMatchStatus = authorized
-  .input(AdminSetMatchStatusSchema)
-  .handler(async ({ input, context }) => {
+export const adminSetMatchStatus = authorized.match.adminSetMatchStatus.handler(
+  async ({ input, context }) => {
     assertSystemAdmin(context.user);
     return runAdminSetMatchStatus(
       { ...input, adminId: context.user.id },
       context.repos.matchTransition
     );
-  });
+  }
+);
 
-export const removeMatch = authorized
-  .input(z.object({ id: z.string() }))
-  .handler(async ({ input, context }) => {
+export const removeMatch = authorized.match.delete.handler(
+  async ({ input, context }) => {
     assertSystemAdmin(context.user);
     return runDeleteCustomMatch(
       { matchId: input.id, adminId: context.user.id },
       context.repos.customMatch
     );
-  });
+  }
+);
 
-export const generateBracket = authorized
-  .input(GenerateBracketSchema)
-  .handler(async ({ input, context }) => {
+export const generateBracket = authorized.bracket.generate.handler(
+  async ({ input, context }) => {
     assertSystemAdmin(context.user);
     return runGenerateBracket(
       { ...input, adminId: context.user.id },
       context.repos.bracketLifecycle
     );
-  });
+  }
+);
 
-export const shuffleBracket = authorized
-  .input(ShuffleBracketSchema)
-  .handler(async ({ input, context }) => {
+export const shuffleBracket = authorized.bracket.shuffle.handler(
+  async ({ input, context }) => {
     assertSystemAdmin(context.user);
     return runShuffleBracket(
       { ...input, adminId: context.user.id },
       context.repos.bracketLifecycle
     );
-  });
+  }
+);
 
-export const regenerateBracket = authorized
-  .input(RegenerateBracketSchema)
-  .handler(async ({ input, context }) => {
+export const regenerateBracket = authorized.bracket.regenerate.handler(
+  async ({ input, context }) => {
     assertSystemAdmin(context.user);
     return runRegenerateBracket(
       { ...input, adminId: context.user.id },
       context.repos.bracketLifecycle
     );
-  });
+  }
+);
 
-export const resetBracket = authorized
-  .input(ResetBracketSchema)
-  .handler(async ({ input, context }) => {
+export const resetBracket = authorized.bracket.reset.handler(
+  async ({ input, context }) => {
     assertSystemAdmin(context.user);
     return runResetBracket(
       { ...input, adminId: context.user.id },
       context.repos.bracketLifecycle
     );
-  });
+  }
+);
 
-export const setLock = authorized
-  .input(SetLockSchema)
-  .handler(async ({ input, context }) => {
+export const setLock = authorized.match.setLock.handler(
+  async ({ input, context }) => {
     assertSystemAdmin(context.user);
     return runSetLock(input, context.repos.round0Slot);
-  });
+  }
+);
 
-export const updateScore = authorized
-  .input(UpdateScoreSchema)
-  .handler(async ({ input, context }) => {
+export const updateScore = authorized.match.updateScore.handler(
+  async ({ input, context }) => {
     assertSystemAdmin(context.user);
     return runUpdateMatchScore(
       { ...input, adminId: context.user.id },
       context.repos.matchTransition
     );
-  });
+  }
+);
 
-export const setWinner = authorized
-  .input(SetWinnerSchema)
-  .handler(async ({ input, context }) => {
+export const setWinner = authorized.match.setWinner.handler(
+  async ({ input, context }) => {
     assertSystemAdmin(context.user);
     return runSetMatchWinner(
       { ...input, adminId: context.user.id },
       context.repos.matchTransition
     );
-  });
+  }
+);
 
-export const swapParticipants = authorized
-  .input(SwapParticipantsSchema)
-  .handler(async ({ input, context }) => {
+export const swapParticipants = authorized.match.swapParticipants.handler(
+  async ({ input, context }) => {
     assertSystemAdmin(context.user);
     return runSwapParticipants(
       { ...input, adminId: context.user.id },
       context.repos.matchParticipant
     );
-  });
+  }
+);
 
-export const assignSlot = authorized
-  .input(AssignSlotSchema)
-  .handler(async ({ input, context }) => {
+export const assignSlot = authorized.match.assignSlot.handler(
+  async ({ input, context }) => {
     assertSystemAdmin(context.user);
     return runAssignSlot(
       { ...input, adminId: context.user.id },
       context.repos.round0Slot
     );
-  });
+  }
+);
 
-export const swapSlots = authorized
-  .input(SwapSlotsSchema)
-  .handler(async ({ input, context }) => {
+export const swapSlots = authorized.match.swapSlots.handler(
+  async ({ input, context }) => {
     assertSystemAdmin(context.user);
     return runSwapSlots(
       { ...input, adminId: context.user.id },
       context.repos.round0Slot
     );
-  });
+  }
+);

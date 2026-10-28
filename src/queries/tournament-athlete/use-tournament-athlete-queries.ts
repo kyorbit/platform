@@ -3,7 +3,7 @@ import {
   useInfiniteQuery,
   useQuery,
 } from '@tanstack/react-query';
-import type { ListTournamentAthletesDTO } from '@/orpc/tournament-athletes/dto';
+import type { ListTournamentAthletesDTO } from '@/contracts/rpc/tournament-athletes/dto';
 import { tournamentAthleteKeys } from '@/queries/keys';
 import {
   getAthleteIdentityKey,

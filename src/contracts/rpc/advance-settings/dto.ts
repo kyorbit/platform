@@ -1,4 +1,8 @@
 import { z } from 'zod';
+import type {
+  SelectionDivisionRow,
+  SelectionMatchRow,
+} from '@/contracts/advance/selection';
 
 /** Tournaments list + divisions for one tournament (key excludes `divisionId`). */
 export const SelectionCatalogSchema = z.object({
@@ -16,3 +20,12 @@ export const SelectionMatchesSchema = z.object({
 });
 
 export type SelectionMatchesDTO = z.infer<typeof SelectionMatchesSchema>;
+
+export type SelectionCatalogResult = {
+  tournaments: Array<{ id: string; name: string; status: string }>;
+  divisions: Array<SelectionDivisionRow>;
+};
+
+export type SelectionMatchesResult = {
+  matches: Array<SelectionMatchRow>;
+};

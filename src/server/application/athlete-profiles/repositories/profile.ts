@@ -1,47 +1,15 @@
 import type {
+  AthleteProfileRow,
+  DedupMatch,
+  ListAthleteProfilesResult,
+} from '@/contracts/rpc/athlete-profiles/dto';
+import type {
   BulkRemoveProfilesCommand,
   CreateProfileData,
   DedupQuery,
   ListAthleteProfilesQuery,
   UpdateProfileData,
 } from '../use-cases/profile-commands';
-
-export type AthleteProfileRow = {
-  id: string;
-  athleteCode: string | null;
-  name: string;
-  gender: string;
-  beltLevel: number;
-  weight: number;
-  affiliation: string;
-  image: string | null;
-  createdAt: Date;
-  updatedAt: Date;
-};
-
-export type AthleteProfileListItem = {
-  id: string;
-  athleteCode: string;
-  name: string;
-  gender: string;
-  beltLevel: number;
-  weight: number;
-  affiliation: string;
-  image: string | null;
-  createdAt: Date;
-  updatedAt: Date;
-};
-
-export type ListAthleteProfilesResult = {
-  items: Array<AthleteProfileListItem>;
-  total: number;
-};
-
-export type DedupMatch = {
-  id: string;
-  name: string;
-  affiliation: string;
-};
 
 export type AthleteProfileStore = {
   list: (query: ListAthleteProfilesQuery) => Promise<ListAthleteProfilesResult>;

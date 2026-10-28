@@ -1,11 +1,6 @@
-import type { AthleteProfileStore, DedupMatch } from '../repositories/profile';
+import type { DedupResult } from '@/contracts/rpc/athlete-profiles/dto';
+import type { AthleteProfileStore } from '../repositories/profile';
 import type { DedupQuery } from './profile-commands';
-
-export type DedupResult = {
-  isDuplicate: boolean;
-  isHardBlock: boolean;
-  matches: Array<DedupMatch>;
-};
 
 export async function runDedupCheck(
   input: DedupQuery,

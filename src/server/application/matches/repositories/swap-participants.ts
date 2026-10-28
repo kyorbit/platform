@@ -1,7 +1,5 @@
-import type {
-  MatchLoadRow,
-  MatchRead,
-} from '@/server/domain/tournament/match/match-read';
+import type { MatchLoadRow } from '@/server/domain/tournament/match/match-read';
+import type { MatchRead } from '@/contracts/rpc/matches/dto';
 import type { MutationActivityInput } from '@/server/application/activity/activity-types';
 import type { SwapParticipantsCommand } from '../use-cases/swap-participants-commands';
 

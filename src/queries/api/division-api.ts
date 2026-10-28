@@ -4,7 +4,7 @@ import type {
   AutoAssignDTO,
   UnassignAthleteDTO,
   UpdateDivisionDTO,
-} from '@/orpc/divisions/dto';
+} from '@/contracts/rpc/divisions/dto';
 import { client } from '@/orpc/client';
 
 export function listDivisions(tournamentId: string) {

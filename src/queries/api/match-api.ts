@@ -8,7 +8,7 @@ import type {
   SwapParticipantsDTO,
   SwapSlotsDTO,
   UpdateScoreDTO,
-} from '@/orpc/matches/dto';
+} from '@/contracts/rpc/matches/dto';
 import { client } from '@/orpc/client';
 
 export function listMatchesByDivision(divisionId: string) {

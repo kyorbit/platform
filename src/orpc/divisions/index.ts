@@ -1,12 +1,3 @@
-import { z } from 'zod';
-import {
-  AssignAthleteSchema,
-  AutoAssignAllSchema,
-  AutoAssignSchema,
-  CreateDivisionSchema,
-  UnassignAthleteSchema,
-  UpdateDivisionSchema,
-} from './dto';
 import { authorized } from '@/orpc/middleware';
 import { assertSystemAdmin } from '@/orpc/policies/auth';
 import {
@@ -25,62 +16,59 @@ import {
   listDivisionsByTournament as runListDivisionsByTournament,
 } from '@/server/application/divisions/use-cases/read';
 
-export const listDivisions = authorized
-  .input(z.object({ tournamentId: z.string() }))
-  .handler(async ({ context, input }) =>
+export const listDivisions = authorized.division.list.handler(
+  async ({ context, input }) =>
     runListDivisionsByTournament(input.tournamentId, context.repos.divisionRead)
-  );
+);
 
-export const getDivision = authorized
-  .input(z.object({ id: z.string() }))
-  .handler(async ({ context, input }) =>
+export const getDivision = authorized.division.get.handler(
+  async ({ context, input }) =>
     runGetDivision(input.id, context.repos.divisionRead)
-  );
+);
 
-export const createDivision = authorized
-  .input(CreateDivisionSchema)
-  .handler(async ({ input, context }) => {
+export const createDivision = authorized.division.create.handler(
+  async ({ input, context }) => {
     assertSystemAdmin(context.user);
     return runCreateDivision(input, context.repos.divisionLifecycle);
-  });
+  }
+);
 
-export const updateDivision = authorized
-  .input(UpdateDivisionSchema)
-  .handler(async ({ input, context }) => {
+export const updateDivision = authorized.division.update.handler(
+  async ({ input, context }) => {
     assertSystemAdmin(context.user);
     return runUpdateDivision(input, context.repos.divisionLifecycle);
-  });
+  }
+);
 
-export const removeDivision = authorized
-  .input(z.object({ id: z.string() }))
-  .handler(async ({ context, input }) => {
+export const removeDivision = authorized.division.delete.handler(
+  async ({ context, input }) => {
     assertSystemAdmin(context.user);
     return runDeleteDivision({ id: input.id }, context.repos.divisionLifecycle);
-  });
+  }
+);
 
-export const autoAssignDivision = authorized
-  .input(AutoAssignSchema)
-  .handler(async ({ input, context }) => {
+export const autoAssignDivision = authorized.division.autoAssign.handler(
+  async ({ input, context }) => {
     assertSystemAdmin(context.user);
     return runAutoAssignDivision(
       { ...input, adminId: context.user.id },
       context.repos.divisionAssign
     );
-  });
+  }
+);
 
-export const autoAssignAllDivisions = authorized
-  .input(AutoAssignAllSchema)
-  .handler(async ({ input, context }) => {
+export const autoAssignAllDivisions = authorized.division.autoAssignAll.handler(
+  async ({ input, context }) => {
     assertSystemAdmin(context.user);
     return runAutoAssignAllEligible(
       { tournamentId: input.tournamentId, adminId: context.user.id },
       context.repos.divisionAssign
     );
-  });
+  }
+);
 
-export const assignAthleteToDivision = authorized
-  .input(AssignAthleteSchema)
-  .handler(async ({ input, context }) => {
+export const assignAthleteToDivision =
+  authorized.division.assignAthlete.handler(async ({ input, context }) => {
     assertSystemAdmin(context.user);
     return runAssignAthleteToDivision(
       { ...input, adminId: context.user.id },
@@ -88,9 +76,8 @@ export const assignAthleteToDivision = authorized
     );
   });
 
-export const unassignAthleteFromDivision = authorized
-  .input(UnassignAthleteSchema)
-  .handler(async ({ input, context }) => {
+export const unassignAthleteFromDivision =
+  authorized.division.unassignAthlete.handler(async ({ input, context }) => {
     assertSystemAdmin(context.user);
     return runUnassignAthleteFromDivision(
       { ...input, adminId: context.user.id },

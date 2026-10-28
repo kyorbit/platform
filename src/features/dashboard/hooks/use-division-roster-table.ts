@@ -4,7 +4,7 @@ import { useTable } from '@tanstack/react-table';
 import { toast } from 'sonner';
 import type { PaginationState, SortingState } from '@tanstack/react-table';
 import type { DivisionData } from '@/contracts/tournament/division';
-import type { ListTournamentAthletesDTO } from '@/orpc/tournament-athletes/dto';
+import type { ListTournamentAthletesDTO } from '@/contracts/rpc/tournament-athletes/dto';
 import { getDivisionRosterColumns } from '@/features/dashboard/components/tournament/builder/divisions-tab/division-roster-table/division-roster-columns';
 import { getViolations } from '@/features/dashboard/components/tournament/builder/divisions-tab/division-violation-badge';
 import { useTournamentAthletes } from '@/queries/tournament-athlete';
