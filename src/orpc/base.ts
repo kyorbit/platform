@@ -1,4 +1,4 @@
-import { os } from '@orpc/server';
+import { COMMON_ERROR_STATUS_MAP, os } from '@orpc/server';
 import type { ServerRepos } from '@/server/composition';
 
 export const base = os
@@ -29,3 +29,6 @@ export const base = os
       message: 'Conflict.',
     },
   });
+
+// v2 has no `status` on errors; handlers map codes, unmapped ones fall back to 400.
+export const errorStatusMap = { ...COMMON_ERROR_STATUS_MAP, RATE_LIMITED: 429 };

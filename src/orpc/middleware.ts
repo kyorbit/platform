@@ -10,7 +10,6 @@ export const authed = base.middleware(async ({ context, next }) => {
   if (!headers) {
     throw new ORPCError('UNAUTHORIZED', {
       message: 'Unauthorized: No headers provided',
-      defined: true,
     });
   }
 
@@ -19,7 +18,6 @@ export const authed = base.middleware(async ({ context, next }) => {
   if (!session) {
     throw new ORPCError('UNAUTHORIZED', {
       message: 'Unauthorized: Invalid session',
-      defined: true,
     });
   }
 

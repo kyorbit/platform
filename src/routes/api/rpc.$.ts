@@ -4,9 +4,11 @@ import { RPCHandler } from '@orpc/server/fetch';
 import { onError } from '@orpc/server';
 import { createFileRoute } from '@tanstack/react-router';
 import router from '@/orpc/router';
+import { errorStatusMap } from '@/orpc/base';
 import { serverRepos } from '@/server/composition';
 
 const handler = new RPCHandler(router, {
+  errorStatusMap,
   interceptors: [
     onError((error) => {
       console.error('[api/rpc]', error);
