@@ -340,7 +340,6 @@ describe('assignSlot', () => {
     vi.mocked(prisma.match.findUnique).mockResolvedValue({
       id: 'm1',
       round: 0,
-      status: 'pending',
       status: 'complete',
       divisionId: 'group-1',
       redLocked: false,
@@ -421,7 +420,6 @@ describe('swapSlots', () => {
     const a = {
       id: 'ma',
       round: 0,
-      status: 'pending',
       status: 'complete',
       divisionId: 'g1',
       redLocked: false,
@@ -436,7 +434,6 @@ describe('swapSlots', () => {
     const b = {
       id: 'mb',
       round: 0,
-      status: 'pending',
       status: 'pending',
       divisionId: 'g1',
       redLocked: false,
