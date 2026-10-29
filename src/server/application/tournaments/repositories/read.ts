@@ -1,15 +1,15 @@
 import type {
   TournamentDetail,
+  TournamentStatus,
   TournamentsPage,
-} from '@/contracts/rpc/tournaments/dto';
-import type { TournamentStatusValue } from '@/lib/tournament/tournament-status';
+} from '@/contracts/tournaments/dto';
 
 export type ListTournamentsQuery = {
   page?: number;
   perPage?: number;
   query?: string;
   name?: string;
-  status?: Array<TournamentStatusValue>;
+  status?: Array<TournamentStatus>;
   sort?: 'name' | 'status' | 'athletes' | 'createdAt';
   sortDir?: 'asc' | 'desc';
 };

@@ -2,9 +2,9 @@ import React from 'react';
 import { useDroppable } from '@dnd-kit/core';
 import { useTable } from '@tanstack/react-table';
 import { toast } from 'sonner';
+import type { DivisionListItem } from '@/contracts/divisions/dto';
 import type { PaginationState, SortingState } from '@tanstack/react-table';
-import type { DivisionData } from '@/contracts/tournament/division';
-import type { ListTournamentAthletesDTO } from '@/contracts/rpc/tournament-athletes/dto';
+import type { ListTournamentAthletesDTO } from '@/contracts/tournament-athletes/dto';
 import { getDivisionRosterColumns } from '@/features/dashboard/components/tournament/builder/divisions-tab/division-roster-table/division-roster-columns';
 import { getViolations } from '@/features/dashboard/components/tournament/builder/divisions-tab/division-violation-badge';
 import { useTournamentAthletes } from '@/queries/tournament-athlete';
@@ -12,9 +12,9 @@ import { useAssignAthlete, useUnassignAthlete } from '@/queries/division';
 import { dataTableFeatures } from '@/lib/data-table/features';
 
 export interface UseDivisionRosterTableArgs {
-  division: DivisionData;
+  division: DivisionListItem;
   tournamentId: string;
-  divisions: Array<DivisionData>;
+  divisions: Array<DivisionListItem>;
   readOnly: boolean;
 }
 
@@ -67,7 +67,7 @@ export function useDivisionRosterTable({
     () => divisions.filter((d) => d.id !== division.id),
     [divisions, division.id]
   );
-  const otherDivisionsRef = React.useRef<Array<DivisionData>>([]);
+  const otherDivisionsRef = React.useRef<Array<DivisionListItem>>([]);
   otherDivisionsRef.current = otherDivisions;
   const otherDivisionsKey = otherDivisions.map((d) => d.id).join(',');
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { toast } from 'sonner';
-import type { DivisionData } from '@/contracts/tournament/division';
+import type { DivisionListItem } from '@/contracts/divisions/dto';
 import { StatusButton } from '@/components/async/status-button';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -18,7 +18,7 @@ interface AutoAssignAllDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   tournamentId: string;
-  divisions: Array<DivisionData>;
+  divisions: Array<DivisionListItem>;
 }
 
 export function AutoAssignAllDialog({
@@ -30,8 +30,8 @@ export function AutoAssignAllDialog({
   const autoAssignAll = useAutoAssignAll();
 
   const { eligible, skipped } = React.useMemo(() => {
-    const eligibleList: Array<DivisionData> = [];
-    const skippedList: Array<DivisionData> = [];
+    const eligibleList: Array<DivisionListItem> = [];
+    const skippedList: Array<DivisionListItem> = [];
     for (const division of divisions) {
       if (division._count.matches === 0) eligibleList.push(division);
       else skippedList.push(division);

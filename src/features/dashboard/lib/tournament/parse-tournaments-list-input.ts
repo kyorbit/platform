@@ -6,10 +6,10 @@ import {
   parseAsStringEnum,
 } from 'nuqs/server';
 import type {
+  ListTournamentsDTO,
   TournamentListItem,
   TournamentSortField,
-} from '@/contracts/tournament/list';
-import type { ListTournamentsDTO } from '@/contracts/rpc/tournaments/dto';
+} from '@/contracts/tournaments/dto';
 import { searchRecordToURLSearchParams } from '@/integrations/nuqs/tanstack-router-adapter';
 import { getSortingStateParser } from '@/lib/data-table/parsers';
 

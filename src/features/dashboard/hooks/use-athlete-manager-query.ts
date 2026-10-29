@@ -5,8 +5,8 @@ import {
   parseAsStringEnum,
   useQueryState,
 } from 'nuqs';
-import type { AthleteProfileData } from '@/contracts/athlete/profile';
-import { ATHLETE_PROFILE_SORT_IDS } from '@/contracts/athlete/profile';
+import type { AthleteProfileListItem } from '@/contracts/athlete-profiles/dto';
+import { ATHLETE_PROFILE_SORT_IDS } from '@/contracts/athlete-profiles/dto';
 import {
   getFiltersStateParser,
   getSortingStateParser,
@@ -46,13 +46,13 @@ export function useAthleteTableQuery() {
   const [weightFilter] = useQueryState('weight');
   const [sort] = useQueryState(
     'sort',
-    getSortingStateParser<AthleteProfileData>(SORTABLE_COLUMN_IDS).withDefault(
-      DEFAULT_SORTING
-    )
+    getSortingStateParser<AthleteProfileListItem>(
+      SORTABLE_COLUMN_IDS
+    ).withDefault(DEFAULT_SORTING)
   );
   const [filters] = useQueryState(
     'filters',
-    getFiltersStateParser<AthleteProfileData>().withDefault([])
+    getFiltersStateParser<AthleteProfileListItem>().withDefault([])
   );
   const [joinOperator] = useQueryState(
     'joinOperator',

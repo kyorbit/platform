@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import type { ContractInputs } from '@/contracts/rpc/router';
+import type { ContractInputs } from '@/contracts/router';
 import { client } from '@/orpc/client';
 import { invalidateAfterDivisionWrite } from '@/queries/division/invalidate-division-cache';
 

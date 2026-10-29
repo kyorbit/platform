@@ -5,7 +5,7 @@ import { ArenaOrderRailHint } from './arena-division-order-sheet/arena-order-rai
 import { BracketActionQueue } from './bracket-action-queue';
 import { DivisionsTabsHeader } from './divisions-tabs-header';
 import { PanelAthleteRow } from './panel-athlete-row';
-import type { TournamentAthleteData } from '@/contracts/tournament/division';
+import type { TournamentAthlete } from '@/contracts/tournament-athletes/dto';
 import { useTournamentBracket } from '@/features/dashboard/contexts/tournament-bracket/use-tournament-bracket';
 import {
   Empty,
@@ -17,12 +17,7 @@ import {
 import { cn } from '@/lib/utils';
 
 type PoolView =
-  | 'loading'
-  | 'athletes'
-  | 'queue'
-  | 'noAthletes'
-  | 'arranged'
-  | 'empty';
+  'loading' | 'athletes' | 'queue' | 'noAthletes' | 'arranged' | 'empty';
 
 function poolView({
   isPoolLoading,
@@ -52,7 +47,7 @@ function PanelAthletes({
   readOnly,
 }: {
   divisionName: string | undefined;
-  athletes: Array<TournamentAthleteData>;
+  athletes: Array<TournamentAthlete>;
   divisionId: string;
   readOnly: boolean;
 }) {

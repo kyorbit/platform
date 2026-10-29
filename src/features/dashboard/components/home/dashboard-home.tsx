@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
-import type { TournamentListItem } from '@/contracts/tournament/list';
+import type { TournamentListItem } from '@/contracts/tournaments/dto';
 import type { DataTableRowAction } from '@/lib/data-table/features';
 import { CreateTournamentDialog } from '@/features/dashboard/components/tournament/create-tournament-dialog';
 import { DeleteTournamentDialog } from '@/features/dashboard/components/tournament/overview/dialogs/delete-tournament-dialog';

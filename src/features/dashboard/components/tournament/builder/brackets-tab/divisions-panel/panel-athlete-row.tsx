@@ -1,11 +1,11 @@
 import { useDraggable } from '@dnd-kit/core';
 import { GripVertical } from 'lucide-react';
-import type { TournamentAthleteData } from '@/contracts/tournament/division';
+import type { TournamentAthlete } from '@/contracts/tournament-athletes/dto';
 import { cn } from '@/lib/utils';
 import { getBeltLabel } from '@/config/athlete';
 
 interface PanelAthleteRowProps {
-  athlete: TournamentAthleteData;
+  athlete: TournamentAthlete;
   divisionId: string;
   readOnly: boolean;
 }

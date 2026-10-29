@@ -1,4 +1,3 @@
-import type { TournamentStatusValue } from '@/lib/tournament/tournament-status';
 import type {
   CreateTournamentCommand,
   DeleteTournamentCommand,
@@ -6,7 +5,8 @@ import type {
   UpdateTournamentCommand,
 } from './lifecycle-commands';
 import type { TournamentLifecycleStore } from '../repositories/lifecycle';
-import { TournamentStatusSchema } from '@/lib/tournament/tournament-status';
+import type { TournamentStatus } from '@/contracts/tournaments/dto';
+import { TournamentStatusSchema } from '@/contracts/tournaments/dto';
 import { BadRequestError, NotFoundError } from '@/server/application/errors';
 import {
   assertCanForceTournamentStatus,
@@ -14,8 +14,8 @@ import {
 } from '@/server/application/policies/tournament-policy';
 
 const NEXT_TOURNAMENT_STATUS: Record<
-  TournamentStatusValue,
-  TournamentStatusValue | null
+  TournamentStatus,
+  TournamentStatus | null
 > = {
   draft: 'active',
   active: 'completed',
@@ -23,8 +23,8 @@ const NEXT_TOURNAMENT_STATUS: Record<
 };
 
 function assertNextStatus(
-  currentStatus: TournamentStatusValue,
-  nextStatus: TournamentStatusValue
+  currentStatus: TournamentStatus,
+  nextStatus: TournamentStatus
 ) {
   const expectedNextStatus = NEXT_TOURNAMENT_STATUS[currentStatus];
 

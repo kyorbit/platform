@@ -12,7 +12,7 @@ import {
 } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { AddAthletesList } from '../add-athletes-list';
-import type { AthleteProfileData } from '@/contracts/athlete/profile';
+import type { AthleteProfileListItem } from '@/contracts/athlete-profiles/dto';
 import { LoadMore } from '@/components/async/load-more';
 import { useAddAthletesSheet } from '@/features/dashboard/hooks/use-add-athletes-sheet';
 import { client as rpc } from '@/orpc/client';
@@ -78,7 +78,7 @@ function intersect(isIntersecting = true) {
   );
 }
 
-function athlete(index: number): AthleteProfileData {
+function athlete(index: number): AthleteProfileListItem {
   return {
     id: `athlete-${index}`,
     athleteCode: `A${index}`,

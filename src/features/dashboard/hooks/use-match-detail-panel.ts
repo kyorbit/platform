@@ -1,6 +1,6 @@
 import React from 'react';
-import type { MatchStatus } from '@/contracts/tournament/match';
-import type { TournamentAthleteData } from '@/contracts/tournament/division';
+import type { MatchStatus } from '@/contracts/matches/dto';
+import type { TournamentAthlete } from '@/contracts/tournament-athletes/dto';
 import { useTournamentBracket } from '@/features/dashboard/contexts/tournament-bracket/use-tournament-bracket';
 import {
   useAdminSetMatchStatus,
@@ -85,7 +85,7 @@ export function useMatchDetailPanel() {
   }, [match]);
 
   const athleteMap = React.useMemo(() => {
-    const map = new Map<string, TournamentAthleteData>();
+    const map = new Map<string, TournamentAthlete>();
     for (const a of athletes) {
       map.set(a.id, a);
     }

@@ -2,7 +2,7 @@ import type {
   GetLastSelectionQuery,
   SetLastSelectionCommand,
 } from '../use-cases/commands';
-import type { LastSelectionPayload } from '@/contracts/rpc/device-last-selection/dto';
+import type { LastSelectionPayload } from '@/contracts/device-last-selection/dto';
 
 export type DeviceLastSelectionStore = {
   find: (query: GetLastSelectionQuery) => Promise<LastSelectionPayload | null>;

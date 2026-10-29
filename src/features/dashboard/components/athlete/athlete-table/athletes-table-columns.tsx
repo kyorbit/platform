@@ -1,6 +1,6 @@
 import { AthleteAvatar } from '../athlete-avatar';
 import AthletesActionMenu from './athletes-action-menu';
-import type { AthleteProfileData } from '@/contracts/athlete/profile';
+import type { AthleteProfileListItem } from '@/contracts/athlete-profiles/dto';
 import type { ColumnOptions } from '@/features/dashboard/lib/athlete/column-options';
 import type { DataTableColumnDef } from '@/lib/data-table/features';
 
@@ -17,7 +17,7 @@ import { cn } from '@/lib/utils';
 
 export function getAthletesTableColumns(
   options: ColumnOptions
-): Array<DataTableColumnDef<AthleteProfileData>> {
+): Array<DataTableColumnDef<AthleteProfileListItem>> {
   const nameFilterQueryKey = options.nameFilterQueryKey ?? 'query';
 
   return [

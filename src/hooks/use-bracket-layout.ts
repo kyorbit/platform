@@ -1,5 +1,5 @@
 import React from 'react';
-import type { MatchData } from '@/contracts/tournament/match';
+import type { Match } from '@/contracts/matches/dto';
 import type {
   BracketCanvasLayout,
   BracketConnectorPath,
@@ -23,7 +23,7 @@ export type UseBracketLayoutResult = {
  * Use this in any bracket surface so layout stays in sync without duplicating useMemo blocks.
  */
 export function useBracketLayout(
-  matches: Array<MatchData>,
+  matches: Array<Match>,
   thirdPlaceMatch: boolean,
   options?: UseBracketLayoutOptions
 ): UseBracketLayoutResult {

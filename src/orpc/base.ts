@@ -1,6 +1,6 @@
 import { COMMON_ERROR_STATUS_MAP, implement } from '@orpc/server';
 import type { ServerRepos } from '@/server/composition';
-import { contract } from '@/contracts/rpc/router';
+import { contract } from '@/contracts/router';
 
 export const base = implement(contract).$context<{
   headers: Headers;

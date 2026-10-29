@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
-
-import { MatchStatusSchema } from '../match-status';
+import { MatchStatusSchema } from '@/contracts/matches/dto';
 
 describe('MatchStatusSchema', () => {
   it('parses valid statuses', () => {

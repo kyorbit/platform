@@ -1,8 +1,8 @@
-import type { AdvanceSelectionStore } from '@/server/application/advance-settings/repositories/selection';
 import type {
   SelectionDivisionRow,
   SelectionMatchRow,
-} from '@/contracts/advance/selection';
+} from '@/contracts/advance-settings/dto';
+import type { AdvanceSelectionStore } from '@/server/application/advance-settings/repositories/selection';
 import type {
   SelectionCatalogQuery,
   SelectionMatchesQuery,

@@ -1,5 +1,5 @@
+import type { Match } from '@/contracts/matches/dto';
 import type { MatchLoadRow } from '@/server/domain/tournament/match/match-read';
-import type { MatchRead } from '@/contracts/rpc/matches/dto';
 import type {
   AssignSlotCommand,
   SetLockCommand,
@@ -8,7 +8,7 @@ import type {
 
 export type Round0SlotStore = {
   findMatch: (matchId: string) => Promise<MatchLoadRow | null>;
-  setLock: (command: SetLockCommand) => Promise<MatchRead>;
-  assignSlot: (command: AssignSlotCommand) => Promise<MatchRead>;
-  swapSlots: (command: SwapSlotsCommand) => Promise<MatchRead>;
+  setLock: (command: SetLockCommand) => Promise<Match>;
+  assignSlot: (command: AssignSlotCommand) => Promise<Match>;
+  swapSlots: (command: SwapSlotsCommand) => Promise<Match>;
 };

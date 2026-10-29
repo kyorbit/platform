@@ -1,9 +1,9 @@
-import type { MatchData } from '@/contracts/tournament/match';
+import type { Match } from '@/contracts/matches/dto';
 import type { ArenaRound0BracketMeta } from '@/lib/tournament/match-eligibility';
 import { isArenaSequenceEligible } from '@/lib/tournament/match-eligibility';
 
 export interface BracketActionQueueItem {
-  match: MatchData;
+  match: Match;
   reasons: Array<string>;
 }
 
@@ -11,13 +11,13 @@ export interface BuildBracketActionQueueOptions {
   groupAthleteCount?: number;
 }
 
-const STATUS_LABEL: Record<MatchData['status'], string> = {
+const STATUS_LABEL: Record<Match['status'], string> = {
   pending: 'Pending',
   active: 'Active',
   complete: 'Complete',
 };
 
-function queueReasonLines(m: MatchData): Array<string> {
+function queueReasonLines(m: Match): Array<string> {
   const status = STATUS_LABEL[m.status] ?? m.status;
   if (m.kind === 'custom') {
     return ['Custom match', status];
@@ -27,7 +27,7 @@ function queueReasonLines(m: MatchData): Array<string> {
 
 /** Same meta shape as {@link buildMatchNumber} uses per group (single-group queue). */
 function buildSingleGroupBracketMeta(
-  matches: ReadonlyArray<MatchData>,
+  matches: ReadonlyArray<Match>,
   athleteCount: number
 ): ReadonlyMap<string, ArenaRound0BracketMeta> | undefined {
   const gid = matches[0]?.divisionId;
@@ -53,7 +53,7 @@ function buildSingleGroupBracketMeta(
 }
 
 export function buildBracketActionQueue(
-  matches: Array<MatchData>,
+  matches: Array<Match>,
   options?: BuildBracketActionQueueOptions
 ): Array<BracketActionQueueItem> {
   if (matches.length === 0) return [];
@@ -91,7 +91,7 @@ export function buildBracketActionQueue(
 
 /** Same count as the builder Matches panel ({@link buildBracketActionQueue}). */
 export function countActionableMatches(
-  matches: ReadonlyArray<MatchData>,
+  matches: ReadonlyArray<Match>,
   options?: BuildBracketActionQueueOptions
 ): number {
   return buildBracketActionQueue([...matches], options).length;
@@ -102,8 +102,8 @@ export interface ActionableMatchGroupInput {
   _count: { tournamentAthletes: number };
 }
 
-function indexMatchesByGroupId(matches: ReadonlyArray<MatchData>) {
-  const matchesByGroupId = new Map<string, Array<MatchData>>();
+function indexMatchesByGroupId(matches: ReadonlyArray<Match>) {
+  const matchesByGroupId = new Map<string, Array<Match>>();
 
   for (const match of matches) {
     const groupMatches = matchesByGroupId.get(match.divisionId);
@@ -119,7 +119,7 @@ function indexMatchesByGroupId(matches: ReadonlyArray<MatchData>) {
 
 export function countActionableMatchesByGroupId(
   divisions: ReadonlyArray<ActionableMatchGroupInput>,
-  matches: ReadonlyArray<MatchData>
+  matches: ReadonlyArray<Match>
 ) {
   const matchesByGroupId = indexMatchesByGroupId(matches);
 
@@ -135,7 +135,7 @@ export function countActionableMatchesByGroupId(
 
 export function countActionableMatchesForGroups(
   divisions: ReadonlyArray<ActionableMatchGroupInput>,
-  matches: ReadonlyArray<MatchData>
+  matches: ReadonlyArray<Match>
 ): number {
   const matchesByGroupId = indexMatchesByGroupId(matches);
   let total = 0;
@@ -155,13 +155,13 @@ export interface ActionableMatchTournamentGroupInput extends ActionableMatchGrou
 
 export function countActionableMatchesByTournamentId(
   divisions: ReadonlyArray<ActionableMatchTournamentGroupInput>,
-  matches: ReadonlyArray<MatchData>
+  matches: ReadonlyArray<Match>
 ) {
   const groupsByTournamentId = new Map<
     string,
     Array<ActionableMatchGroupInput>
   >();
-  const matchesByTournamentId = new Map<string, Array<MatchData>>();
+  const matchesByTournamentId = new Map<string, Array<Match>>();
 
   for (const group of divisions) {
     const tournamentGroups = groupsByTournamentId.get(group.tournamentId);

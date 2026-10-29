@@ -1,9 +1,7 @@
 import React from 'react';
 import { PlusIcon } from 'lucide-react';
-import type { CreateCustomMatchDTO } from '@/contracts/rpc/matches/dto';
+import type { CreateCustomMatchDTO } from '@/contracts/matches/dto';
 import type { CreateCustomMatchFormValues } from '@/lib/validations';
-import type { MatchData } from '@/contracts/tournament/match';
-import type { TournamentAthleteData } from '@/contracts/tournament/division';
 import { StatusButton } from '@/components/async/status-button';
 import {
   AthleteSelectionSync,
@@ -47,8 +45,8 @@ export function CreateCustomMatchDialog({
     readOnly,
   } = useTournamentBracket();
 
-  const matchList = matches as Array<MatchData>;
-  const athleteList = athletes as Array<TournamentAthleteData>;
+  const matchList = matches;
+  const athleteList = athletes;
 
   const blocked =
     readOnly ||

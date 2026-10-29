@@ -1,7 +1,7 @@
-import type { MatchRead } from '@/contracts/rpc/matches/dto';
+import type { Match } from '@/contracts/matches/dto';
 
 export type MatchReadStore = {
-  findByDivisionId: (divisionId: string) => Promise<Array<MatchRead>>;
-  findByTournamentId: (tournamentId: string) => Promise<Array<MatchRead>>;
-  findById: (id: string) => Promise<MatchRead | null>;
+  findByDivisionId: (divisionId: string) => Promise<Array<Match>>;
+  findByTournamentId: (tournamentId: string) => Promise<Array<Match>>;
+  findById: (id: string) => Promise<Match | null>;
 };

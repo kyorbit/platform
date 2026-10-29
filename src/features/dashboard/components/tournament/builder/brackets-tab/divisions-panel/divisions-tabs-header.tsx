@@ -1,5 +1,5 @@
 import { MoreHorizontal } from 'lucide-react';
-import type { DivisionData } from '@/contracts/tournament/division';
+import type { DivisionListItem } from '@/contracts/divisions/dto';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import {
@@ -15,7 +15,7 @@ import {
 import { useScrollActiveIntoView } from '@/hooks/use-scroll-active-into-view';
 
 interface DivisionsTabsHeaderProps {
-  divisions: Array<DivisionData>;
+  divisions: Array<DivisionListItem>;
   selectedDivisionId: string | null;
   onSelect: (id: string) => void;
 }

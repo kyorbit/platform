@@ -1,4 +1,4 @@
-import type { DedupResult } from '@/contracts/rpc/athlete-profiles/dto';
+import type { DedupResult } from '@/contracts/athlete-profiles/dto';
 import type { AthleteProfileStore } from '../repositories/profile';
 import type { DedupQuery } from './profile-commands';
 

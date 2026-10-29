@@ -1,4 +1,4 @@
-import type { DivisionRow } from '@/contracts/rpc/divisions/dto';
+import type { Division } from '@/contracts/divisions/dto';
 import type {
   CreateDivisionCommand,
   DeleteDivisionCommand,
@@ -12,7 +12,7 @@ export type DivisionLifecycleStore = {
     tournamentId: string;
     tournamentStatus: string;
   } | null>;
-  create: (command: CreateDivisionCommand) => Promise<DivisionRow>;
-  update: (command: UpdateDivisionCommand) => Promise<DivisionRow>;
-  delete: (command: DeleteDivisionCommand) => Promise<DivisionRow>;
+  create: (command: CreateDivisionCommand) => Promise<Division>;
+  update: (command: UpdateDivisionCommand) => Promise<Division>;
+  delete: (command: DeleteDivisionCommand) => Promise<Division>;
 };

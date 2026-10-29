@@ -1,4 +1,4 @@
-import type { AthleteProfileData } from '@/contracts/athlete/profile';
+import type { AthleteProfileListItem } from '@/contracts/athlete-profiles/dto';
 import type { DataTableInstance } from '@/lib/data-table/features';
 
 function csvCell(value: unknown): string {
@@ -11,7 +11,7 @@ function csvCell(value: unknown): string {
 }
 
 export function exportAthletesTableToCSV(
-  table: DataTableInstance<AthleteProfileData>,
+  table: DataTableInstance<AthleteProfileListItem>,
   opts: { filename?: string; onlySelected?: boolean } = {}
 ): void {
   const { filename = 'athletes', onlySelected = false } = opts;

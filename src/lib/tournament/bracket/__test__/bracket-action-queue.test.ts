@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { buildBracketActionQueue } from '../bracket-action-queue';
+import type { Match } from '@/contracts/matches/dto';
 import type { BracketActionQueueItem } from '../bracket-action-queue';
-import type { MatchData } from '@/contracts/tournament/match';
 
-function baseMatch(over: Partial<MatchData>): MatchData {
+function baseMatch(over: Partial<Match>): Match {
   return {
     id: over.id ?? 'm1',
     kind: over.kind ?? 'bracket',
@@ -22,6 +22,7 @@ function baseMatch(over: Partial<MatchData>): MatchData {
     redLocked: over.redLocked ?? false,
     blueLocked: over.blueLocked ?? false,
     cornersSwapped: over.cornersSwapped ?? false,
+    createdAt: over.createdAt ?? new Date(0),
     updatedAt: over.updatedAt ?? new Date(0),
     divisionId: over.divisionId ?? 'g1',
     tournamentId: over.tournamentId ?? 't1',

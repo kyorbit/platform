@@ -1,11 +1,9 @@
 import { Plus } from 'lucide-react';
 import React from 'react';
+import type { AthleteProfileListItem } from '@/contracts/athlete-profiles/dto';
 import type { AthleteDrawerMode } from '@/features/dashboard/components/athlete/athlete-drawer';
-import type {
-  AthleteProfileData,
-  AthleteRow,
-} from '@/contracts/athlete/profile';
 import type { DataTableRowAction } from '@/lib/data-table/features';
+import type { AthleteRow } from '@/features/dashboard/lib/athlete/athlete-profile-to-row';
 import { FeatureFlagsProvider } from '@/contexts/feature-flags';
 import { AthleteDrawer } from '@/features/dashboard/components/athlete/athlete-drawer';
 import { AthleteTable } from '@/features/dashboard/components/athlete/athlete-table';
@@ -27,7 +25,7 @@ export function AthletesPage() {
   const bulkEditCompleteRef = React.useRef<(() => void) | null>(null);
 
   const [rowAction, setRowAction] =
-    React.useState<DataTableRowAction<AthleteProfileData> | null>(null);
+    React.useState<DataTableRowAction<AthleteProfileListItem> | null>(null);
 
   const columns = React.useMemo(
     () =>

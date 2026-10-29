@@ -6,9 +6,9 @@ import {
   isResettableMatch,
   isRound0ByeMatch,
 } from '../bracket-progression';
-import type { MatchData } from '@/contracts/tournament/match';
+import type { Match } from '@/contracts/matches/dto';
 
-function baseBracket(over: Partial<MatchData> = {}): MatchData {
+function baseBracket(over: Partial<Match> = {}): Match {
   return {
     id: 'm1',
     kind: 'bracket',
@@ -27,6 +27,7 @@ function baseBracket(over: Partial<MatchData> = {}): MatchData {
     redLocked: false,
     blueLocked: false,
     cornersSwapped: false,
+    createdAt: new Date(0),
     updatedAt: new Date(0),
     divisionId: 'g1',
     tournamentId: 't1',

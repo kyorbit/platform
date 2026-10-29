@@ -8,7 +8,7 @@ import {
 } from 'nuqs';
 
 import { ViewModeToggle, useTournamentsViewMode } from './view-mode-toggle';
-import type { TournamentStatus } from '@/contracts/tournament/list';
+import type { TournamentStatus } from '@/contracts/tournaments/dto';
 import { Button } from '@/components/ui/button';
 import { DialogTrigger } from '@/components/ui/dialog';
 import {

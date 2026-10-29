@@ -1,5 +1,5 @@
 import { ArenaDivisionOrdersPanel } from './arena-division-orders-panel';
-import type { DivisionData } from '@/contracts/tournament/division';
+import type { DivisionListItem } from '@/contracts/divisions/dto';
 import { useBracketChrome } from '@/features/dashboard/contexts/bracket-chrome';
 import {
   Sheet,
@@ -14,7 +14,7 @@ interface ArenaDivisionOrderSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   tournamentId: string;
-  divisions: Array<DivisionData>;
+  divisions: Array<DivisionListItem>;
   readOnly: boolean;
 }
 

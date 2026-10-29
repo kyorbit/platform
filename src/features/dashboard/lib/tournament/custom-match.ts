@@ -1,6 +1,5 @@
 import React from 'react';
-import type { CustomSlotDTO } from '@/contracts/rpc/matches/dto';
-import type { MatchData } from '@/contracts/tournament/match';
+import type { CustomSlotDTO, Match } from '@/contracts/matches/dto';
 import type { CreateCustomMatchFormValues } from '@/lib/validations';
 import { formatArenaMatchTitle } from '@/lib/tournament/arena/match-label';
 import { customMatchCornersUseSameSource } from '@/lib/validations';
@@ -15,7 +14,7 @@ export type FormSetSelectionApi = {
 };
 
 export function matchOptionLabel(
-  m: MatchData,
+  m: Match,
   matchLabel: Map<string, number | null>
 ): string {
   const n = matchLabel.get(m.id);

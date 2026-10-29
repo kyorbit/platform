@@ -1,16 +1,16 @@
 import React from 'react';
 import { useBuilderManagerQuery } from './use-builder-manager-query';
-import type { DivisionData } from '@/contracts/tournament/division';
+import type { DivisionListItem } from '@/contracts/divisions/dto';
 import type {
-  TournamentData,
+  TournamentDetail,
   TournamentStatus,
-} from '@/contracts/tournament/list';
+} from '@/contracts/tournaments/dto';
 import { useTournamentReadOnly } from '@/hooks/use-tournament-read-only';
 import { authClient } from '@/lib/auth-client';
 
 export interface UseTournamentBuilderArgs {
-  tournament: TournamentData;
-  divisions: Array<DivisionData>;
+  tournament: TournamentDetail;
+  divisions: Array<DivisionListItem>;
   tournamentId: string;
 }
 

@@ -1,4 +1,4 @@
-import type { MatchStatus } from '@/lib/tournament/match-status';
+import type { MatchStatus } from '@/contracts/matches/dto';
 
 export type BracketMatchInput = {
   kind: 'bracket';

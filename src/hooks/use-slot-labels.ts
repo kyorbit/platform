@@ -1,15 +1,15 @@
 import React from 'react';
-import type { MatchData } from '@/contracts/tournament/match';
-import type { TournamentAthleteData } from '@/contracts/tournament/division';
+import type { Match } from '@/contracts/matches/dto';
+import type { TournamentAthlete } from '@/contracts/tournament-athletes/dto';
 import {
   formatFeederWinnerPlaceholder,
   getFeederMatch,
 } from '@/server/domain/tournament/arena/match-label';
 
 export function useSlotLabels(
-  match: MatchData,
-  matches: Array<MatchData>,
-  athleteMap: Map<string, TournamentAthleteData>,
+  match: Match,
+  matches: Array<Match>,
+  athleteMap: Map<string, TournamentAthlete>,
   matchLabel: ReadonlyMap<string, number | null>
 ) {
   const resolveTaName = React.useCallback(

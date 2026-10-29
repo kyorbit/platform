@@ -1,7 +1,7 @@
-import type { TournamentActivityEventType } from '@/contracts/activity/event-types';
-import type { AthleteProfilesDTO } from '@/contracts/rpc/athlete-profiles/dto';
-import type { ListTournamentAthletesDTO } from '@/contracts/rpc/tournament-athletes/dto';
-import type { ListTournamentsDTO } from '@/contracts/rpc/tournaments/dto';
+import type { TournamentActivityEventType } from '@/contracts/activity/dto';
+import type { AthleteProfilesDTO } from '@/contracts/athlete-profiles/dto';
+import type { ListTournamentAthletesDTO } from '@/contracts/tournament-athletes/dto';
+import type { ListTournamentsDTO } from '@/contracts/tournaments/dto';
 
 export function activityTypesQueryKeyPart(
   eventTypes: Array<TournamentActivityEventType> | undefined

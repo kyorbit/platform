@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import type { ContractInputs } from '@/contracts/rpc/router';
-import type { MatchData } from '@/contracts/tournament/match';
+import type { Match } from '@/contracts/matches/dto';
+import type { ContractInputs } from '@/contracts/router';
 import type { BracketDnDMutationContext } from '@/queries/optimistic-updates/match';
 import { client } from '@/orpc/client';
 import {
@@ -103,9 +103,8 @@ export function useAssignSlot(options?: { onSuccess?: () => void }) {
       if (!queryKey) return undefined;
 
       await queryClient.cancelQueries({ queryKey });
-      const previousMatches =
-        queryClient.getQueryData<Array<MatchData>>(queryKey);
-      queryClient.setQueryData<Array<MatchData>>(queryKey, (old) => {
+      const previousMatches = queryClient.getQueryData<Array<Match>>(queryKey);
+      queryClient.setQueryData<Array<Match>>(queryKey, (old) => {
         if (!old) return old;
         return applyOptimisticAssign(old, input);
       });
@@ -135,9 +134,8 @@ export function useSwapSlots(options?: { onSuccess?: () => void }) {
       if (!queryKey) return undefined;
 
       await queryClient.cancelQueries({ queryKey });
-      const previousMatches =
-        queryClient.getQueryData<Array<MatchData>>(queryKey);
-      queryClient.setQueryData<Array<MatchData>>(queryKey, (old) => {
+      const previousMatches = queryClient.getQueryData<Array<Match>>(queryKey);
+      queryClient.setQueryData<Array<Match>>(queryKey, (old) => {
         if (!old) return old;
         return applyOptimisticSwap(old, input);
       });
@@ -167,9 +165,8 @@ export function useSetLock(options?: { onSuccess?: () => void }) {
       if (!queryKey) return undefined;
 
       await queryClient.cancelQueries({ queryKey });
-      const previousMatches =
-        queryClient.getQueryData<Array<MatchData>>(queryKey);
-      queryClient.setQueryData<Array<MatchData>>(queryKey, (old) => {
+      const previousMatches = queryClient.getQueryData<Array<Match>>(queryKey);
+      queryClient.setQueryData<Array<Match>>(queryKey, (old) => {
         if (!old) return old;
         return applyOptimisticSetLock(old, input);
       });
@@ -200,9 +197,8 @@ export function useUpdateScore(options?: { onSuccess?: () => void }) {
       if (!queryKey) return undefined;
 
       await queryClient.cancelQueries({ queryKey });
-      const previousMatches =
-        queryClient.getQueryData<Array<MatchData>>(queryKey);
-      queryClient.setQueryData<Array<MatchData>>(queryKey, (old) => {
+      const previousMatches = queryClient.getQueryData<Array<Match>>(queryKey);
+      queryClient.setQueryData<Array<Match>>(queryKey, (old) => {
         if (!old) return old;
         return applyOptimisticUpdateScore(old, input);
       });
@@ -296,9 +292,8 @@ export function useSwapParticipants(options?: { onSuccess?: () => void }) {
       if (!queryKey) return undefined;
 
       await queryClient.cancelQueries({ queryKey });
-      const previousMatches =
-        queryClient.getQueryData<Array<MatchData>>(queryKey);
-      queryClient.setQueryData<Array<MatchData>>(queryKey, (old) => {
+      const previousMatches = queryClient.getQueryData<Array<Match>>(queryKey);
+      queryClient.setQueryData<Array<Match>>(queryKey, (old) => {
         if (!old) return old;
         return applyOptimisticSwapParticipants(old, input);
       });

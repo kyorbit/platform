@@ -1,4 +1,4 @@
-import type { MatchKind } from '@/contracts/tournament/match';
+import type { MatchKind } from '@/contracts/matches/dto';
 /** DB `kind` → domain {@link MatchKind}: only `custom` is custom; all other values are bracket. */
 export function matchKindFromDb(kind: string | null | undefined): MatchKind {
   return kind === 'custom' ? 'custom' : 'bracket';

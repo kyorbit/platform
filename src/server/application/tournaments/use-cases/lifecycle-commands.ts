@@ -1,4 +1,4 @@
-import type { TournamentStatusValue } from '@/lib/tournament/tournament-status';
+import type { TournamentStatus } from '@/contracts/tournaments/dto';
 
 export type CreateTournamentCommand = {
   name: string;
@@ -11,7 +11,7 @@ export type UpdateTournamentCommand = {
 
 export type SetTournamentStatusCommand = {
   id: string;
-  status: TournamentStatusValue;
+  status: TournamentStatus;
   adminId: string;
   force?: boolean;
 };

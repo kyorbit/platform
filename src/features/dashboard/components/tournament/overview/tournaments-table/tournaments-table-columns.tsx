@@ -2,8 +2,8 @@ import { formatDistanceToNow } from 'date-fns';
 import { Link } from '@tanstack/react-router';
 import { TournamentStatusPill } from '../../tournament-status-pill';
 import { TournamentsActionMenu } from './tournaments-action-menu';
+import type { TournamentListItem } from '@/contracts/tournaments/dto';
 
-import type { TournamentListItem } from '@/contracts/tournament/list';
 import type { TournamentRowActionOptions } from '@/features/dashboard/lib/tournament/row-action-options';
 import type { DataTableColumnDef } from '@/lib/data-table/features';
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';

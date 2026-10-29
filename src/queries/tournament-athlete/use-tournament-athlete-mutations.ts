@@ -1,11 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import type { ContractInputs } from '@/contracts/rpc/router';
+import type { ContractInputs } from '@/contracts/router';
 import type {
   BulkAddAthletesDTO,
   BulkRemoveTournamentAthletesDTO,
   UpdateTournamentAthleteDTO,
-} from '@/contracts/rpc/tournament-athletes/dto';
+} from '@/contracts/tournament-athletes/dto';
 import { client } from '@/orpc/client';
 import {
   invalidateOnBulkAdd,

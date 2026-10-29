@@ -9,8 +9,8 @@ import { AutoAssignAllDialog } from './dialogs/auto-assign-all-dialog';
 import { TournamentStatusDialog } from './dialogs/tournament-status-dialog';
 import { DivisionsTab } from './divisions-tab';
 import { BracketsTab } from './brackets-tab';
-import type { DivisionData } from '@/contracts/tournament/division';
-import type { TournamentData } from '@/contracts/tournament/list';
+import type { TournamentDetail } from '@/contracts/tournaments/dto';
+import type { DivisionListItem } from '@/contracts/divisions/dto';
 import LoadingScreen from '@/components/navigation/loading';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { TournamentBracketProvider } from '@/features/dashboard/contexts/tournament-bracket';
@@ -32,7 +32,7 @@ export function TournamentBuilder({ id }: TournamentBuilderProps) {
   useTournamentRealtimeStream(id);
 
   const { data } = useTournament(id);
-  const tournament = data as TournamentData;
+  const tournament = data;
 
   return (
     <ErrorBoundary title="Failed to load divisions">
@@ -59,7 +59,7 @@ function TournamentBuilderDivisions({
   tournament,
   tournamentId,
 }: {
-  tournament: TournamentData;
+  tournament: TournamentDetail;
   tournamentId: string;
 }) {
   const { data: divisions } = useDivisions(tournamentId);
@@ -74,8 +74,8 @@ function TournamentBuilderDivisions({
 }
 
 interface TournamentBuilderActiveProps {
-  tournament: TournamentData;
-  divisions: Array<DivisionData>;
+  tournament: TournamentDetail;
+  divisions: Array<DivisionListItem>;
   tournamentId: string;
 }
 

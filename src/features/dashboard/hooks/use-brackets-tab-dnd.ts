@@ -1,8 +1,8 @@
 import React from 'react';
 import { MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { toast } from 'sonner';
+import type { TournamentAthlete } from '@/contracts/tournament-athletes/dto';
 import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
-import type { TournamentAthleteData } from '@/contracts/tournament/division';
 import {
   useAssignSlot,
   useSwapParticipants,
@@ -18,7 +18,7 @@ function dndErrorMessage(err: unknown, fallback: string): string {
   return err instanceof Error ? err.message : fallback;
 }
 
-export function useBracketsTabDnd(athletes: Array<TournamentAthleteData>) {
+export function useBracketsTabDnd(athletes: Array<TournamentAthlete>) {
   const [dragLabel, setDragLabel] = React.useState<DragLabel>(null);
 
   const assignSlot = useAssignSlot();
@@ -33,7 +33,7 @@ export function useBracketsTabDnd(athletes: Array<TournamentAthleteData>) {
   );
 
   const athleteById = React.useMemo(() => {
-    const m = new Map<string, TournamentAthleteData>();
+    const m = new Map<string, TournamentAthlete>();
     for (const a of athletes) m.set(a.id, a);
     return m;
   }, [athletes]);
@@ -41,8 +41,7 @@ export function useBracketsTabDnd(athletes: Array<TournamentAthleteData>) {
   const onDragStart = React.useCallback(
     (e: DragStartEvent) => {
       const d = e.active.data.current as
-        | { from?: string; tournamentAthleteId?: string }
-        | undefined;
+        { from?: string; tournamentAthleteId?: string } | undefined;
       if (!d) return;
       if (d.from === 'panel' && d.tournamentAthleteId) {
         const a = athleteById.get(d.tournamentAthleteId);

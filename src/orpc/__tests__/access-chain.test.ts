@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { call } from '@orpc/server';
 import type { AnyProcedure } from '@orpc/server';
-import { getAccess } from '@/contracts/rpc/base';
+import { getAccess } from '@/contracts/base';
 import { auth } from '@/lib/auth';
 import router from '@/orpc/router';
 

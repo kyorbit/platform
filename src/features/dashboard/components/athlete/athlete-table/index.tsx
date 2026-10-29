@@ -6,9 +6,11 @@ import { BulkDeleteAthletesDialog } from '../dialogs/bulk-delete-athletes-dialog
 import { AthleteImportDialog } from '../dialogs/athlete-import-dialog';
 import { AthletesActionBar } from './athletes-action-bar';
 
-import type { AthleteProfileData } from '@/contracts/athlete/profile';
 import type { DataTableColumnDef } from '@/lib/data-table/features';
-import type { AthleteProfilesDTO } from '@/contracts/rpc/athlete-profiles/dto';
+import type {
+  AthleteProfileListItem,
+  AthleteProfilesDTO,
+} from '@/contracts/athlete-profiles/dto';
 import { exportAthletesTableToCSV } from '@/features/dashboard/lib/athlete/export-athletes-csv';
 import { useAthleteTableQuery } from '@/features/dashboard/hooks/use-athlete-manager-query';
 import { useAthleteProfiles } from '@/queries/athlete-profile';
@@ -31,12 +33,12 @@ import { DataTableAdvancedToolbar } from '@/components/data-table/data-table-adv
 const ATHLETE_TABLE_COLUMN_COUNT = 8;
 
 interface AthleteTableProps {
-  columns: Array<DataTableColumnDef<AthleteProfileData>>;
+  columns: Array<DataTableColumnDef<AthleteProfileListItem>>;
   className?: string;
   onAdd: () => void;
   enableQueryFilter?: boolean;
   onBulkEdit?: (
-    profiles: Array<AthleteProfileData>,
+    profiles: Array<AthleteProfileListItem>,
     onComplete: () => void
   ) => void;
 }

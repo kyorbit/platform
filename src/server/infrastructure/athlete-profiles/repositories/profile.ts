@@ -1,3 +1,4 @@
+import type { AthleteProfileListItem } from '@/contracts/athlete-profiles/dto';
 import type { AthleteProfileStore } from '@/server/application/athlete-profiles/repositories/profile';
 import type {
   BulkRemoveProfilesCommand,
@@ -5,7 +6,6 @@ import type {
   ListAthleteProfilesQuery,
   UpdateProfileData,
 } from '@/server/application/athlete-profiles/use-cases/profile-commands';
-import type { AthleteProfileData } from '@/contracts/athlete/profile';
 import { prisma } from '@/lib/db';
 import { filterColumns } from '@/lib/data-table/filter-columns';
 import {
@@ -131,7 +131,7 @@ export const athleteProfileStore: AthleteProfileStore = {
       prisma.athleteProfile.count({ where }),
     ]);
 
-    const items: Array<AthleteProfileData> = rows.map(
+    const items: Array<AthleteProfileListItem> = rows.map(
       ({ nameSortKey: _nameSortKey, ...row }) => ({
         ...row,
         athleteCode: row.athleteCode ?? '',

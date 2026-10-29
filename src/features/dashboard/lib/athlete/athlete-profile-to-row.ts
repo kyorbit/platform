@@ -1,9 +1,20 @@
-import type {
-  AthleteProfileData,
-  AthleteRow,
-} from '@/contracts/athlete/profile';
+import type { AthleteProfileListItem } from '@/contracts/athlete-profiles/dto';
 
-export function athleteProfileToRow(profile: AthleteProfileData): AthleteRow {
+/** One editable row in the athlete drawer form. */
+export type AthleteRow = {
+  id: string;
+  athleteCode: string;
+  name: string;
+  gender: 'M' | 'F';
+  beltLevel: number;
+  weight: number;
+  affiliation: string;
+  image: string;
+};
+
+export function athleteProfileToRow(
+  profile: AthleteProfileListItem
+): AthleteRow {
   return {
     id: profile.id,
     athleteCode: profile.athleteCode ?? '',

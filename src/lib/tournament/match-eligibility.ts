@@ -1,4 +1,4 @@
-import type { MatchData } from '@/contracts/tournament/match';
+import type { Match } from '@/contracts/matches/dto';
 import { buildSlotMap } from '@/lib/tournament/bracket/bracket-seeding';
 
 export type ArenaRound0BracketMeta = {
@@ -8,13 +8,13 @@ export type ArenaRound0BracketMeta = {
 };
 
 function getFeederMatch(
-  matches: ReadonlyArray<MatchData>,
+  matches: ReadonlyArray<Match>,
   divisionId: string,
   round: number,
   matchIndex: number,
   side: 'red' | 'blue',
   cornersSwapped = false
-): MatchData | undefined {
+): Match | undefined {
   if (round <= 0) return undefined;
   const effectiveSide = cornersSwapped
     ? side === 'red'
@@ -32,9 +32,9 @@ function getFeederMatch(
 }
 
 export function isArenaSequenceEligible(
-  match: MatchData,
+  match: Match,
   divisionBracketMeta?: ReadonlyMap<string, ArenaRound0BracketMeta>,
-  allMatches?: ReadonlyArray<MatchData>
+  allMatches?: ReadonlyArray<Match>
 ): boolean {
   if (match.kind === 'custom') return true;
 
@@ -87,7 +87,7 @@ export function isArenaSequenceEligible(
   );
   if (!fr || !fb) return false;
 
-  const phantomRound0Feeder = (f: MatchData) =>
+  const phantomRound0Feeder = (f: Match) =>
     f.round === 0 &&
     f.redTournamentAthleteId == null &&
     f.blueTournamentAthleteId == null;

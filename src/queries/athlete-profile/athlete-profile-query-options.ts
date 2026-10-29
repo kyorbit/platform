@@ -1,5 +1,5 @@
 import { queryOptions } from '@tanstack/react-query';
-import type { AthleteProfilesDTO } from '@/contracts/rpc/athlete-profiles/dto';
+import type { AthleteProfilesDTO } from '@/contracts/athlete-profiles/dto';
 import { client } from '@/orpc/client';
 import { DEFAULT_SORTING } from '@/config/athlete';
 import { athleteProfileKeys } from '@/queries/keys';

@@ -9,19 +9,19 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
+import type { TournamentRowActionOptions } from '@/features/dashboard/lib/tournament/row-action-options';
+import type { DataTableRow } from '@/lib/data-table/features';
 import type {
   TournamentListItem,
   TournamentStatus,
-} from '@/contracts/tournament/list';
-import type { TournamentRowActionOptions } from '@/features/dashboard/lib/tournament/row-action-options';
-import type { DataTableRow } from '@/lib/data-table/features';
+} from '@/contracts/tournaments/dto';
+import { TOURNAMENT_STATUSES } from '@/contracts/tournaments/dto';
 import {
   TOURNAMENT_STATUS_LABEL,
   forceSetTournamentStatus,
   isBackwardStatusTransition,
   tournamentStatusRiskNotes,
 } from '@/lib/tournament/tournament-status';
-import { TOURNAMENT_STATUSES } from '@/contracts/tournament/list';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,

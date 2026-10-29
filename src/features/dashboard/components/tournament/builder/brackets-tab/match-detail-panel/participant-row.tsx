@@ -1,5 +1,5 @@
 import { Crown } from 'lucide-react';
-import type { TournamentAthleteData } from '@/contracts/tournament/division';
+import type { TournamentAthlete } from '@/contracts/tournament-athletes/dto';
 import { cn } from '@/lib/utils';
 
 export function ParticipantRow({
@@ -9,7 +9,7 @@ export function ParticipantRow({
   dotClassName,
 }: {
   label: string;
-  athlete: TournamentAthleteData | undefined | null;
+  athlete: TournamentAthlete | undefined | null;
   isWinner: boolean;
   dotClassName: string;
 }) {

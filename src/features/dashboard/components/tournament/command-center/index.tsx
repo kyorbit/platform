@@ -15,9 +15,6 @@ import { SetupChecklist } from './setup-checklist';
 import { TournamentKpiRow } from './tournament-kpi-row';
 import { TournamentStatusDialog } from './tournament-status-dialog';
 import type { TournamentStatus } from './tournament-status-dialog';
-import type { DivisionData } from '@/contracts/tournament/division';
-import type { MatchData } from '@/contracts/tournament/match';
-import type { TournamentData } from '@/contracts/tournament/list';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { useTournamentCommandCenter } from '@/features/dashboard/hooks/use-tournament-command-center';
 import {
@@ -38,7 +35,7 @@ export function TournamentCommandCenter({
   tournamentId,
 }: TournamentCommandCenterProps) {
   const { data } = useTournament(tournamentId);
-  const tournament = data as TournamentData;
+  const tournament = data;
 
   const [activityOpen, setActivityOpen] = React.useState(false);
   const [confirmStatus, setConfirmStatus] =
@@ -173,8 +170,8 @@ export function TournamentCommandCenter({
 function SetupChecklistIsland({ tournamentId }: { tournamentId: string }) {
   const { data: tournamentData } = useTournament(tournamentId);
   const { data: matchesData } = useTournamentMatches(tournamentId);
-  const tournament = tournamentData as TournamentData;
-  const matches = matchesData as Array<MatchData>;
+  const tournament = tournamentData;
+  const matches = matchesData;
   const commandCenter = useTournamentCommandCenter({
     tournament,
     matches,
@@ -199,9 +196,9 @@ function TournamentKpiRowIsland({ tournamentId }: { tournamentId: string }) {
 
   return (
     <TournamentKpiRow
-      tournament={tournamentData as TournamentData}
-      divisions={divisionsData as Array<DivisionData>}
-      matches={matchesData as Array<MatchData>}
+      tournament={tournamentData}
+      divisions={divisionsData}
+      matches={matchesData}
     />
   );
 }
@@ -212,8 +209,8 @@ function DivisionsOverviewIsland({ tournamentId }: { tournamentId: string }) {
 
   return (
     <DivisionsOverview
-      divisions={divisionsData as Array<DivisionData>}
-      matches={matchesData as Array<MatchData>}
+      divisions={divisionsData}
+      matches={matchesData}
       tournamentId={tournamentId}
     />
   );

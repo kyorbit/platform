@@ -11,10 +11,10 @@ import { useMemo } from 'react';
 import { BuilderFooterSlot } from './footer-portal';
 import type { LucideIcon } from 'lucide-react';
 import type {
-  TournamentData,
+  TournamentDetail,
   TournamentStatus,
-} from '@/contracts/tournament/list';
-import { TOURNAMENT_STATUSES } from '@/contracts/tournament/list';
+} from '@/contracts/tournaments/dto';
+import { TOURNAMENT_STATUSES } from '@/contracts/tournaments/dto';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -40,7 +40,7 @@ import {
 import { cn } from '@/lib/utils';
 
 interface BuilderFooterProps {
-  tournament: TournamentData;
+  tournament: TournamentDetail;
   readOnly: boolean;
   isSettingTournamentStatus?: boolean;
   onAutoAssignAll?: () => void;

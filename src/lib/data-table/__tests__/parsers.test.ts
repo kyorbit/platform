@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import type { AthleteProfileData } from '@/contracts/athlete/profile';
-import { ATHLETE_PROFILE_SORT_IDS } from '@/contracts/athlete/profile';
+import type { AthleteProfileListItem } from '@/contracts/athlete-profiles/dto';
+import { ATHLETE_PROFILE_SORT_IDS } from '@/contracts/athlete-profiles/dto';
 import {
   getFiltersStateParser,
   getSortingStateParser,
@@ -13,7 +13,7 @@ describe('getSortingStateParser', () => {
       { id: 'name' as const, desc: false },
       { id: 'athleteCode' as const, desc: false },
     ];
-    const parser = getSortingStateParser<AthleteProfileData>(
+    const parser = getSortingStateParser<AthleteProfileListItem>(
       new Set(ATHLETE_PROFILE_SORT_IDS)
     );
     const serialized = parser.serialize(sorting);
@@ -36,7 +36,7 @@ describe('getSortingStateParser', () => {
 
 describe('getFiltersStateParser', () => {
   it('treats range values with the same contents as equal', () => {
-    const parser = getFiltersStateParser<AthleteProfileData>();
+    const parser = getFiltersStateParser<AthleteProfileListItem>();
     const left = [
       {
         id: 'weight' as const,

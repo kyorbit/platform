@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useMemo } from 'react';
 
 import { getTournamentFields } from '../constant/form';
-import type { QueryClient, UseQueryResult } from '@tanstack/react-query';
-import type { AdvanceFormData } from '@/features/app/contexts/settings/context';
 import type {
   SelectionDivisionRow,
   SelectionMatchRow,
-} from '@/contracts/advance/selection';
+} from '@/contracts/advance-settings/dto';
+import type { QueryClient, UseQueryResult } from '@tanstack/react-query';
+import type { AdvanceFormData } from '@/features/app/contexts/settings/context';
 import { resolveMatchComboboxRow } from '@/features/app/lib/settings/match';
 import { resolveDivisionComboboxStatus } from '@/features/app/lib/settings/division';
 import {

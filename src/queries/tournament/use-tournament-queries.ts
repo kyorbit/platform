@@ -3,7 +3,7 @@ import {
   useQuery,
   useSuspenseQuery,
 } from '@tanstack/react-query';
-import type { ListTournamentsDTO } from '@/contracts/rpc/tournaments/dto';
+import type { ListTournamentsDTO } from '@/contracts/tournaments/dto';
 import {
   tournamentQueryOptions,
   tournamentsAllQueryOptions,

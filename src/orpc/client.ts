@@ -4,7 +4,7 @@ import { RPCLink } from '@orpc/client/fetch';
 import { getRequestHeaders } from '@tanstack/react-start/server';
 import { createIsomorphicFn } from '@tanstack/react-start';
 
-import type { ContractClient } from '@/contracts/rpc/router';
+import type { ContractClient } from '@/contracts/router';
 
 import router from '@/orpc/router';
 import { serverRepos } from '@/server/composition';

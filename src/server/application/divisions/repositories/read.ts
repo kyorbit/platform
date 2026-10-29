@@ -1,9 +1,9 @@
 import type {
-  DivisionDetailRow,
-  DivisionListRow,
-} from '@/contracts/rpc/divisions/dto';
+  DivisionDetail,
+  DivisionListItem,
+} from '@/contracts/divisions/dto';
 
 export type DivisionReadStore = {
-  listByTournament: (tournamentId: string) => Promise<Array<DivisionListRow>>;
-  findById: (id: string) => Promise<DivisionDetailRow | null>;
+  listByTournament: (tournamentId: string) => Promise<Array<DivisionListItem>>;
+  findById: (id: string) => Promise<DivisionDetail | null>;
 };

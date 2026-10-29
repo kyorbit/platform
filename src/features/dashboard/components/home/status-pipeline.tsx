@@ -12,13 +12,13 @@ import {
   Users,
 } from 'lucide-react';
 import { HubSection } from './hub-panel';
-import type { ReactNode } from 'react';
-import type { LucideIcon } from 'lucide-react';
-import type { DashboardStats } from '@/features/dashboard/lib/home/compute-dashboard-stats';
 import type {
   TournamentListItem,
   TournamentStatus,
-} from '@/contracts/tournament/list';
+} from '@/contracts/tournaments/dto';
+import type { ReactNode } from 'react';
+import type { LucideIcon } from 'lucide-react';
+import type { DashboardStats } from '@/features/dashboard/lib/home/compute-dashboard-stats';
 import type { StatusProps } from '@/components/ui/status';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';

@@ -1,10 +1,10 @@
-import type { TournamentsManagerQuery } from '@/features/dashboard/hooks/use-tournaments-manager-query';
-
 import type {
   TournamentListItem,
   TournamentSortField,
   TournamentStatus,
-} from '@/contracts/tournament/list';
+} from '@/contracts/tournaments/dto';
+import type { TournamentsManagerQuery } from '@/features/dashboard/hooks/use-tournaments-manager-query';
+
 import type { DataTableColumnDef } from '@/lib/data-table/features';
 import { useTournamentList } from '@/queries/tournament';
 import { useDataTable } from '@/hooks/use-data-table';

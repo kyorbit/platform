@@ -1,4 +1,4 @@
-import type { TournamentData } from '@/contracts/tournament/list';
+import type { TournamentDetail } from '@/contracts/tournaments/dto';
 import type { User } from '@/lib/auth';
 import { TournamentStatusPill } from '@/features/dashboard/components/tournament/tournament-status-pill';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 interface BuilderHeaderProps {
-  tournament: TournamentData;
+  tournament: TournamentDetail;
   tab: 'divisions' | 'brackets';
   onTabChange: (value: 'divisions' | 'brackets') => void;
   user: User | null | undefined;

@@ -13,10 +13,8 @@ import {
 import { useDroppable } from '@dnd-kit/core';
 import { DivisionsTab } from '..';
 import { AthletePoolRow } from '../athlete-pool/athlete-pool-row';
-import type {
-  DivisionData,
-  TournamentAthleteData,
-} from '@/contracts/tournament/division';
+import type { TournamentAthlete } from '@/contracts/tournament-athletes/dto';
+import type { DivisionListItem } from '@/contracts/divisions/dto';
 import {
   BuilderFooterProvider,
   BuilderFooterSlot,
@@ -49,7 +47,7 @@ const athlete = {
   beltLevel: 1,
   weight: 40,
   gender: 'F',
-} as TournamentAthleteData;
+} as TournamentAthlete;
 
 vi.mock('../athlete-pool', () => ({
   AthletePool: () => (
@@ -90,9 +88,9 @@ vi.mock('../divisions-rail', () => ({
     onSelect,
     prepareSettingsDivision,
   }: {
-    divisions: Array<DivisionData>;
+    divisions: Array<DivisionListItem>;
     onSelect: (id: string) => void;
-    prepareSettingsDivision: (d: DivisionData) => void;
+    prepareSettingsDivision: (d: DivisionListItem) => void;
   }) => (
     <div>
       Rail
@@ -111,7 +109,11 @@ vi.mock('../divisions-rail', () => ({
 }));
 
 vi.mock('../../dialogs/division-settings-sheet', () => ({
-  DivisionSettingsSheet: ({ division }: { division: DivisionData | null }) =>
+  DivisionSettingsSheet: ({
+    division,
+  }: {
+    division: DivisionListItem | null;
+  }) =>
     division ? <SheetContent>Settings for {division.name}</SheetContent> : null,
 }));
 
@@ -126,7 +128,7 @@ afterEach(() => {
   assign.mockClear();
 });
 
-const divisions = [{ id: 'd-1', name: 'U12 Male' }] as Array<DivisionData>;
+const divisions = [{ id: 'd-1', name: 'U12 Male' }] as Array<DivisionListItem>;
 
 function renderTab(isDesktop: boolean) {
   vi.stubGlobal('matchMedia', () => ({

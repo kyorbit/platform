@@ -4,7 +4,7 @@ import {
   parseAsStringEnum,
   useQueryState,
 } from 'nuqs';
-import type { TournamentListItem } from '@/contracts/tournament/list';
+import type { TournamentListItem } from '@/contracts/tournaments/dto';
 import {
   getFiltersStateParser,
   getSortingStateParser,

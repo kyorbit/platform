@@ -1,4 +1,4 @@
-import type { DivisionAssignmentRow } from '@/contracts/rpc/divisions/dto';
+import type { DivisionAssignmentRow } from '@/contracts/divisions/dto';
 import type { MutationActivityInput } from '@/server/application/activity/activity-types';
 import type {
   AssignAthleteCommand,

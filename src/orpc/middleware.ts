@@ -3,7 +3,7 @@ import { ORPCError } from '@orpc/server';
 import { base } from '@/orpc/base';
 import { auth } from '@/lib/auth';
 import { toOrpcError } from '@/orpc/map-app-error';
-import { getAccess } from '@/contracts/rpc/base';
+import { getAccess } from '@/contracts/base';
 import { assertSystemAdmin } from '@/orpc/policies/auth';
 
 export const authed = base.middleware(async ({ context, next }) => {

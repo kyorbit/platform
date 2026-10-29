@@ -1,4 +1,4 @@
-import type { MatchRead } from '@/contracts/rpc/matches/dto';
+import type { Match } from '@/contracts/matches/dto';
 import type { MutationActivityInput } from '@/server/application/activity/activity-types';
 import type { CreateCustomMatchCommand } from '../use-cases/custom-commands';
 
@@ -17,7 +17,7 @@ export type CustomMatchDeleteContext = {
   tournamentStatus: string;
 };
 
-export type CustomMatchResult = MatchRead;
+export type CustomMatchResult = Match;
 
 export type CustomMatchStore = {
   findDivision: (

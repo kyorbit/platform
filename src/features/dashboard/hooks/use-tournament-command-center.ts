@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
-import type { MatchData } from '@/contracts/tournament/match';
-import type { TournamentData } from '@/contracts/tournament/list';
+import type { Match } from '@/contracts/matches/dto';
+import type { TournamentDetail } from '@/contracts/tournaments/dto';
 import { computeCommandCenter } from '@/features/dashboard/lib/tournament/compute-command-center';
 
 export function useTournamentCommandCenter(input: {
-  tournament: TournamentData | undefined;
-  matches: Array<MatchData>;
+  tournament: TournamentDetail | undefined;
+  matches: Array<Match>;
 }) {
   return useMemo(() => {
     if (!input.tournament) {

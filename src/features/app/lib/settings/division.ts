@@ -1,9 +1,7 @@
-import type { SelectionDivisionRow } from '@/contracts/advance/selection';
+import type { SelectionDivisionRow } from '@/contracts/advance-settings/dto';
 
 export type DivisionComboboxStatusVariant =
-  | 'online'
-  | 'offline'
-  | 'maintenance';
+  'online' | 'offline' | 'maintenance';
 
 export function resolveDivisionComboboxStatus(
   division: SelectionDivisionRow,

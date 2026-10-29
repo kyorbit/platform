@@ -3,8 +3,8 @@ import { BracketConnectors } from './bracket-connectors';
 import { BracketFinalMatchNode } from './bracket-final-match-node';
 import { BracketMatchNode } from './bracket-match-node';
 import { BracketRoundLabels } from './bracket-round-labels';
-import type { MatchData } from '@/contracts/tournament/match';
-import type { TournamentAthleteData } from '@/contracts/tournament/division';
+import type { TournamentAthlete } from '@/contracts/tournament-athletes/dto';
+import type { Match } from '@/contracts/matches/dto';
 import type {
   BracketCanvasLayout,
   BracketConnectorPath,
@@ -16,12 +16,12 @@ import { isBracketFinal } from '@/lib/tournament/bracket/bracket-layout';
 import { MATCH_HEADER_ABOVE, MATCH_W } from '@/config/bracket';
 
 export interface BracketProps {
-  matches: Array<MatchData>;
+  matches: Array<Match>;
   thirdPlaceMatch: boolean;
-  athleteMap: Map<string, TournamentAthleteData>;
+  athleteMap: Map<string, TournamentAthlete>;
   matchLabel: ReadonlyMap<string, number | null>;
   readOnly: boolean;
-  onSlotClick: (match: MatchData) => void;
+  onSlotClick: (match: Match) => void;
   onToggleLock: (
     matchId: string,
     side: 'red' | 'blue',

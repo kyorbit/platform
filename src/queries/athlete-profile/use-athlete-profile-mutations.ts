@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import type { ContractInputs } from '@/contracts/rpc/router';
-import type { CheckDuplicateDTO } from '@/contracts/rpc/athlete-profiles/dto';
+import type { ContractInputs } from '@/contracts/router';
+import type { CheckDuplicateDTO } from '@/contracts/athlete-profiles/dto';
 import { client } from '@/orpc/client';
 import { invalidateAthleteProfileQueries } from '@/queries/athlete-profile/invalidate-athlete-profile-cache';
 

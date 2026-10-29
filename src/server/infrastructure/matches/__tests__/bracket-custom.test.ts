@@ -287,6 +287,7 @@ describe('assignSlot', () => {
     vi.mocked(prisma.match.findUnique).mockResolvedValue({
       id: 'm1',
       round: 0,
+      status: 'pending',
       redLocked: true,
       divisionId: 'group-1',
       tournament: { status: 'draft' },
@@ -310,6 +311,7 @@ describe('assignSlot', () => {
     vi.mocked(prisma.match.findUnique).mockResolvedValue({
       id: 'm1',
       round: 0,
+      status: 'pending',
       redLocked: false,
       divisionId: 'group-1',
       tournament: { status: 'draft' },
@@ -338,6 +340,7 @@ describe('assignSlot', () => {
     vi.mocked(prisma.match.findUnique).mockResolvedValue({
       id: 'm1',
       round: 0,
+      status: 'pending',
       status: 'complete',
       divisionId: 'group-1',
       redLocked: false,
@@ -365,6 +368,7 @@ describe('swapSlots', () => {
     const a = {
       id: 'ma',
       round: 0,
+      status: 'pending',
       divisionId: 'g1',
       redLocked: true,
       blueLocked: false,
@@ -378,6 +382,7 @@ describe('swapSlots', () => {
     const b = {
       id: 'mb',
       round: 0,
+      status: 'pending',
       divisionId: 'g1',
       redLocked: false,
       blueLocked: false,
@@ -416,6 +421,7 @@ describe('swapSlots', () => {
     const a = {
       id: 'ma',
       round: 0,
+      status: 'pending',
       status: 'complete',
       divisionId: 'g1',
       redLocked: false,
@@ -430,6 +436,7 @@ describe('swapSlots', () => {
     const b = {
       id: 'mb',
       round: 0,
+      status: 'pending',
       status: 'pending',
       divisionId: 'g1',
       redLocked: false,
@@ -785,6 +792,7 @@ describe('createCustomMatch', () => {
       tournamentId: 't-1',
       round: 900,
       matchIndex: 0,
+      status: 'pending',
     } as never);
 
     const row = await createCustomMatch(
@@ -881,6 +889,7 @@ describe('deleteCustomMatch', () => {
       displayLabel: 'Exhibition',
       tournamentId: 't-1',
       divisionId: 'group-1',
+      status: 'pending',
       tournament: { status: 'active' },
     };
     vi.mocked(prisma.match.findUnique).mockResolvedValue(match as never);

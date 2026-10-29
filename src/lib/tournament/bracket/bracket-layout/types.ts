@@ -1,4 +1,4 @@
-import type { MatchData, MatchStatus } from '@/contracts/tournament/match';
+import type { Match, MatchStatus } from '@/contracts/matches/dto';
 
 export type BracketCanvasLayout = 'two-sided' | 'one-sided';
 
@@ -7,7 +7,7 @@ export type BracketWing = 'left' | 'right' | 'center';
 export interface MatchPosition {
   x: number;
   y: number;
-  match: MatchData;
+  match: Match;
   wing: BracketWing;
 }
 
@@ -16,7 +16,7 @@ export type BracketLayoutResult = {
   width: number;
   height: number;
   layoutMaxRound: number;
-  thirdPlace: MatchData | null;
+  thirdPlace: Match | null;
 };
 
 export interface BracketConnectorPath {

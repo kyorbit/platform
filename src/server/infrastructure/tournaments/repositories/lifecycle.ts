@@ -1,5 +1,6 @@
 import { findTournamentWithLifecycle } from './read-lifecycle';
 import type { TournamentLifecycleStore } from '@/server/application/tournaments/repositories/lifecycle';
+import { TournamentStatusSchema } from '@/contracts/tournaments/dto';
 import { getNameSortKey } from '@/lib/sort/name-sort-key';
 import { NotFoundError } from '@/server/application/errors';
 import {
@@ -7,6 +8,10 @@ import {
   recordMutationActivity,
 } from '@/server/infrastructure/mutation-effects';
 import { prisma } from '@/lib/db';
+
+function toTournament<T extends { status: string }>(row: T) {
+  return { ...row, status: TournamentStatusSchema.parse(row.status) };
+}
 
 export const tournamentLifecycleStore: TournamentLifecycleStore = {
   async findWithLifecycle(id) {
@@ -28,22 +33,26 @@ export const tournamentLifecycleStore: TournamentLifecycleStore = {
   },
 
   async create(command) {
-    return prisma.tournament.create({
-      data: {
-        name: command.name,
-        nameSortKey: getNameSortKey(command.name),
-      },
-    });
+    return toTournament(
+      await prisma.tournament.create({
+        data: {
+          name: command.name,
+          nameSortKey: getNameSortKey(command.name),
+        },
+      })
+    );
   },
 
   async update(command) {
-    return prisma.tournament.update({
-      where: { id: command.id },
-      data: {
-        name: command.name,
-        nameSortKey: getNameSortKey(command.name),
-      },
-    });
+    return toTournament(
+      await prisma.tournament.update({
+        where: { id: command.id },
+        data: {
+          name: command.name,
+          nameSortKey: getNameSortKey(command.name),
+        },
+      })
+    );
   },
 
   async applyStatus(input) {
@@ -76,7 +85,7 @@ export const tournamentLifecycleStore: TournamentLifecycleStore = {
     });
 
     publishTournamentMutation(input.id);
-    return updated;
+    return toTournament(updated);
   },
 
   async delete(command) {
@@ -103,6 +112,6 @@ export const tournamentLifecycleStore: TournamentLifecycleStore = {
     });
 
     publishTournamentMutation(command.id);
-    return deleted;
+    return toTournament(deleted);
   },
 };

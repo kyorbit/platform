@@ -1,4 +1,4 @@
-import type { TournamentActivityEventType } from '@/contracts/activity/event-types';
+import type { TournamentActivityEventType } from '@/contracts/activity/dto';
 
 /** JSON-safe activity payload at the application boundary. */
 export type MutationActivityPayload = Record<string, unknown>;

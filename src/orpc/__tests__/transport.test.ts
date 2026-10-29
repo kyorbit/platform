@@ -7,7 +7,7 @@ import { type } from '@orpc/contract';
 import { z } from 'zod';
 import type { RouterContractClient } from '@orpc/contract';
 
-import { access, base as contractBase, getAccess } from '@/contracts/rpc/base';
+import { access, base as contractBase, getAccess } from '@/contracts/base';
 import { errorStatusMap } from '@/orpc/base';
 import { toOrpcError } from '@/orpc/map-app-error';
 import { NotFoundError } from '@/server/application/errors';

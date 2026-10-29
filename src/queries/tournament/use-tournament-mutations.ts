@@ -1,12 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { toast } from 'sonner';
-import type { ContractInputs } from '@/contracts/rpc/router';
+import type { ContractInputs } from '@/contracts/router';
 import type {
   EnsureArenaSlotDTO,
   RetireArenaDTO,
-} from '@/contracts/rpc/tournaments/dto';
-import type { TournamentStatus } from '@/contracts/tournament/list';
+  TournamentStatus,
+} from '@/contracts/tournaments/dto';
 import { client } from '@/orpc/client';
 import {
   mergeArenaDivisionOrderAfterCrossArenaMove,

@@ -1,7 +1,7 @@
 import type {
   SelectionCatalogResult,
   SelectionMatchesResult,
-} from '@/contracts/rpc/advance-settings/dto';
+} from '@/contracts/advance-settings/dto';
 import type {
   SelectionCatalogQuery,
   SelectionMatchesQuery,

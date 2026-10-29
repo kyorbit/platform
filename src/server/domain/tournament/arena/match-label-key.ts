@@ -1,4 +1,4 @@
-import type { MatchData } from '@/contracts/tournament/match';
+import type { Match } from '@/contracts/matches/dto';
 
 export function normalizeMatchLabelKey(label: string): string {
   return label.trim().toLowerCase();
@@ -7,7 +7,7 @@ export function normalizeMatchLabelKey(label: string): string {
 export type MatchLabelContext = {
   arenaIndex: number;
   divisionIdsOnArena: Array<string>;
-  allMatches: Array<MatchData>;
+  allMatches: Array<Match>;
   numbers: Map<string, number | null>;
   assignedBracketTitleKeys: Set<string>;
 };
