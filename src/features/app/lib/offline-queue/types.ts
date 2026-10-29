@@ -1,6 +1,6 @@
-import type { ReleaseMatchClaimDTO } from '@/orpc/arena-match-claim/dto';
-import type { SetLastSelectionDTO } from '@/orpc/device-last-selection/dto';
-import type { SetWinnerDTO, UpdateScoreDTO } from '@/orpc/matches/dto';
+import type { ReleaseMatchClaimDTO } from '@/contracts/arena-match-claim/dto';
+import type { SetLastSelectionDTO } from '@/contracts/device-last-selection/dto';
+import type { SetWinnerDTO, UpdateScoreDTO } from '@/contracts/matches/dto';
 
 export type ArenaMutation =
   | { kind: 'match.updateScore'; payload: UpdateScoreDTO }

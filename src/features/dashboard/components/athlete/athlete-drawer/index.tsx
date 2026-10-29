@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
 import { IconGripVertical, IconPlus } from '@tabler/icons-react';
-import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 import { PlusIcon, SaveIcon } from 'lucide-react';
 import { AthleteRowFields } from './athlete-row-fields';
-import type { AthleteRow } from '@/contracts/athlete/profile';
+import type { AthleteRow } from '@/features/dashboard/lib/athlete/athlete-profile-to-row';
 import { Button } from '@/components/ui/button';
 import {
   Drawer,
@@ -23,7 +22,7 @@ import {
   SortableOverlay,
 } from '@/components/ui/sortable';
 import { StatusButton } from '@/components/async/status-button';
-import { client } from '@/orpc/client';
+import { useBulkSaveAthleteProfiles } from '@/queries/athlete-profile/use-athlete-profile-mutations';
 
 export type AthleteDrawerMode = 'create' | 'bulk-edit';
 
@@ -67,7 +66,7 @@ export function AthleteDrawer({
   seedRows = null,
   onBulkEditSaved,
 }: AthleteDrawerProps) {
-  const queryClient = useQueryClient();
+  const bulkSave = useBulkSaveAthleteProfiles();
   const [rows, setRows] = useState<Array<AthleteRow>>(() => [createEmptyRow()]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -131,10 +130,11 @@ export function AthleteDrawer({
 
     try {
       if (mode === 'bulk-edit') {
-        const results = await Promise.allSettled(
-          rows.map((row) => {
+        const { successCount, failCount } = await bulkSave.mutateAsync({
+          kind: 'update',
+          rows: rows.map((row) => {
             const trimmedImage = row.image.trim();
-            return client.athleteProfile.update({
+            return {
               id: row.id,
               athleteCode: row.athleteCode.trim(),
               name: row.name,
@@ -143,16 +143,10 @@ export function AthleteDrawer({
               weight: row.weight,
               affiliation: row.affiliation,
               image: trimmedImage === '' ? null : trimmedImage,
-            });
-          })
-        );
+            };
+          }),
+        });
 
-        const successCount = results.filter(
-          (r) => r.status === 'fulfilled'
-        ).length;
-        const failCount = results.length - successCount;
-
-        await queryClient.invalidateQueries({ queryKey: ['athleteProfile'] });
         onBulkEditSaved?.();
         handleOpenChange(false);
 
@@ -166,10 +160,11 @@ export function AthleteDrawer({
           );
         }
       } else {
-        const results = await Promise.allSettled(
-          rows.map((row) => {
+        const { successCount, failCount } = await bulkSave.mutateAsync({
+          kind: 'create',
+          rows: rows.map((row) => {
             const trimmedImage = row.image.trim();
-            return client.athleteProfile.create({
+            return {
               athleteCode: row.athleteCode.trim(),
               name: row.name,
               gender: row.gender,
@@ -178,16 +173,10 @@ export function AthleteDrawer({
               affiliation: row.affiliation,
               ...(trimmedImage ? { image: trimmedImage } : {}),
               confirmDuplicate: false,
-            });
-          })
-        );
+            };
+          }),
+        });
 
-        const successCount = results.filter(
-          (r) => r.status === 'fulfilled'
-        ).length;
-        const failCount = results.length - successCount;
-
-        await queryClient.invalidateQueries({ queryKey: ['athleteProfile'] });
         handleOpenChange(false);
 
         if (failCount === 0) {

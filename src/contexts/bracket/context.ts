@@ -1,14 +1,14 @@
 import { createContext } from 'react';
-import type { MatchData } from '@/contracts/tournament/match';
-import type { TournamentAthleteData } from '@/contracts/tournament/division';
+import type { Match } from '@/contracts/matches/dto';
+import type { TournamentAthlete } from '@/contracts/tournament-athletes/dto';
 
 export interface BracketContextValue {
-  matches: Array<MatchData>;
-  athleteMap: Map<string, TournamentAthleteData>;
+  matches: Array<Match>;
+  athleteMap: Map<string, TournamentAthlete>;
   matchLabel: ReadonlyMap<string, number | null>;
   readOnly: boolean;
   thirdPlaceId: string | undefined;
-  onSlotClick: (match: MatchData) => void;
+  onSlotClick: (match: Match) => void;
   onToggleLock: (
     matchId: string,
     side: 'red' | 'blue',

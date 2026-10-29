@@ -1,4 +1,4 @@
-import type { MatchStatus } from '@/contracts/tournament/match';
+import type { MatchStatus } from '@/contracts/matches/dto';
 import { Status, StatusIndicator } from '@/components/ui/status';
 import { cn } from '@/lib/utils';
 

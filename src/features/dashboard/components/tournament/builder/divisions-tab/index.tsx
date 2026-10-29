@@ -19,8 +19,8 @@ import { AddAthletesSheet } from './add-athletes-sheet';
 import { AthletePool } from './athlete-pool';
 import { DivisionRosterTable } from './division-roster-table';
 import { DivisionsRail } from './divisions-rail';
+import type { DivisionListItem } from '@/contracts/divisions/dto';
 import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
-import type { DivisionData } from '@/contracts/tournament/division';
 import { useBuilderManagerQuery } from '@/features/dashboard/hooks/use-builder-manager-query';
 import { useAssignAthlete } from '@/queries/division';
 import { Dialog } from '@/components/ui/dialog';
@@ -31,7 +31,7 @@ import { useMediaQuery } from '@/hooks/use-media-query';
 interface DivisionsTabProps {
   tournamentId: string;
   tournamentName: string;
-  divisions: Array<DivisionData>;
+  divisions: Array<DivisionListItem>;
   readOnly: boolean;
 }
 
@@ -57,7 +57,7 @@ export function DivisionsTab({
   const [addAthletesOpen, setAddAthletesOpen] = React.useState(false);
   const [settingsOpen, setSettingsOpen] = React.useState(false);
   const [settingsDivision, setSettingsDivision] =
-    React.useState<DivisionData | null>(null);
+    React.useState<DivisionListItem | null>(null);
   const [poolOpen, setPoolOpen] = React.useState(false);
   const [railOpen, setRailOpen] = React.useState(false);
   const [dragName, setDragName] = React.useState<string | null>(null);
@@ -109,11 +109,9 @@ export function DivisionsTab({
   const handleDragEnd = (event: DragEndEvent) => {
     setDragName(null);
     const athleteId = event.active.data.current?.athleteId as
-      | string
-      | undefined;
+      string | undefined;
     const targetDivisionId = event.over?.data.current?.divisionId as
-      | string
-      | undefined;
+      string | undefined;
     if (!athleteId || !targetDivisionId) return;
     if (event.active.data.current?.fromDivisionId === targetDivisionId) return;
     void toast.promise(
@@ -130,7 +128,7 @@ export function DivisionsTab({
     );
   };
 
-  const prepareSettingsDivision = (division: DivisionData) => {
+  const prepareSettingsDivision = (division: DivisionListItem) => {
     setSettingsDivision(division);
   };
 

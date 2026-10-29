@@ -1,6 +1,5 @@
 import React from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import type { AthleteProfileData } from '@/contracts/athlete/profile';
 import { bulkAddAthleteResult } from '@/features/dashboard/lib/athlete/bulk-add-athletes';
 import { useBulkAddAthletes } from '@/queries/tournament-athlete';
 import {
@@ -199,7 +198,7 @@ export function useAddAthletesSheet({
     },
     list: {
       isPending: listQuery.isPending || pendingEmpty,
-      items: items as Array<AthleteProfileData>,
+      items: items,
       total,
       hasFilters,
       emptyLibrary,

@@ -1,12 +1,12 @@
 import { ArrowRight, UserPlus } from 'lucide-react';
-import type { DivisionData } from '@/contracts/tournament/division';
+import type { DivisionListItem } from '@/contracts/divisions/dto';
 import { StatusButton } from '@/components/async/status-button';
 import { useButtonStatus } from '@/hooks/use-button-status';
 import { useAutoAssignDivision } from '@/queries/division';
 
 interface DivisionRosterEmptyStateProps {
   variant: 'no-division-selected' | 'no-athletes';
-  division?: DivisionData | null;
+  division?: DivisionListItem | null;
   tournamentId?: string;
   readOnly?: boolean;
 }

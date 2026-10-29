@@ -1,4 +1,4 @@
-import type { MatchStatus } from '@/contracts/tournament/match';
+import type { MatchStatus } from '@/contracts/matches/dto';
 import type {
   BracketCanvasLayout,
   BracketConnectorPath,

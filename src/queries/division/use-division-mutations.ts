@@ -1,15 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import type { ContractInputs } from '@/contracts/router';
+import { client } from '@/orpc/client';
 import { invalidateAfterDivisionWrite } from '@/queries/division/invalidate-division-cache';
-import {
-  assignAthlete,
-  autoAssignAllDivisions,
-  autoAssignDivision,
-  createDivision,
-  deleteDivision,
-  unassignAthlete,
-  updateDivision,
-} from '@/queries/api/division-api';
 
 function useInvalidateDivisions() {
   const queryClient = useQueryClient();
@@ -21,7 +14,8 @@ export function useCreateDivision(options?: { onSuccess?: () => void }) {
   const invalidate = useInvalidateDivisions();
 
   return useMutation({
-    mutationFn: createDivision,
+    mutationFn: (input: ContractInputs['division']['create']) =>
+      client.division.create(input),
     onSuccess: (_data, variables) => {
       invalidate(variables.tournamentId);
       toast.success('Division created');
@@ -35,7 +29,8 @@ export function useUpdateDivision(options?: { onSuccess?: () => void }) {
   const invalidate = useInvalidateDivisions();
 
   return useMutation({
-    mutationFn: updateDivision,
+    mutationFn: (input: ContractInputs['division']['update']) =>
+      client.division.update(input),
     onSuccess: () => {
       invalidate();
       toast.success('Division updated');
@@ -49,7 +44,8 @@ export function useDeleteDivision(options?: { onSuccess?: () => void }) {
   const invalidate = useInvalidateDivisions();
 
   return useMutation({
-    mutationFn: deleteDivision,
+    mutationFn: (input: ContractInputs['division']['delete']) =>
+      client.division.delete(input),
     onSuccess: () => {
       invalidate();
       toast.success('Division deleted');
@@ -66,7 +62,8 @@ export function useAutoAssignDivision(options?: {
   const invalidate = useInvalidateDivisions();
 
   return useMutation({
-    mutationFn: autoAssignDivision,
+    mutationFn: (input: ContractInputs['division']['autoAssign']) =>
+      client.division.autoAssign(input),
     onSuccess: (result) => {
       invalidate();
       if (!options?.suppressToast) {
@@ -88,7 +85,8 @@ export function useAutoAssignAll(options?: {
   const invalidate = useInvalidateDivisions();
 
   return useMutation({
-    mutationFn: autoAssignAllDivisions,
+    mutationFn: (input: ContractInputs['division']['autoAssignAll']) =>
+      client.division.autoAssignAll(input),
     onSuccess: (result) => {
       invalidate();
       options?.onSuccess?.(result);
@@ -104,7 +102,8 @@ export function useAssignAthlete(options?: {
   const invalidate = useInvalidateDivisions();
 
   return useMutation({
-    mutationFn: assignAthlete,
+    mutationFn: (input: ContractInputs['division']['assignAthlete']) =>
+      client.division.assignAthlete(input),
     onSuccess: () => {
       invalidate();
       options?.onSuccess?.();
@@ -122,7 +121,8 @@ export function useUnassignAthlete(options?: {
   const invalidate = useInvalidateDivisions();
 
   return useMutation({
-    mutationFn: unassignAthlete,
+    mutationFn: (input: ContractInputs['division']['unassignAthlete']) =>
+      client.division.unassignAthlete(input),
     onSuccess: () => {
       invalidate();
       options?.onSuccess?.();

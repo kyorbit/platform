@@ -1,18 +1,20 @@
 import { describe, expect, it } from 'vitest';
 import { computeCommandCenter } from '../compute-command-center';
-import type { MatchData } from '@/contracts/tournament/match';
-import type { TournamentData } from '@/contracts/tournament/list';
+import type { Match } from '@/contracts/matches/dto';
+import type { TournamentDetail } from '@/contracts/tournaments/dto';
 
 const tournament = {
   id: 't1',
   name: 'Test',
   status: 'draft',
+  nameSortKey: 'test',
+  arenaDivisionOrder: null,
   createdAt: new Date(),
   updatedAt: new Date(),
   lifecycle: { canComplete: false },
   divisions: [],
   _count: { divisions: 1, matches: 4, tournamentAthletes: 8 },
-} satisfies TournamentData;
+} satisfies TournamentDetail;
 
 describe('computeCommandCenter', () => {
   it('derives setup steps for draft tournament', () => {
@@ -30,7 +32,7 @@ describe('computeCommandCenter', () => {
       tournament,
       matches: [
         { id: 'm1', divisionId: 'g1', status: 'pending', kind: 'bracket' },
-      ] as Array<MatchData>,
+      ] as Array<Match>,
     });
 
     expect(result.setupSteps).toEqual(
@@ -45,7 +47,7 @@ describe('computeCommandCenter', () => {
       tournament,
       matches: [
         { id: 'c1', divisionId: 'g1', status: 'pending', kind: 'custom' },
-      ] as Array<MatchData>,
+      ] as Array<Match>,
     });
 
     expect(result.setupSteps).toEqual(

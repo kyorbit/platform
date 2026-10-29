@@ -1,7 +1,4 @@
-import { z } from 'zod';
-
-export const MatchStatusSchema = z.enum(['pending', 'active', 'complete']);
-export type MatchStatus = z.infer<typeof MatchStatusSchema>;
+import type { MatchStatus } from '@/contracts/matches/dto';
 
 export const MATCH_STATUS_RANK: Record<MatchStatus, number> = {
   pending: 0,

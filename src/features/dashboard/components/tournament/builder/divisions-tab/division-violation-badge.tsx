@@ -1,8 +1,6 @@
 import { AlertTriangle } from 'lucide-react';
-import type {
-  DivisionData,
-  TournamentAthleteData,
-} from '@/contracts/tournament/division';
+import type { DivisionListItem } from '@/contracts/divisions/dto';
+import type { TournamentAthlete } from '@/contracts/tournament-athletes/dto';
 import { Badge } from '@/components/ui/badge';
 import {
   Tooltip,
@@ -13,8 +11,8 @@ import {
 export type Violation = 'gender' | 'belt' | 'weight';
 
 export function getViolations(
-  athlete: TournamentAthleteData,
-  division: DivisionData
+  athlete: TournamentAthlete,
+  division: DivisionListItem
 ): Array<Violation> {
   const violations: Array<Violation> = [];
 

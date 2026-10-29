@@ -1,8 +1,4 @@
-import { z } from 'zod';
-import type { TournamentStatus } from '@/contracts/tournament/list';
-
-export const TournamentStatusSchema = z.enum(['draft', 'active', 'completed']);
-export type TournamentStatusValue = z.infer<typeof TournamentStatusSchema>;
+import type { TournamentStatus } from '@/contracts/tournaments/dto';
 
 export const TOURNAMENT_STATUS_LABEL: Record<TournamentStatus, string> = {
   draft: 'Draft',

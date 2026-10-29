@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from '@tanstack/react-router';
 import { Layers, LayoutGrid } from 'lucide-react';
-import type { DivisionData } from '@/contracts/tournament/division';
-import type { MatchData } from '@/contracts/tournament/match';
+import type { Match } from '@/contracts/matches/dto';
+import type { DivisionListItem } from '@/contracts/divisions/dto';
 import {
   HubMetricCard,
   HubMetricFooter,
@@ -21,8 +21,8 @@ import {
 import { countActionableMatchesByGroupId } from '@/lib/tournament/bracket/bracket-action-queue';
 
 interface DivisionsOverviewProps {
-  divisions: Array<DivisionData>;
-  matches: Array<MatchData>;
+  divisions: Array<DivisionListItem>;
+  matches: Array<Match>;
   tournamentId: string;
 }
 

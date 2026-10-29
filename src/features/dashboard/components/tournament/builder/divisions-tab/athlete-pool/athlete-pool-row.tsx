@@ -1,7 +1,7 @@
 import { Plus } from 'lucide-react';
 import { useDraggable } from '@dnd-kit/core';
 import { toast } from 'sonner';
-import type { TournamentAthleteData } from '@/contracts/tournament/division';
+import type { TournamentAthlete } from '@/contracts/tournament-athletes/dto';
 import { getBeltLabel } from '@/config/athlete';
 import { Badge } from '@/components/ui/badge';
 import { StatusButton } from '@/components/async/status-button';
@@ -15,7 +15,7 @@ import { useAssignAthlete } from '@/queries/division';
 import { cn } from '@/lib/utils';
 
 interface AthletePoolRowProps {
-  athlete: TournamentAthleteData;
+  athlete: TournamentAthlete;
   selectedDivisionId: string | null;
   readOnly: boolean;
 }

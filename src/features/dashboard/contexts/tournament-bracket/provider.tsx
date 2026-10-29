@@ -2,7 +2,7 @@ import React from 'react';
 import { useRouterState } from '@tanstack/react-router';
 import { useBuilderWorkspace } from '../builder-workspace/use-builder-workspace';
 import { TournamentBracketContext } from './context';
-import type { MatchData } from '@/contracts/tournament/match';
+import type { Match } from '@/contracts/matches/dto';
 import type { TournamentBracketContextValue } from './context';
 import { useBuilderManagerQuery } from '@/features/dashboard/hooks/use-builder-manager-query';
 import { useBracketsTabDnd } from '@/features/dashboard/hooks/use-brackets-tab-dnd';
@@ -23,9 +23,7 @@ export function TournamentBracketProvider({
     select: (s) => s.location.pathname.endsWith('/builder'),
   });
 
-  const [selectedMatch, setSelectedMatch] = React.useState<MatchData | null>(
-    null
-  );
+  const [selectedMatch, setSelectedMatch] = React.useState<Match | null>(null);
   const [panelOpen, setPanelOpen] = React.useState(false);
   const [arenaOrderSheetOpen, setArenaOrderSheetOpen] = React.useState(false);
 
@@ -58,14 +56,10 @@ export function TournamentBracketProvider({
 
   const matchDetail = React.useMemo(() => {
     if (!selectedMatch) return null;
-    return (
-      (data.matches as Array<MatchData>).find(
-        (m) => m.id === selectedMatch.id
-      ) ?? selectedMatch
-    );
+    return data.matches.find((m) => m.id === selectedMatch.id) ?? selectedMatch;
   }, [data.matches, selectedMatch]);
 
-  const handleSlotClick = React.useCallback((match: MatchData) => {
+  const handleSlotClick = React.useCallback((match: Match) => {
     setSelectedMatch(match);
     setPanelOpen(true);
   }, []);

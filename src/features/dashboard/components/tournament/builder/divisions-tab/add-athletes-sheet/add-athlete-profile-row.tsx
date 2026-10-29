@@ -1,11 +1,11 @@
-import type { AthleteProfileData } from '@/contracts/athlete/profile';
+import type { AthleteProfileListItem } from '@/contracts/athlete-profiles/dto';
 import { getBeltLabel } from '@/config/athlete';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
 
 interface AddAthleteProfileRowProps {
-  profile: AthleteProfileData;
+  profile: AthleteProfileListItem;
   checked: boolean;
   onToggle: () => void;
 }

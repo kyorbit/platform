@@ -3,8 +3,8 @@ import { formatDistanceToNow } from 'date-fns';
 
 import { TournamentsActionMenu } from '../tournaments-table/tournaments-action-menu';
 import { TournamentStatusPill } from '../../tournament-status-pill';
+import type { TournamentListItem } from '@/contracts/tournaments/dto';
 
-import type { TournamentListItem } from '@/contracts/tournament/list';
 import type { TournamentRowActionOptions } from '@/features/dashboard/lib/tournament/row-action-options';
 import type { DataTableRow } from '@/lib/data-table/features';
 import {

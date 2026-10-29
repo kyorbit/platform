@@ -4,7 +4,7 @@ import { RPCLink } from '@orpc/client/fetch';
 import { getRequestHeaders } from '@tanstack/react-start/server';
 import { createIsomorphicFn } from '@tanstack/react-start';
 
-import type { RouterClient } from '@orpc/server';
+import type { ContractClient } from '@/contracts/router';
 
 import router from '@/orpc/router';
 import { serverRepos } from '@/server/composition';
@@ -18,11 +18,11 @@ const getORPCClient = createIsomorphicFn()
       }),
     })
   )
-  .client((): RouterClient<typeof router> => {
+  .client((): ContractClient => {
     const link = new RPCLink({
-      url: `${window.location.origin}/api/rpc`,
+      url: '/api/rpc',
     });
     return createORPCClient(link);
   });
 
-export const client: RouterClient<typeof router> = getORPCClient();
+export const client: ContractClient = getORPCClient();

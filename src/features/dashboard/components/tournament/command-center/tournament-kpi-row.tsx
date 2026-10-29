@@ -1,7 +1,7 @@
 import { Layers, LayoutGrid, Users } from 'lucide-react';
-import type { DivisionData } from '@/contracts/tournament/division';
-import type { MatchData } from '@/contracts/tournament/match';
-import type { TournamentData } from '@/contracts/tournament/list';
+import type { DivisionListItem } from '@/contracts/divisions/dto';
+import type { Match } from '@/contracts/matches/dto';
+import type { TournamentDetail } from '@/contracts/tournaments/dto';
 import {
   HubMetricCard,
   HubMetricFooter,
@@ -9,17 +9,17 @@ import {
 import { countActionableMatchesForGroups } from '@/lib/tournament/bracket/bracket-action-queue';
 
 interface TournamentKpiRowProps {
-  tournament: TournamentData;
-  divisions: Array<DivisionData>;
-  matches: Array<MatchData>;
+  tournament: TournamentDetail;
+  divisions: Array<DivisionListItem>;
+  matches: Array<Match>;
 }
 
-function getArenaCount(divisions: Array<DivisionData>) {
+function getArenaCount(divisions: Array<DivisionListItem>) {
   if (divisions.length === 0) return 0;
   return new Set(divisions.map((d) => d.arenaIndex)).size;
 }
 
-function getAssignedAthleteCount(divisions: Array<DivisionData>) {
+function getAssignedAthleteCount(divisions: Array<DivisionListItem>) {
   return divisions.reduce(
     (sum, division) => sum + division._count.tournamentAthletes,
     0
@@ -47,8 +47,8 @@ function getDivisionsFooter(arenaCount: number) {
 }
 
 function getAthletesFooter(
-  tournament: TournamentData,
-  divisions: Array<DivisionData>
+  tournament: TournamentDetail,
+  divisions: Array<DivisionListItem>
 ) {
   const total = tournament._count.tournamentAthletes;
   const divisionCount = tournament._count.divisions;
@@ -92,7 +92,7 @@ function getAthletesFooter(
   );
 }
 
-function getMatchesFooter(tournament: TournamentData) {
+function getMatchesFooter(tournament: TournamentDetail) {
   if (tournament.status === 'draft') {
     return (
       <HubMetricFooter status="degraded" value="Setup" label="in progress" />

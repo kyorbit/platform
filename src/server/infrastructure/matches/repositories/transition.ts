@@ -20,7 +20,7 @@ export const matchTransitionStore: MatchTransitionStore = {
     if (!match) return null;
 
     const { tournament, ...row } = match;
-    return { ...row, tournamentStatus: tournament.status };
+    return { ...coalesceMatchRead(row), tournamentStatus: tournament.status };
   },
 
   async applyTransition(input) {

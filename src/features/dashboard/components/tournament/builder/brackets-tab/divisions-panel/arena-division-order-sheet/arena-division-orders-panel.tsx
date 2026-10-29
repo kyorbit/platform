@@ -16,14 +16,13 @@ import {
   parseArenaOrderDndId,
 } from './arena-division-order-editor';
 import { RetireArenaDialog } from './retire-arena-dialog';
+import type { DivisionListItem } from '@/contracts/divisions/dto';
 import type {
   DragEndEvent,
   DragOverEvent,
   DragStartEvent,
 } from '@dnd-kit/core';
 import type { ArenaCrossInsertPreview } from './arena-division-order-editor';
-import type { DivisionData } from '@/contracts/tournament/division';
-import type { TournamentData } from '@/contracts/tournament/list';
 import { Button } from '@/components/ui/button';
 import {
   arenaIndicesForOrderPanel,
@@ -43,7 +42,7 @@ import { cn } from '@/lib/utils';
 
 interface ArenaDivisionOrdersPanelProps {
   tournamentId: string;
-  divisions: Array<DivisionData>;
+  divisions: Array<DivisionListItem>;
   readOnly: boolean;
   className?: string;
 }
@@ -60,7 +59,7 @@ export function ArenaDivisionOrdersPanel({
   const ensureSlot = useEnsureArenaSlot();
   const retireArena = useRetireArena();
 
-  const tournament = tournamentQuery.data as TournamentData;
+  const tournament = tournamentQuery.data;
   const arenaOrderRaw = tournament.arenaDivisionOrder;
   const isDraft = tournament.status === 'draft';
   const dndDisabled = readOnly || !isDraft;
@@ -110,8 +109,7 @@ export function ArenaDivisionOrdersPanel({
     (e: DragStartEvent) => {
       if (dndDisabled) return;
       const d = e.active.data.current as
-        | { from?: string; label?: string }
-        | undefined;
+        { from?: string; label?: string } | undefined;
       if (d?.from === 'arena-order' && typeof d.label === 'string') {
         setActiveArenaOrderLabel(d.label);
       }

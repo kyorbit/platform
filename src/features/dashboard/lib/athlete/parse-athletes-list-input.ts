@@ -5,9 +5,11 @@ import {
   parseAsString,
   parseAsStringEnum,
 } from 'nuqs/server';
-import type { AthleteProfileData } from '@/contracts/athlete/profile';
-import type { AthleteProfilesDTO } from '@/orpc/athlete-profiles/dto';
-import { ATHLETE_PROFILE_SORT_IDS } from '@/contracts/athlete/profile';
+import type {
+  AthleteProfileListItem,
+  AthleteProfilesDTO,
+} from '@/contracts/athlete-profiles/dto';
+import { ATHLETE_PROFILE_SORT_IDS } from '@/contracts/athlete-profiles/dto';
 import { searchRecordToURLSearchParams } from '@/integrations/nuqs/tanstack-router-adapter';
 import {
   getFiltersStateParser,
@@ -35,10 +37,10 @@ const loadAthletesSearch = createLoader({
   affiliation: parseAsString,
   beltLevel: parseAsArrayOf(parseAsString, ARRAY_SEPARATOR),
   weight: parseAsString,
-  sort: getSortingStateParser<AthleteProfileData>(
+  sort: getSortingStateParser<AthleteProfileListItem>(
     SORTABLE_COLUMN_IDS
   ).withDefault(DEFAULT_SORTING),
-  filters: getFiltersStateParser<AthleteProfileData>().withDefault([]),
+  filters: getFiltersStateParser<AthleteProfileListItem>().withDefault([]),
   joinOperator: parseAsStringEnum(['and', 'or']).withDefault('and'),
 });
 

@@ -1,13 +1,9 @@
-import { ClaimMatchSchema, ReleaseMatchClaimSchema } from './dto';
 import { authorized } from '@/orpc/middleware';
-import { assertSystemAdmin } from '@/orpc/policies/auth';
 import { claimMatch as runClaimMatch } from '@/server/application/arena-match-claim/use-cases/claim';
 import { releaseClaim as runReleaseClaim } from '@/server/application/arena-match-claim/use-cases/release';
 
-export const claim = authorized
-  .input(ClaimMatchSchema)
-  .handler(async ({ context, input }) => {
-    assertSystemAdmin(context.user);
+export const claim = authorized.arenaMatchClaim.claim.handler(
+  async ({ context, input }) => {
     return runClaimMatch(
       {
         matchId: input.matchId,
@@ -18,12 +14,11 @@ export const claim = authorized
       },
       context.repos.arenaMatchClaim
     );
-  });
+  }
+);
 
-export const release = authorized
-  .input(ReleaseMatchClaimSchema)
-  .handler(async ({ context, input }) => {
-    assertSystemAdmin(context.user);
+export const release = authorized.arenaMatchClaim.release.handler(
+  async ({ context, input }) => {
     return runReleaseClaim(
       {
         matchId: input.matchId,
@@ -32,4 +27,5 @@ export const release = authorized
       },
       context.repos.arenaMatchClaim
     );
-  });
+  }
+);

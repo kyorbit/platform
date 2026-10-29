@@ -1,4 +1,4 @@
-import type { DivisionData } from '@/contracts/tournament/division';
+import type { DivisionListItem } from '@/contracts/divisions/dto';
 import {
   arenaIndicesForOrderPanel,
   shouldShowArenaOrderUi,
@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 interface ArenaOrderRailHintProps {
-  divisions: Array<DivisionData>;
+  divisions: Array<DivisionListItem>;
   /** Tournament `arenaDivisionOrder` JSON; used to show reserved empty arena slots. */
   arenaDivisionOrder?: unknown;
   isDraft: boolean;

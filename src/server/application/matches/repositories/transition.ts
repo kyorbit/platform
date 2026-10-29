@@ -1,12 +1,10 @@
+import type { Match } from '@/contracts/matches/dto';
 import type { MatchTransitionPlan } from '@/lib/tournament/match-transition';
-import type {
-  MatchLoadRow,
-  MatchRead,
-} from '@/server/domain/tournament/match/match-read';
+import type { MatchLoadRow } from '@/server/domain/tournament/match/match-read';
 import type { MutationActivityInput } from '@/server/application/activity/activity-types';
 
 export type MatchTransitionRow = MatchLoadRow;
-export type MatchTransitionResult = MatchRead;
+export type MatchTransitionResult = Match;
 
 export type MatchTransitionStore = {
   findMatch: (matchId: string) => Promise<MatchTransitionRow | null>;

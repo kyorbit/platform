@@ -1,10 +1,7 @@
-import type { SelectionMatchRow } from '@/contracts/advance/selection';
+import type { SelectionMatchRow } from '@/contracts/advance-settings/dto';
 
 export type MatchComboboxStatusVariant =
-  | 'online'
-  | 'offline'
-  | 'maintenance'
-  | 'degraded';
+  'online' | 'offline' | 'maintenance' | 'degraded';
 
 export function resolveMatchComboboxRow(row: SelectionMatchRow): {
   status: MatchComboboxStatusVariant;

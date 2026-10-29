@@ -1,5 +1,5 @@
 import { Trash2 } from 'lucide-react';
-import type { AthleteProfileData } from '@/contracts/athlete/profile';
+import type { AthleteProfileListItem } from '@/contracts/athlete-profiles/dto';
 import { StatusButton } from '@/components/async/status-button';
 import { Button } from '@/components/ui/button';
 import {
@@ -13,7 +13,7 @@ import {
 import { useDeleteAthleteProfile } from '@/queries/athlete-profile';
 
 interface DeleteAthleteDialogProps {
-  athlete: AthleteProfileData | null;
+  athlete: AthleteProfileListItem | null;
   onClose: () => void;
 }
 

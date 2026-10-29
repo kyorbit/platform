@@ -1,4 +1,4 @@
-import type { MatchRead } from '@/server/domain/tournament/match/match-read';
+import type { Match } from '@/contracts/matches/dto';
 import type { MutationActivityInput } from '@/server/application/activity/activity-types';
 import type {
   GenerateBracketCommand,
@@ -20,20 +20,20 @@ export type BracketLifecycleStore = {
     command: GenerateBracketCommand;
     group: BracketDivisionContext;
     activity: MutationActivityInput;
-  }) => Promise<Array<MatchRead>>;
+  }) => Promise<Array<Match>>;
   shuffle: (input: {
     command: GroupBracketCommand;
     group: BracketDivisionContext;
     activity: MutationActivityInput;
-  }) => Promise<Array<MatchRead>>;
+  }) => Promise<Array<Match>>;
   reset: (input: {
     command: GroupBracketCommand;
     group: BracketDivisionContext;
     activity: MutationActivityInput;
-  }) => Promise<Array<MatchRead>>;
+  }) => Promise<Array<Match>>;
   regenerate: (input: {
     command: GroupBracketCommand;
     group: BracketDivisionContext;
     activity: MutationActivityInput;
-  }) => Promise<Array<MatchRead>>;
+  }) => Promise<Array<Match>>;
 };

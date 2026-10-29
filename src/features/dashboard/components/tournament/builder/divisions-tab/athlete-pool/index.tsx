@@ -13,7 +13,7 @@ import {
   PoolWeightFilter,
 } from './filters';
 import { AthletePoolRow } from './athlete-pool-row';
-import type { TournamentAthleteData } from '@/contracts/tournament/division';
+import type { TournamentAthlete } from '@/contracts/tournament-athletes/dto';
 import { useBuilderManagerQuery } from '@/features/dashboard/hooks/use-builder-manager-query';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -168,7 +168,7 @@ export function AthletePool({
 
 interface PoolContentProps {
   isPending: boolean;
-  items: Array<TournamentAthleteData>;
+  items: Array<TournamentAthlete>;
   hasFilters: boolean;
   readOnly: boolean;
   selectedDivisionId: string | null;

@@ -1,5 +1,5 @@
 import { IconX } from '@tabler/icons-react';
-import type { AthleteRow } from '@/contracts/athlete/profile';
+import type { AthleteRow } from '@/features/dashboard/lib/athlete/athlete-profile-to-row';
 import { NumberInput } from '@/components/input/number-input';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

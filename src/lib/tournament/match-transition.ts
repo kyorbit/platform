@@ -1,5 +1,6 @@
-import { MATCH_STATUS_RANK, MatchStatusSchema } from './match-status';
-import type { MatchStatus } from './match-status';
+import { MATCH_STATUS_RANK } from './match-status';
+import type { MatchStatus } from '@/contracts/matches/dto';
+import { MatchStatusSchema } from '@/contracts/matches/dto';
 
 const WIN_NEEDED = 2;
 

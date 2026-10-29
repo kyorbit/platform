@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { SaveIcon } from 'lucide-react';
-import type { TournamentListItem } from '@/contracts/tournament/list';
+import type { TournamentListItem } from '@/contracts/tournaments/dto';
 import { StatusButton } from '@/components/async/status-button';
 import { Button } from '@/components/ui/button';
 import {

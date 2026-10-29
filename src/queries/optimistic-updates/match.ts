@@ -1,12 +1,12 @@
 import type { QueryClient } from '@tanstack/react-query';
 import type {
   AssignSlotDTO,
+  Match,
   SetLockDTO,
   SwapParticipantsDTO,
   SwapSlotsDTO,
   UpdateScoreDTO,
-} from '@/orpc/matches/dto';
-import type { MatchData } from '@/contracts/tournament/match';
+} from '@/contracts/matches/dto';
 import {
   getSuccessorSlot,
   resolveAdvanceSide,
@@ -18,14 +18,14 @@ export type MatchListQueryKey = ReturnType<typeof matchKeys.listByDivision>;
 
 export type BracketDnDMutationContext = {
   queryKey: MatchListQueryKey;
-  previousMatches: Array<MatchData> | undefined;
+  previousMatches: Array<Match> | undefined;
 };
 
 export function findMatchListQueryKey(
   queryClient: QueryClient,
   matchId: string
 ): MatchListQueryKey | null {
-  for (const [key, data] of queryClient.getQueriesData<Array<MatchData>>({
+  for (const [key, data] of queryClient.getQueriesData<Array<Match>>({
     queryKey: matchKeys.lists(),
   })) {
     if (!Array.isArray(key) || key.length !== 3) continue;
@@ -38,7 +38,7 @@ export function findMatchListQueryKey(
 }
 
 export function findProfileId(
-  matches: Array<MatchData>,
+  matches: Array<Match>,
   taId: string
 ): string | null {
   for (const m of matches) {
@@ -53,9 +53,9 @@ export function findProfileId(
 }
 
 export function applyOptimisticAssign(
-  matches: Array<MatchData>,
+  matches: Array<Match>,
   input: AssignSlotDTO
-): Array<MatchData> {
+): Array<Match> {
   const profileFor = input.tournamentAthleteId
     ? findProfileId(matches, input.tournamentAthleteId)
     : null;
@@ -90,9 +90,9 @@ export function applyOptimisticAssign(
 }
 
 export function applyOptimisticSwap(
-  matches: Array<MatchData>,
+  matches: Array<Match>,
   input: SwapSlotsDTO
-): Array<MatchData> {
+): Array<Match> {
   const out = matches.map((m) => ({ ...m }));
 
   if (input.matchAId === input.matchBId) {
@@ -111,7 +111,7 @@ export function applyOptimisticSwap(
   const mb = out.find((x) => x.id === input.matchBId);
   if (!ma || !mb) return out;
 
-  const read = (m: MatchData, side: 'red' | 'blue') =>
+  const read = (m: Match, side: 'red' | 'blue') =>
     side === 'red'
       ? {
           ta: m.redTournamentAthleteId,
@@ -123,7 +123,7 @@ export function applyOptimisticSwap(
         };
 
   const write = (
-    m: MatchData,
+    m: Match,
     side: 'red' | 'blue',
     ta: string | null,
     prof: string | null
@@ -145,9 +145,9 @@ export function applyOptimisticSwap(
 }
 
 export function applyOptimisticSwapParticipants(
-  matches: Array<MatchData>,
+  matches: Array<Match>,
   input: SwapParticipantsDTO
-): Array<MatchData> {
+): Array<Match> {
   const out = matches.map((m) => ({ ...m }));
   const m = out.find((x) => x.id === input.matchId);
   if (!m) return out;
@@ -186,9 +186,9 @@ export function applyOptimisticSwapParticipants(
 }
 
 export function applyOptimisticUpdateScore(
-  matches: Array<MatchData>,
+  matches: Array<Match>,
   input: UpdateScoreDTO
-): Array<MatchData> {
+): Array<Match> {
   const out = matches.map((m) => ({ ...m }));
   const m = out.find((x) => x.id === input.matchId);
   if (!m) return out;
@@ -233,9 +233,9 @@ export function applyOptimisticUpdateScore(
 }
 
 export function applyOptimisticSetLock(
-  matches: Array<MatchData>,
+  matches: Array<Match>,
   input: SetLockDTO
-): Array<MatchData> {
+): Array<Match> {
   const out = matches.map((m) => ({ ...m }));
   const m = out.find((x) => x.id === input.matchId);
   if (!m) return out;

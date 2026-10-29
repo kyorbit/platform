@@ -1,17 +1,17 @@
 import { Settings } from 'lucide-react';
 import { useDroppable } from '@dnd-kit/core';
-import type { DivisionData } from '@/contracts/tournament/division';
+import type { DivisionListItem } from '@/contracts/divisions/dto';
 import { Button } from '@/components/ui/button';
 import { SheetTrigger } from '@/components/ui/sheet';
 import { Status, StatusIndicator } from '@/components/ui/status';
 import { cn } from '@/lib/utils';
 
 interface DivisionRailRowProps {
-  division: DivisionData;
+  division: DivisionListItem;
   active: boolean;
   readOnly: boolean;
   onSelect: (divisionId: string) => void;
-  prepareSettingsDivision: (division: DivisionData) => void;
+  prepareSettingsDivision: (division: DivisionListItem) => void;
 }
 
 export function DivisionRailRow({

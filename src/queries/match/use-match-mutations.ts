@@ -1,7 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import type { MatchData } from '@/contracts/tournament/match';
+import type { Match } from '@/contracts/matches/dto';
+import type { ContractInputs } from '@/contracts/router';
 import type { BracketDnDMutationContext } from '@/queries/optimistic-updates/match';
+import { client } from '@/orpc/client';
 import {
   applyOptimisticAssign,
   applyOptimisticSetLock,
@@ -10,21 +12,6 @@ import {
   applyOptimisticUpdateScore,
   findMatchListQueryKey,
 } from '@/queries/optimistic-updates/match';
-import {
-  adminSetMatchStatus,
-  assignMatchSlot,
-  createCustomMatch,
-  deleteMatch,
-  generateBracket,
-  regenerateBracket,
-  resetBracket,
-  setMatchLock,
-  setMatchWinner,
-  shuffleBracket,
-  swapMatchParticipants,
-  swapMatchSlots,
-  updateMatchScore,
-} from '@/queries/api/match-api';
 import { invalidateAfterMatchWrite } from '@/queries/match/invalidate-match-cache';
 
 function useInvalidateMatches() {
@@ -36,7 +23,8 @@ export function useGenerateBracket(options?: { onSuccess?: () => void }) {
   const invalidate = useInvalidateMatches();
 
   return useMutation({
-    mutationFn: generateBracket,
+    mutationFn: (input: ContractInputs['bracket']['generate']) =>
+      client.bracket.generate(input),
     onSuccess: () => {
       invalidate();
       options?.onSuccess?.();
@@ -48,7 +36,8 @@ export function useShuffleBracket(options?: { onSuccess?: () => void }) {
   const invalidate = useInvalidateMatches();
 
   return useMutation({
-    mutationFn: shuffleBracket,
+    mutationFn: (input: ContractInputs['bracket']['shuffle']) =>
+      client.bracket.shuffle(input),
     onSuccess: () => {
       invalidate();
       options?.onSuccess?.();
@@ -60,7 +49,8 @@ export function useRegenerateBracket(options?: { onSuccess?: () => void }) {
   const invalidate = useInvalidateMatches();
 
   return useMutation({
-    mutationFn: regenerateBracket,
+    mutationFn: (input: ContractInputs['bracket']['regenerate']) =>
+      client.bracket.regenerate(input),
     onSuccess: () => {
       options?.onSuccess?.();
     },
@@ -74,7 +64,8 @@ export function useResetBracket(options?: { onSuccess?: () => void }) {
   const invalidate = useInvalidateMatches();
 
   return useMutation({
-    mutationFn: resetBracket,
+    mutationFn: (input: ContractInputs['bracket']['reset']) =>
+      client.bracket.reset(input),
     onSuccess: () => {
       options?.onSuccess?.();
     },
@@ -88,7 +79,8 @@ export function useCreateCustomMatch(options?: { onSuccess?: () => void }) {
   const invalidate = useInvalidateMatches();
 
   return useMutation({
-    mutationFn: createCustomMatch,
+    mutationFn: (input: ContractInputs['match']['createCustom']) =>
+      client.match.createCustom(input),
     onSuccess: () => {
       invalidate();
       toast.success('Custom match created');
@@ -104,15 +96,15 @@ export function useAssignSlot(options?: { onSuccess?: () => void }) {
   const invalidate = useInvalidateMatches();
 
   return useMutation({
-    mutationFn: assignMatchSlot,
+    mutationFn: (input: ContractInputs['match']['assignSlot']) =>
+      client.match.assignSlot(input),
     onMutate: async (input): Promise<BracketDnDMutationContext | undefined> => {
       const queryKey = findMatchListQueryKey(queryClient, input.matchId);
       if (!queryKey) return undefined;
 
       await queryClient.cancelQueries({ queryKey });
-      const previousMatches =
-        queryClient.getQueryData<Array<MatchData>>(queryKey);
-      queryClient.setQueryData<Array<MatchData>>(queryKey, (old) => {
+      const previousMatches = queryClient.getQueryData<Array<Match>>(queryKey);
+      queryClient.setQueryData<Array<Match>>(queryKey, (old) => {
         if (!old) return old;
         return applyOptimisticAssign(old, input);
       });
@@ -135,15 +127,15 @@ export function useSwapSlots(options?: { onSuccess?: () => void }) {
   const invalidate = useInvalidateMatches();
 
   return useMutation({
-    mutationFn: swapMatchSlots,
+    mutationFn: (input: ContractInputs['match']['swapSlots']) =>
+      client.match.swapSlots(input),
     onMutate: async (input): Promise<BracketDnDMutationContext | undefined> => {
       const queryKey = findMatchListQueryKey(queryClient, input.matchAId);
       if (!queryKey) return undefined;
 
       await queryClient.cancelQueries({ queryKey });
-      const previousMatches =
-        queryClient.getQueryData<Array<MatchData>>(queryKey);
-      queryClient.setQueryData<Array<MatchData>>(queryKey, (old) => {
+      const previousMatches = queryClient.getQueryData<Array<Match>>(queryKey);
+      queryClient.setQueryData<Array<Match>>(queryKey, (old) => {
         if (!old) return old;
         return applyOptimisticSwap(old, input);
       });
@@ -166,15 +158,15 @@ export function useSetLock(options?: { onSuccess?: () => void }) {
   const invalidate = useInvalidateMatches();
 
   return useMutation({
-    mutationFn: setMatchLock,
+    mutationFn: (input: ContractInputs['match']['setLock']) =>
+      client.match.setLock(input),
     onMutate: async (input): Promise<BracketDnDMutationContext | undefined> => {
       const queryKey = findMatchListQueryKey(queryClient, input.matchId);
       if (!queryKey) return undefined;
 
       await queryClient.cancelQueries({ queryKey });
-      const previousMatches =
-        queryClient.getQueryData<Array<MatchData>>(queryKey);
-      queryClient.setQueryData<Array<MatchData>>(queryKey, (old) => {
+      const previousMatches = queryClient.getQueryData<Array<Match>>(queryKey);
+      queryClient.setQueryData<Array<Match>>(queryKey, (old) => {
         if (!old) return old;
         return applyOptimisticSetLock(old, input);
       });
@@ -198,15 +190,15 @@ export function useUpdateScore(options?: { onSuccess?: () => void }) {
   const invalidate = useInvalidateMatches();
 
   return useMutation({
-    mutationFn: updateMatchScore,
+    mutationFn: (input: ContractInputs['match']['updateScore']) =>
+      client.match.updateScore(input),
     onMutate: async (input): Promise<BracketDnDMutationContext | undefined> => {
       const queryKey = findMatchListQueryKey(queryClient, input.matchId);
       if (!queryKey) return undefined;
 
       await queryClient.cancelQueries({ queryKey });
-      const previousMatches =
-        queryClient.getQueryData<Array<MatchData>>(queryKey);
-      queryClient.setQueryData<Array<MatchData>>(queryKey, (old) => {
+      const previousMatches = queryClient.getQueryData<Array<Match>>(queryKey);
+      queryClient.setQueryData<Array<Match>>(queryKey, (old) => {
         if (!old) return old;
         return applyOptimisticUpdateScore(old, input);
       });
@@ -232,7 +224,8 @@ export function useAdminSetMatchStatus(options?: { onSuccess?: () => void }) {
   const invalidate = useInvalidateMatches();
 
   return useMutation({
-    mutationFn: adminSetMatchStatus,
+    mutationFn: (input: ContractInputs['match']['adminSetMatchStatus']) =>
+      client.match.adminSetMatchStatus(input),
     onSuccess: () => {
       invalidate();
       toast.success('Match status updated');
@@ -246,7 +239,8 @@ export function useResetMatchScore(options?: { onSuccess?: () => void }) {
   const invalidate = useInvalidateMatches();
 
   return useMutation({
-    mutationFn: updateMatchScore,
+    mutationFn: (input: ContractInputs['match']['updateScore']) =>
+      client.match.updateScore(input),
     onSuccess: () => {
       invalidate();
       toast.success('Match reset');
@@ -260,7 +254,8 @@ export function useDeleteMatch(options?: { onSuccess?: () => void }) {
   const invalidate = useInvalidateMatches();
 
   return useMutation({
-    mutationFn: deleteMatch,
+    mutationFn: (input: ContractInputs['match']['delete']) =>
+      client.match.delete(input),
     onSuccess: () => {
       invalidate();
       toast.success('Custom match deleted');
@@ -274,7 +269,8 @@ export function useSetWinner(options?: { onSuccess?: () => void }) {
   const invalidate = useInvalidateMatches();
 
   return useMutation({
-    mutationFn: setMatchWinner,
+    mutationFn: (input: ContractInputs['match']['setWinner']) =>
+      client.match.setWinner(input),
     onSuccess: () => {
       invalidate();
       toast.success('Winner set');
@@ -289,15 +285,15 @@ export function useSwapParticipants(options?: { onSuccess?: () => void }) {
   const invalidate = useInvalidateMatches();
 
   return useMutation({
-    mutationFn: swapMatchParticipants,
+    mutationFn: (input: ContractInputs['match']['swapParticipants']) =>
+      client.match.swapParticipants(input),
     onMutate: async (input): Promise<BracketDnDMutationContext | undefined> => {
       const queryKey = findMatchListQueryKey(queryClient, input.matchId);
       if (!queryKey) return undefined;
 
       await queryClient.cancelQueries({ queryKey });
-      const previousMatches =
-        queryClient.getQueryData<Array<MatchData>>(queryKey);
-      queryClient.setQueryData<Array<MatchData>>(queryKey, (old) => {
+      const previousMatches = queryClient.getQueryData<Array<Match>>(queryKey);
+      queryClient.setQueryData<Array<Match>>(queryKey, (old) => {
         if (!old) return old;
         return applyOptimisticSwapParticipants(old, input);
       });

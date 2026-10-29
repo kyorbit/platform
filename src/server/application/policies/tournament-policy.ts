@@ -1,5 +1,5 @@
-import type { TournamentStatusValue } from '@/lib/tournament/tournament-status';
-import { TournamentStatusSchema } from '@/lib/tournament/tournament-status';
+import type { TournamentStatus } from '@/contracts/tournaments/dto';
+import { TournamentStatusSchema } from '@/contracts/tournaments/dto';
 import { PolicyViolationError } from '@/server/application/errors';
 
 export type TournamentAction =
@@ -51,7 +51,7 @@ const completedAllowed = new Set<TournamentAction>([
 ]);
 
 export function assertTournamentAction(
-  status: TournamentStatusValue | string,
+  status: TournamentStatus | string,
   action: TournamentAction
 ) {
   const parsedStatus = TournamentStatusSchema.parse(status);
@@ -68,7 +68,7 @@ export function assertTournamentAction(
 }
 
 export function assertCanForceTournamentStatus(
-  status: TournamentStatusValue | string
+  status: TournamentStatus | string
 ) {
   assertTournamentAction(status, 'tournament.status.force');
 }

@@ -1,11 +1,11 @@
 import React from 'react';
 import { useTable } from '@tanstack/react-table';
+import type { TournamentListItem } from '@/contracts/tournaments/dto';
 import type {
   ColumnVisibilityState,
   SortingState,
 } from '@tanstack/react-table';
 import type { DataTableControlledState } from '@/hooks/use-data-table';
-import type { TournamentListItem } from '@/contracts/tournament/list';
 import type { TournamentRowActionOptions } from '@/features/dashboard/lib/tournament/row-action-options';
 import { getTournamentsTableColumns } from '@/features/dashboard/components/tournament/overview/tournaments-table/tournaments-table-columns';
 import { dataTableFeatures } from '@/lib/data-table/features';

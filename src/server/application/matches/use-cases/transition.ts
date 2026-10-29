@@ -4,12 +4,12 @@ import type {
   UpdateMatchScoreCommand,
 } from './commands';
 import type { MatchTransitionStore } from '../repositories/transition';
+import { MatchStatusSchema } from '@/contracts/matches/dto';
 import {
   buildAdminStatusPlan,
   buildScoreTransitionPlan,
   buildWinnerOverridePlan,
 } from '@/lib/tournament/match-transition';
-import { MatchStatusSchema } from '@/lib/tournament/match-status';
 import { NotFoundError } from '@/server/application/errors';
 import { assertTournamentAction } from '@/server/application/policies/tournament-policy';
 

@@ -22,7 +22,9 @@ const baseLifecycle = {
 const baseRow = {
   id: 'tournament-1',
   name: 'Spring Open',
-  status: 'draft',
+  status: 'draft' as const,
+  nameSortKey: 'spring open',
+  arenaDivisionOrder: null,
   createdAt: new Date('2026-01-01T00:00:00Z'),
   updatedAt: new Date('2026-01-01T00:00:00Z'),
 };

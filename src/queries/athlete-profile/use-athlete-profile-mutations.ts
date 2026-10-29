@@ -1,14 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import type { CheckDuplicateDTO } from '@/orpc/athlete-profiles/dto';
+import type { ContractInputs } from '@/contracts/router';
+import type { CheckDuplicateDTO } from '@/contracts/athlete-profiles/dto';
+import { client } from '@/orpc/client';
 import { invalidateAthleteProfileQueries } from '@/queries/athlete-profile/invalidate-athlete-profile-cache';
-import {
-  bulkDeleteAthleteProfiles,
-  checkAthleteProfileDuplicate,
-  createAthleteProfile,
-  deleteAthleteProfile,
-  updateAthleteProfile,
-} from '@/queries/api/athlete-profile-api';
 
 function useInvalidateAthleteProfiles() {
   const queryClient = useQueryClient();
@@ -23,7 +18,8 @@ export function useCreateAthleteProfile(options?: {
   const invalidate = useInvalidateAthleteProfiles();
 
   return useMutation({
-    mutationFn: createAthleteProfile,
+    mutationFn: (input: ContractInputs['athleteProfile']['create']) =>
+      client.athleteProfile.create(input),
     onSuccess: () => {
       invalidate();
       options?.onSuccess?.();
@@ -50,7 +46,8 @@ export function useCreateAthleteProfile(options?: {
 
 export function useCheckDuplicate() {
   return useMutation({
-    mutationFn: (data: CheckDuplicateDTO) => checkAthleteProfileDuplicate(data),
+    mutationFn: (data: CheckDuplicateDTO) =>
+      client.athleteProfile.checkDuplicate(data),
   });
 }
 
@@ -61,7 +58,8 @@ export function useUpdateAthleteProfile(options?: {
   const invalidate = useInvalidateAthleteProfiles();
 
   return useMutation({
-    mutationFn: updateAthleteProfile,
+    mutationFn: (input: ContractInputs['athleteProfile']['update']) =>
+      client.athleteProfile.update(input),
     onSuccess: () => {
       invalidate();
       if (!options?.suppressToast) {
@@ -81,7 +79,8 @@ export function useDeleteAthleteProfile(options?: { onSuccess?: () => void }) {
   const invalidate = useInvalidateAthleteProfiles();
 
   return useMutation({
-    mutationFn: deleteAthleteProfile,
+    mutationFn: (input: ContractInputs['athleteProfile']['delete']) =>
+      client.athleteProfile.delete(input),
     onSuccess: () => {
       invalidate();
       toast.success('Athlete deleted');
@@ -97,7 +96,8 @@ export function useBulkDeleteAthleteProfiles(options?: {
   const invalidate = useInvalidateAthleteProfiles();
 
   return useMutation({
-    mutationFn: bulkDeleteAthleteProfiles,
+    mutationFn: (input: ContractInputs['athleteProfile']['bulkDelete']) =>
+      client.athleteProfile.bulkDelete(input),
     onSuccess: (deletedCount) => {
       invalidate();
       toast.success(
@@ -108,5 +108,29 @@ export function useBulkDeleteAthleteProfiles(options?: {
       options?.onSuccess?.();
     },
     onError: (err) => toast.error(err.message),
+  });
+}
+
+type BulkSave =
+  | { kind: 'create'; rows: Array<ContractInputs['athleteProfile']['create']> }
+  | { kind: 'update'; rows: Array<ContractInputs['athleteProfile']['update']> };
+
+/** Saves rows in parallel; one row failing does not fail the batch. */
+export function useBulkSaveAthleteProfiles() {
+  const invalidate = useInvalidateAthleteProfiles();
+
+  return useMutation({
+    mutationFn: async (batch: BulkSave) => {
+      const results = await Promise.allSettled(
+        batch.kind === 'create'
+          ? batch.rows.map((row) => client.athleteProfile.create(row))
+          : batch.rows.map((row) => client.athleteProfile.update(row))
+      );
+      const successCount = results.filter(
+        (r) => r.status === 'fulfilled'
+      ).length;
+      return { successCount, failCount: results.length - successCount };
+    },
+    onSuccess: () => invalidate(),
   });
 }

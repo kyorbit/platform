@@ -1,3 +1,8 @@
+import type { AthleteProfile } from '@/contracts/athlete-profiles/dto';
+import type {
+  TournamentAthlete,
+  TournamentAthletesPage,
+} from '@/contracts/tournament-athletes/dto';
 import type {
   BulkRemoveTournamentAthletesCommand,
   ListTournamentAthletesQuery,
@@ -5,57 +10,25 @@ import type {
   UpdateTournamentAthleteCommand,
 } from '../use-cases/roster-commands';
 
-export type AthleteProfileRow = {
-  id: string;
-  name: string;
-  gender: string;
-  beltLevel: number;
-  weight: number;
-  affiliation: string;
-  image: string | null;
-};
-
-export type CreatedProfileRow = AthleteProfileRow;
-
-export type TournamentAthleteRow = {
-  id: string;
-  tournamentId: string;
-  athleteProfileId: string;
-  name: string;
-  gender: string;
-  beltLevel: number;
-  weight: number;
-  affiliation: string;
-  image: string | null;
-  status: string;
-  divisionId: string | null;
-  seed: number | null;
-  locked: boolean;
-  notes: string | null;
-  createdAt: Date;
-  athleteProfile: { id: string; athleteCode: string | null };
-};
-
-export type ListTournamentAthletesResult = {
-  items: Array<TournamentAthleteRow>;
-  total: number;
-};
+/** Profile fields copied onto a TournamentAthlete when it joins a tournament. */
+export type ProfileSnapshot = Pick<
+  AthleteProfile,
+  'id' | 'name' | 'gender' | 'beltLevel' | 'weight' | 'affiliation' | 'image'
+>;
 
 export type TournamentAthleteStore = {
-  list: (
-    query: ListTournamentAthletesQuery
-  ) => Promise<ListTournamentAthletesResult>;
-  findProfilesByIds: (ids: Array<string>) => Promise<Array<AthleteProfileRow>>;
+  list: (query: ListTournamentAthletesQuery) => Promise<TournamentAthletesPage>;
+  findProfilesByIds: (ids: Array<string>) => Promise<Array<ProfileSnapshot>>;
   bulkCreate: (
     tournamentId: string,
-    profiles: Array<AthleteProfileRow>
-  ) => Promise<Array<CreatedProfileRow>>;
+    profiles: Array<ProfileSnapshot>
+  ) => Promise<Array<ProfileSnapshot>>;
   update: (
     command: UpdateTournamentAthleteCommand
-  ) => Promise<TournamentAthleteRow>;
+  ) => Promise<TournamentAthlete>;
   remove: (
     command: RemoveTournamentAthleteCommand
-  ) => Promise<TournamentAthleteRow>;
+  ) => Promise<TournamentAthlete>;
   bulkRemove: (
     command: BulkRemoveTournamentAthletesCommand
   ) => Promise<{ removed: number }>;

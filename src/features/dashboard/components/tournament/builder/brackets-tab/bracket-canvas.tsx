@@ -1,8 +1,7 @@
 import React from 'react';
 import { BracketLayoutToggle } from './bracket-layout-toggle';
 import { BracketViewToolbar } from './bracket-view-toolbar';
-import type { MatchData } from '@/contracts/tournament/match';
-import type { TournamentAthleteData } from '@/contracts/tournament/division';
+import type { TournamentAthlete } from '@/contracts/tournament-athletes/dto';
 import { useBracketChrome } from '@/features/dashboard/contexts/bracket-chrome';
 import { useTournamentBracket } from '@/features/dashboard/contexts/tournament-bracket/use-tournament-bracket';
 import { useBracketCanvasLayout } from '@/features/dashboard/hooks/use-bracket-canvas-layout';
@@ -23,11 +22,11 @@ export function BracketCanvas() {
 
   const setLock = useSetLock();
   const thirdPlaceMatch = selectedDivision?.thirdPlaceMatch ?? false;
-  const matchListFull = matches as Array<MatchData>;
+  const matchListFull = matches;
   const matchList = matchListFull.filter((m) => m.kind !== 'custom');
 
   const athleteMap = React.useMemo(() => {
-    const map = new Map<string, TournamentAthleteData>();
+    const map = new Map<string, TournamentAthlete>();
     for (const a of athletes) map.set(a.id, a);
     return map;
   }, [athletes]);

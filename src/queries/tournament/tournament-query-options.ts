@@ -1,7 +1,7 @@
 import { queryOptions } from '@tanstack/react-query';
-import type { ListTournamentsDTO } from '@/orpc/tournaments/dto';
+import type { ListTournamentsDTO } from '@/contracts/tournaments/dto';
+import { client } from '@/orpc/client';
 import { tournamentKeys } from '@/queries/keys';
-import { getTournament, listTournaments } from '@/queries/api/tournament-api';
 
 const ALL_TOURNAMENTS_PER_PAGE = 1000;
 
@@ -20,7 +20,7 @@ const tournamentsAllListInput = {
 export function tournamentsListQueryOptions(input: ListTournamentsDTO) {
   return queryOptions({
     queryKey: tournamentKeys.list(input),
-    queryFn: () => listTournaments(input),
+    queryFn: () => client.tournament.list(input),
     staleTime: 30_000,
     gcTime: 5 * 60 * 1000,
   });
@@ -29,7 +29,7 @@ export function tournamentsListQueryOptions(input: ListTournamentsDTO) {
 export function tournamentsAllQueryOptions() {
   return queryOptions({
     queryKey: tournamentKeys.listAll(),
-    queryFn: () => listTournaments(tournamentsAllListInput),
+    queryFn: () => client.tournament.list(tournamentsAllListInput),
     staleTime: 30_000,
     gcTime: 5 * 60 * 1000,
   });
@@ -38,6 +38,6 @@ export function tournamentsAllQueryOptions() {
 export function tournamentQueryOptions(id: string) {
   return queryOptions({
     queryKey: tournamentKeys.detail(id),
-    queryFn: () => getTournament(id),
+    queryFn: () => client.tournament.get({ id }),
   });
 }

@@ -1,6 +1,6 @@
 import { buildOneSidedConnectors, buildTwoSidedConnectors } from './connectors';
 import { layoutCenterX, matchX, oneSidedMatchX } from './coords';
-import type { MatchData } from '@/contracts/tournament/match';
+import type { Match } from '@/contracts/matches/dto';
 import type {
   BracketCanvasLayout,
   BracketConnectorPath,
@@ -35,11 +35,11 @@ export function matchWing(
 }
 
 export function resolveBracketLayout(
-  matches: Array<MatchData>,
+  matches: Array<Match>,
   thirdPlaceMatch: boolean
 ): {
-  mainMatches: Array<MatchData>;
-  thirdPlace: MatchData | null;
+  mainMatches: Array<Match>;
+  thirdPlace: Match | null;
   layoutMaxRound: number;
 } {
   if (matches.length === 0) {
@@ -90,22 +90,19 @@ export function resolveBracketLayout(
 }
 
 export function isThirdPlaceMatch(
-  match: Pick<MatchData, 'id' | 'round' | 'matchIndex' | 'kind'>,
-  matches: ReadonlyArray<Pick<MatchData, 'id' | 'round' | 'matchIndex'>>,
+  match: Pick<Match, 'id' | 'round' | 'matchIndex' | 'kind'>,
+  matches: ReadonlyArray<Pick<Match, 'id' | 'round' | 'matchIndex'>>,
   thirdPlaceMatch: boolean
 ): boolean {
   if (!thirdPlaceMatch || match.kind !== 'bracket') return false;
   const { thirdPlace } = resolveBracketLayout(
-    matches as Array<MatchData>,
+    matches as Array<Match>,
     thirdPlaceMatch
   );
   return thirdPlace?.id === match.id;
 }
 
-export function isBracketFinal(
-  match: MatchData,
-  layoutMaxRound: number
-): boolean {
+export function isBracketFinal(match: Match, layoutMaxRound: number): boolean {
   return match.round === layoutMaxRound && match.matchIndex === 0;
 }
 
@@ -115,11 +112,11 @@ export function twoSidedMatchRowGap(layoutMaxRound: number): number {
   return layoutMaxRound === 3 ? MATCH_ROW_GAP : MATCH_ROW_GAP_SPACIOUS;
 }
 
-type RoundsMap = Map<number, Array<MatchData>>;
+type RoundsMap = Map<number, Array<Match>>;
 
 function emptyLayoutResult(
   layoutMaxRound: number,
-  thirdPlace: MatchData | null
+  thirdPlace: Match | null
 ): BracketLayoutResult {
   return {
     positions: [],
@@ -130,7 +127,7 @@ function emptyLayoutResult(
   };
 }
 
-function groupMainMatchesByRound(mainMatches: Array<MatchData>): {
+function groupMainMatchesByRound(mainMatches: Array<Match>): {
   rounds: RoundsMap;
   roundNums: Array<number>;
 } {
@@ -169,9 +166,9 @@ function layoutYTreeFromR0({
   roundNums: Array<number>;
   matchTop: number;
   rowGap: number;
-  r0Matches: Array<MatchData>;
+  r0Matches: Array<Match>;
   propagateThroughRound: number;
-  matchInRound?: (match: MatchData) => boolean;
+  matchInRound?: (match: Match) => boolean;
 }): { yByKey: Map<string, number>; treeHeight: number } {
   const yByKey = new Map<string, number>();
   const r0Count = r0Matches.length;
@@ -210,7 +207,7 @@ function layoutYTreeFromR0({
 
 function appendThirdPlacePosition(
   positions: Array<MatchPosition>,
-  thirdPlace: MatchData,
+  thirdPlace: Match,
   {
     matchTop,
     totalMainHeight,
@@ -230,7 +227,7 @@ function appendThirdPlacePosition(
 }
 
 export function buildTwoSidedLayout(
-  matches: Array<MatchData>,
+  matches: Array<Match>,
   thirdPlaceMatch: boolean
 ): BracketLayoutResult {
   const { mainMatches, thirdPlace, layoutMaxRound } = resolveBracketLayout(
@@ -309,7 +306,7 @@ export function buildTwoSidedLayout(
 }
 
 export function buildOneSidedLayout(
-  matches: Array<MatchData>,
+  matches: Array<Match>,
   thirdPlaceMatch: boolean
 ): BracketLayoutResult {
   const { mainMatches, thirdPlace, layoutMaxRound } = resolveBracketLayout(
@@ -379,7 +376,7 @@ export const canvasBuilders = {
   BracketCanvasLayout,
   {
     layout: (
-      matches: Array<MatchData>,
+      matches: Array<Match>,
       thirdPlaceMatch: boolean
     ) => BracketLayoutResult;
     connectors: (

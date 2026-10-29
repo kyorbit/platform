@@ -1,12 +1,12 @@
 import { TournamentsEmptyState } from '../tournaments-empty-state';
 import { TournamentCardSkeleton } from './tournament-card-skeleton';
 import { TournamentCard } from './tournament-card';
-import type { TournamentsManagerQuery } from '@/features/dashboard/hooks/use-tournaments-manager-query';
-import type { TournamentRowActionOptions } from '@/features/dashboard/lib/tournament/row-action-options';
 import type {
   TournamentSortField,
   TournamentStatus,
-} from '@/contracts/tournament/list';
+} from '@/contracts/tournaments/dto';
+import type { TournamentsManagerQuery } from '@/features/dashboard/hooks/use-tournaments-manager-query';
+import type { TournamentRowActionOptions } from '@/features/dashboard/lib/tournament/row-action-options';
 import { useTournamentList } from '@/queries/tournament';
 import { cn } from '@/lib/utils';
 

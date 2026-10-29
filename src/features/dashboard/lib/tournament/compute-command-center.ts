@@ -1,5 +1,5 @@
-import type { MatchData } from '@/contracts/tournament/match';
-import type { TournamentData } from '@/contracts/tournament/list';
+import type { Match } from '@/contracts/matches/dto';
+import type { TournamentDetail } from '@/contracts/tournaments/dto';
 
 export interface SetupStep {
   id: 'athletes' | 'divisions' | 'brackets';
@@ -16,7 +16,7 @@ function getAthletesMetric(athleteCount: number) {
   return `${athleteCount} ${athleteCount === 1 ? 'athlete' : 'athletes'} registered`;
 }
 
-function getDivisionsMetric(tournament: TournamentData) {
+function getDivisionsMetric(tournament: TournamentDetail) {
   const divisionCount = tournament._count.divisions;
   const athleteCount = tournament._count.tournamentAthletes;
 
@@ -39,8 +39,8 @@ function getDivisionsMetric(tournament: TournamentData) {
 }
 
 function getBracketsMetric(
-  tournament: TournamentData,
-  matches: Array<MatchData>
+  tournament: TournamentDetail,
+  matches: Array<Match>
 ) {
   const divisionCount = tournament._count.divisions;
 
@@ -62,8 +62,8 @@ function getBracketsMetric(
 }
 
 export function computeCommandCenter(input: {
-  tournament: TournamentData;
-  matches: Array<MatchData>;
+  tournament: TournamentDetail;
+  matches: Array<Match>;
 }) {
   const { tournament, matches } = input;
 

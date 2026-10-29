@@ -11,7 +11,7 @@ import { SlotLocks } from './slot-locks';
 import { MatchSheetStatus } from './match-sheet-status';
 import { ParticipantRow } from './participant-row';
 import { ScoreControl } from './score-control';
-import type { MatchStatus } from '@/contracts/tournament/match';
+import type { MatchStatus } from '@/contracts/matches/dto';
 import { useButtonStatus } from '@/hooks/use-button-status';
 import { StatusButton } from '@/components/async/status-button';
 import { useMatchDetailPanel } from '@/features/dashboard/hooks/use-match-detail-panel';

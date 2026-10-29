@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { AlertTriangle, SaveIcon } from 'lucide-react';
+import type { AthleteProfileListItem } from '@/contracts/athlete-profiles/dto';
 import type z from 'zod';
-import type { AthleteProfileData } from '@/contracts/athlete/profile';
 import { StatusButton } from '@/components/async/status-button';
 import { EditAthleteSchema } from '@/lib/validations';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -24,8 +24,8 @@ import {
 } from '@/queries/athlete-profile';
 
 interface AthleteEditSheetProps {
-  athlete: AthleteProfileData | null;
-  onOpenChange: (athlete: AthleteProfileData | null) => void;
+  athlete: AthleteProfileListItem | null;
+  onOpenChange: (athlete: AthleteProfileListItem | null) => void;
 }
 
 type FormValues = z.infer<typeof EditAthleteSchema>;

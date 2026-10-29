@@ -1,4 +1,5 @@
 import type { Prisma } from '@/generated/prisma/client';
+import { TournamentStatusSchema } from '@/contracts/tournaments/dto';
 import { prisma } from '@/lib/db';
 
 type TournamentLookupDatabase = Pick<typeof prisma, 'match' | 'tournament'>;
@@ -61,6 +62,7 @@ export async function findTournamentWithLifecycle(
 
   return {
     ...tournament,
+    status: TournamentStatusSchema.parse(tournament.status),
     lifecycle: await buildTournamentLifecycle(tournament, db),
   };
 }

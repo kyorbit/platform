@@ -1,7 +1,7 @@
 import React from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { MatchSheetStatus } from '../match-detail-panel/match-sheet-status';
-import type { MatchData } from '@/contracts/tournament/match';
+import type { Match } from '@/contracts/matches/dto';
 import { useTournamentBracket } from '@/features/dashboard/contexts/tournament-bracket/use-tournament-bracket';
 import { buildBracketActionQueue } from '@/lib/tournament/bracket/bracket-action-queue';
 import { getBracketRoundLabel } from '@/lib/tournament/bracket/bracket-round-label';
@@ -33,7 +33,7 @@ export function BracketActionQueue() {
     athleteCount,
   } = useTournamentBracket();
 
-  const matchList = matches as Array<MatchData>;
+  const matchList = matches;
 
   const maxRound = React.useMemo(() => {
     const bracketRounds = matchList
@@ -113,11 +113,11 @@ export function BracketActionQueue() {
 }
 
 interface QueueRowProps {
-  match: MatchData;
+  match: Match;
   maxRound: number;
   order: number;
   isLast: boolean;
-  onOpen: (m: MatchData) => void;
+  onOpen: (m: Match) => void;
   matchLabel: Map<string, number | null>;
 }
 

@@ -1,14 +1,14 @@
 import { Plus } from 'lucide-react';
 import { DivisionRailRow } from './division-rail-row';
-import type { DivisionData } from '@/contracts/tournament/division';
+import type { DivisionListItem } from '@/contracts/divisions/dto';
 import { Button } from '@/components/ui/button';
 
 interface DivisionsRailProps {
-  divisions: Array<DivisionData>;
+  divisions: Array<DivisionListItem>;
   selectedDivisionId: string | null;
   readOnly: boolean;
   onSelect: (divisionId: string) => void;
-  prepareSettingsDivision: (division: DivisionData) => void;
+  prepareSettingsDivision: (division: DivisionListItem) => void;
   onOpenAddDivision: () => void;
 }
 

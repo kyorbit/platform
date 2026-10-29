@@ -1,5 +1,5 @@
 import { SaveIcon, Trash2 } from 'lucide-react';
-import type { DivisionData } from '@/contracts/tournament/division';
+import type { DivisionListItem } from '@/contracts/divisions/dto';
 import { StatusButton } from '@/components/async/status-button';
 import {
   SheetContent,
@@ -20,7 +20,7 @@ import { BELT_LEVELS } from '@/config/athlete';
 
 interface DivisionSettingsSheetProps {
   onOpenChange: (open: boolean) => void;
-  division: DivisionData | null;
+  division: DivisionListItem | null;
 }
 
 export function DivisionSettingsSheet({
@@ -49,7 +49,7 @@ export function DivisionSettingsSheet({
 }
 
 interface DivisionSettingsFormProps {
-  division: DivisionData;
+  division: DivisionListItem;
   onClose: () => void;
 }
 

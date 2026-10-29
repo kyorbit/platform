@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
+import type { Match } from '@/contracts/matches/dto';
 
-import type { MatchData } from '@/contracts/tournament/match';
 import { applyOptimisticUpdateScore } from '@/queries/optimistic-updates/match';
 
-function baseMatch(over: Partial<MatchData> = {}): MatchData {
+function baseMatch(over: Partial<Match> = {}): Match {
   return {
     id: 'm-r0-0',
     kind: 'bracket',
@@ -22,6 +22,7 @@ function baseMatch(over: Partial<MatchData> = {}): MatchData {
     redLocked: false,
     blueLocked: false,
     cornersSwapped: false,
+    createdAt: new Date(0),
     updatedAt: new Date(0),
     divisionId: 'g1',
     tournamentId: 't1',

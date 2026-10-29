@@ -1,4 +1,4 @@
-import type { MatchData } from '@/contracts/tournament/match';
+import type { Match } from '@/contracts/matches/dto';
 import type { ArenaRound0BracketMeta } from '@/lib/tournament/match-eligibility';
 import { isArenaSequenceEligible } from '@/lib/tournament/match-eligibility';
 
@@ -22,7 +22,7 @@ export function formatMatchHeaderLine(
  * When the feeder has no arena number, prefer the winner's name if known; otherwise **Open**.
  */
 export function formatFeederWinnerPlaceholder(
-  feeder: MatchData,
+  feeder: Match,
   arenaNumberById: ReadonlyMap<string, number | null>,
   resolveAthleteName?: (
     tournamentAthleteId: string
@@ -42,11 +42,11 @@ export function formatFeederWinnerPlaceholder(
 }
 
 export function sortMatchesInRound(
-  roundMatches: Array<MatchData>,
+  roundMatches: Array<Match>,
   thirdPlaceMatch: boolean,
   divisionMaxRound: number,
   round: number
-): Array<MatchData> {
+): Array<Match> {
   let arr = [...roundMatches].sort((a, b) => a.matchIndex - b.matchIndex);
   if (thirdPlaceMatch && round === divisionMaxRound && arr.length === 2) {
     arr = [...arr].sort((a, b) => b.matchIndex - a.matchIndex);
@@ -59,7 +59,7 @@ export type ArenaDivisionMeta = { id: string; thirdPlaceMatch: boolean };
 export type ArenaCrossDivisionOrderInput = {
   arenaIndex: number;
   divisions: ReadonlyArray<ArenaDivisionMeta>;
-  matches: ReadonlyArray<MatchData>;
+  matches: ReadonlyArray<Match>;
   /** divisionIds in “who goes first within each round” order for this arena. */
   divisionOrder: ReadonlyArray<string>;
   /** Optional: when set, round-0 BYE-vs-BYE rows are excluded from the arena sequence (see {@link isArenaSequenceEligible}). */
@@ -87,7 +87,7 @@ export function resolveArenaDivisionOrder(
 }
 
 export function buildManualRankMap(
-  matches: ReadonlyArray<MatchData>
+  matches: ReadonlyArray<Match>
 ): Map<string, number> {
   const m = new Map<string, number>();
   for (const x of matches) {
@@ -109,8 +109,7 @@ export function buildMatchNumber(
   const base = safeArena * 100;
   const divisionMeta = new Map(input.divisions.map((g) => [g.id, g]));
   let divisionBracketMeta:
-    | ReadonlyMap<string, ArenaRound0BracketMeta>
-    | undefined;
+    ReadonlyMap<string, ArenaRound0BracketMeta> | undefined;
   if (
     input.divisionAthleteCountById &&
     input.divisionAthleteCountById.size > 0
@@ -156,7 +155,7 @@ export function buildMatchNumber(
   const rounds = [...new Set(input.matches.map((m) => m.round))].sort(
     (a, b) => a - b
   );
-  const ordered: Array<MatchData> = [];
+  const ordered: Array<Match> = [];
 
   for (const round of rounds) {
     for (const gid of input.divisionOrder) {
@@ -207,7 +206,7 @@ export function buildMatchNumber(
 }
 
 export function buildArenaMatchNumberById(
-  matches: Array<MatchData>,
+  matches: Array<Match>,
   arenaIndex: number,
   thirdPlaceMatch: boolean,
   athleteCount?: number
@@ -236,13 +235,13 @@ export function formatFeederWinnerLabel(displayNumber: number): string {
 }
 
 export function getFeederMatch(
-  matches: ReadonlyArray<MatchData>,
+  matches: ReadonlyArray<Match>,
   divisionId: string,
   round: number,
   matchIndex: number,
   side: 'red' | 'blue',
   cornersSwapped = false
-): MatchData | undefined {
+): Match | undefined {
   if (round <= 0) return undefined;
   const effectiveSide = cornersSwapped
     ? side === 'red'

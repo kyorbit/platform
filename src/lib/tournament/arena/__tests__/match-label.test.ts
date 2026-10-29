@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { MatchData } from '@/contracts/tournament/match';
+import type { Match } from '@/contracts/matches/dto';
 import { isArenaSequenceEligible } from '@/lib/tournament/match-eligibility';
 import {
   buildArenaMatchNumberById,
@@ -15,8 +15,8 @@ function m(
   id: string,
   round: number,
   matchIndex: number,
-  over: Partial<MatchData> = {}
-): MatchData {
+  over: Partial<Match> = {}
+): Match {
   return {
     id,
     kind: 'bracket',
@@ -35,6 +35,7 @@ function m(
     redLocked: false,
     blueLocked: false,
     cornersSwapped: false,
+    createdAt: new Date(0),
     updatedAt: new Date(0),
     divisionId: 'g',
     tournamentId: 't',
@@ -388,8 +389,8 @@ describe('buildMatchNumber', () => {
     round: number,
     matchIndex: number,
     divisionId: string,
-    over: Partial<MatchData> = {}
-  ): MatchData {
+    over: Partial<Match> = {}
+  ): Match {
     return m(id, round, matchIndex, { divisionId, ...over });
   }
 

@@ -10,9 +10,3 @@ export type SetLastSelectionCommand = {
   divisionId?: string | null;
   matchId?: string | null;
 };
-
-export type LastSelectionPayload = {
-  tournamentId: string | null;
-  divisionId: string | null;
-  matchId: string | null;
-};

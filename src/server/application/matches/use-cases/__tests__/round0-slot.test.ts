@@ -9,13 +9,13 @@ import {
 
 const baseMatch = {
   id: 'm1',
-  kind: 'bracket',
+  kind: 'bracket' as const,
   displayLabel: null,
   divisionId: 'g1',
   tournamentId: 't1',
   round: 0,
   matchIndex: 0,
-  status: 'pending',
+  status: 'pending' as const,
   redAthleteId: null,
   blueAthleteId: null,
   redTournamentAthleteId: null,

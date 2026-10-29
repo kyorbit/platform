@@ -1,8 +1,8 @@
 import React from 'react';
 import { useDraggable, useDroppable } from '@dnd-kit/core';
 import { Lock, LockOpen } from 'lucide-react';
-import type { MatchData } from '@/contracts/tournament/match';
-import type { TournamentAthleteData } from '@/contracts/tournament/division';
+import type { TournamentAthlete } from '@/contracts/tournament-athletes/dto';
+import type { Match } from '@/contracts/matches/dto';
 import { ATHLETE_ROW_H, MATCH_W } from '@/config/bracket';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -10,10 +10,10 @@ import { cn } from '@/lib/utils';
 export type BracketSlotDirection = 'ltr' | 'rtl';
 
 export interface BracketSlotProps {
-  match: MatchData;
+  match: Match;
   side: 'red' | 'blue';
   direction: BracketSlotDirection;
-  athlete: TournamentAthleteData | null | undefined;
+  athlete: TournamentAthlete | null | undefined;
   emptyLabel: string;
   assignedName?: string | null;
   locked: boolean;
@@ -21,7 +21,7 @@ export interface BracketSlotProps {
   isWinner: boolean;
   isFinal?: boolean;
   cornerSwapEnabled?: boolean;
-  onSlotClick: (match: MatchData) => void;
+  onSlotClick: (match: Match) => void;
   onToggleLock: () => void;
   readOnly: boolean;
   showIndicator?: boolean;

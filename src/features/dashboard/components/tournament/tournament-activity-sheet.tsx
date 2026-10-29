@@ -1,8 +1,8 @@
 import React from 'react';
 import { CircleAlert, ListFilter, ScrollText, X } from 'lucide-react';
 import { ActivityEventRow } from './command-center/activity-event-row';
+import type { TournamentActivityEventType } from '@/contracts/activity/dto';
 import type { ActivityEventRowData } from './command-center/activity-event-row';
-import type { TournamentActivityEventType } from '@/contracts/activity/event-types';
 import type { ActivityEventFilterOption } from '@/features/dashboard/lib/tournament/activity-filter-options';
 import { getNormalizedEvents } from '@/features/dashboard/lib/tournament/activity-filter-options';
 import { buttonVariants } from '@/components/ui/button';

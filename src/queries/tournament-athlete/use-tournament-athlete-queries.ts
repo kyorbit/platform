@@ -3,13 +3,30 @@ import {
   useInfiniteQuery,
   useQuery,
 } from '@tanstack/react-query';
-import type { ListTournamentAthletesDTO } from '@/orpc/tournament-athletes/dto';
+import type { ListTournamentAthletesDTO } from '@/contracts/tournament-athletes/dto';
+import { client } from '@/orpc/client';
 import { tournamentAthleteKeys } from '@/queries/keys';
-import {
-  getAthleteIdentityKey,
-  listTournamentAthletes,
-} from '@/queries/api/tournament-athlete-api';
 import { tournamentAthletesQueryOptions } from '@/queries/tournament-athlete/tournament-athlete-query-options';
+
+/**
+ * Stable identity for `placeholderData`: same filters / scope, excluding
+ * page, perPage, and sorting so paginating or re-sorting keeps prior rows visible.
+ */
+function getAthleteIdentityKey(input: ListTournamentAthletesDTO): string {
+  return JSON.stringify({
+    tournamentId: input.tournamentId,
+    divisionId: input.divisionId ?? null,
+    unassignedOnly: input.unassignedOnly ?? false,
+    query: input.query ?? '',
+    gender: input.gender ?? null,
+    beltLevels: input.beltLevels ?? null,
+    beltLevelMin: input.beltLevelMin ?? null,
+    beltLevelMax: input.beltLevelMax ?? null,
+    weightMin: input.weightMin ?? null,
+    weightMax: input.weightMax ?? null,
+    status: input.status ?? null,
+  });
+}
 
 export function useTournamentAthletes(input: ListTournamentAthletesDTO) {
   const placeholderIdentity = getAthleteIdentityKey(input);
@@ -32,7 +49,7 @@ export function useTournamentAthletesInfinite(
   return useInfiniteQuery({
     queryKey: tournamentAthleteKeys.listInfinite(input),
     queryFn: ({ pageParam }: { pageParam: number }) =>
-      listTournamentAthletes({ ...input, page: pageParam }),
+      client.tournamentAthlete.list({ ...input, page: pageParam }),
     initialPageParam: 1,
     getNextPageParam: (last, allPages) => {
       const fetched = allPages.reduce((acc, p) => acc + p.items.length, 0);

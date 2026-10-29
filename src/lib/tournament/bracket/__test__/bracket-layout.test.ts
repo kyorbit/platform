@@ -12,7 +12,7 @@ import {
   roundLabelPlacements,
   twoSidedMatchRowGap,
 } from '../bracket-layout';
-import type { MatchData } from '@/contracts/tournament/match';
+import type { Match } from '@/contracts/matches/dto';
 import {
   FINAL_FEEDER_EXTRA,
   MATCH_H,
@@ -24,7 +24,7 @@ import {
 function shellToMatches(
   athleteCount: number,
   thirdPlaceMatch: boolean
-): Array<MatchData> {
+): Array<Match> {
   let bracketSize = 1;
   while (bracketSize < athleteCount) bracketSize *= 2;
   const totalRounds = Math.log2(bracketSize);
@@ -56,6 +56,7 @@ function shellToMatches(
     redLocked: false,
     blueLocked: false,
     cornersSwapped: false,
+    createdAt: new Date(),
     updatedAt: new Date(),
     divisionId: 'g1',
     tournamentId: 't1',

@@ -1,7 +1,8 @@
 import { matchDisplayLabelFromDb, matchKindFromDb } from './match-kind';
+import type { Match } from '@/contracts/matches/dto';
 import type { Prisma } from '@/generated/prisma/client';
-import type { MatchData } from '@/contracts/tournament/match';
-/** Fields required to build {@link MatchData} for arena labels and bracket tooling. */
+import { MatchStatusSchema } from '@/contracts/matches/dto';
+/** Fields required to build {@link Match} for arena labels and bracket tooling. */
 export const matchProjectionSelect = {
   id: true,
   kind: true,
@@ -20,6 +21,7 @@ export const matchProjectionSelect = {
   redLocked: true,
   blueLocked: true,
   cornersSwapped: true,
+  createdAt: true,
   updatedAt: true,
   divisionId: true,
   tournamentId: true,
@@ -31,14 +33,14 @@ export type MatchProjectionRow = Prisma.MatchGetPayload<{
   arenaSequenceRank?: number | null;
 };
 
-export function toMatchData(m: MatchProjectionRow): MatchData {
+export function toMatchData(m: MatchProjectionRow): Match {
   return {
     id: m.id,
     kind: matchKindFromDb(m.kind),
     displayLabel: matchDisplayLabelFromDb(m.displayLabel),
     round: m.round,
     matchIndex: m.matchIndex,
-    status: m.status as MatchData['status'],
+    status: MatchStatusSchema.parse(m.status),
     redAthleteId: m.redAthleteId,
     blueAthleteId: m.blueAthleteId,
     redTournamentAthleteId: m.redTournamentAthleteId,
@@ -50,6 +52,7 @@ export function toMatchData(m: MatchProjectionRow): MatchData {
     redLocked: m.redLocked,
     blueLocked: m.blueLocked,
     cornersSwapped: m.cornersSwapped,
+    createdAt: m.createdAt,
     updatedAt: m.updatedAt,
     divisionId: m.divisionId,
     tournamentId: m.tournamentId,

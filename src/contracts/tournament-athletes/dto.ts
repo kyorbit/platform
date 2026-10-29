@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { Page } from '@/contracts/base';
 
 export const BulkAddAthletesSchema = z.object({
   tournamentId: z.string(),
@@ -65,3 +66,24 @@ export type UpdateTournamentAthleteDTO = z.infer<
 export type ListTournamentAthletesDTO = z.infer<
   typeof ListTournamentAthletesSchema
 >;
+
+export type TournamentAthlete = {
+  id: string;
+  tournamentId: string;
+  athleteProfileId: string;
+  name: string;
+  gender: string;
+  beltLevel: number;
+  weight: number;
+  affiliation: string;
+  image: string | null;
+  status: string;
+  divisionId: string | null;
+  seed: number | null;
+  locked: boolean;
+  notes: string | null;
+  createdAt: Date;
+  athleteProfile: { id: string; athleteCode: string | null };
+};
+
+export type TournamentAthletesPage = Page<TournamentAthlete>;

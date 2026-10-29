@@ -1,4 +1,4 @@
-import type { TournamentListItem } from '@/contracts/tournament/list';
+import type { TournamentListItem } from '@/contracts/tournaments/dto';
 import type { DataTableRowAction } from '@/lib/data-table/features';
 
 export interface TournamentRowActionOptions {

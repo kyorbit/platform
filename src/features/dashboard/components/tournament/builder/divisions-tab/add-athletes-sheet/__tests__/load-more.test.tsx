@@ -12,17 +12,19 @@ import {
 } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { AddAthletesList } from '../add-athletes-list';
-import type { AthleteProfileData } from '@/contracts/athlete/profile';
+import type { AthleteProfileListItem } from '@/contracts/athlete-profiles/dto';
 import { LoadMore } from '@/components/async/load-more';
 import { useAddAthletesSheet } from '@/features/dashboard/hooks/use-add-athletes-sheet';
-import { listAthleteProfiles } from '@/queries/api/athlete-profile-api';
+import { client as rpc } from '@/orpc/client';
 
-vi.mock('@/queries/api/athlete-profile-api', () => ({
-  listAthleteProfiles: vi.fn(),
+vi.mock('@/orpc/client', () => ({
+  client: {
+    athleteProfile: { list: vi.fn() },
+    tournamentAthlete: { bulkAdd: vi.fn() },
+  },
 }));
-vi.mock('@/queries/api/tournament-athlete-api', () => ({
-  bulkAddTournamentAthletes: vi.fn(),
-}));
+
+const listAthleteProfiles = rpc.athleteProfile.list;
 
 const observers = new Set<TestIntersectionObserver>();
 
@@ -76,7 +78,7 @@ function intersect(isIntersecting = true) {
   );
 }
 
-function athlete(index: number): AthleteProfileData {
+function athlete(index: number): AthleteProfileListItem {
   return {
     id: `athlete-${index}`,
     athleteCode: `A${index}`,
@@ -159,16 +161,14 @@ beforeEach(() => {
     }
   );
   vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockReturnValue(480);
-  vi.mocked(listAthleteProfiles).mockImplementation((input) =>
-    Promise.resolve({
-      items: input.excludeTournamentId
-        ? athletes.slice(
-            (input.page - 1) * input.perPage,
-            input.page * input.perPage
-          )
-        : athletes.slice(0, 1),
-      total: athletes.length,
-    })
+  vi.mocked(listAthleteProfiles).mockImplementation(
+    ({ page = 1, perPage = 20, ...input }) =>
+      Promise.resolve({
+        items: input.excludeTournamentId
+          ? athletes.slice((page - 1) * perPage, page * perPage)
+          : athletes.slice(0, 1),
+        total: athletes.length,
+      })
   );
 });
 

@@ -1,4 +1,5 @@
 import { tournamentRouter } from './tournaments/router';
+import { base } from './base';
 import { divisionRouter } from './divisions/router';
 import { bracketRouter, matchRouter } from './matches/router';
 import { athleteProfileRouter } from './athlete-profiles/router';
@@ -8,7 +9,7 @@ import { advanceSettingsRouter } from './advance-settings/router';
 import { arenaMatchClaimRouter } from './arena-match-claim/router';
 import { deviceLastSelectionRouter } from './device-last-selection/router';
 
-export default {
+export default base.router({
   tournament: tournamentRouter,
   division: divisionRouter,
   match: matchRouter,
@@ -21,4 +22,4 @@ export default {
   device: {
     lastSelection: deviceLastSelectionRouter,
   },
-} as const;
+});

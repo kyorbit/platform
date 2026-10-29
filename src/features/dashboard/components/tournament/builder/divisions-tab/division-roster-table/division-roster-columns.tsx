@@ -1,10 +1,8 @@
 import { MoreHorizontal } from 'lucide-react';
 import { useDraggable } from '@dnd-kit/core';
+import type { DivisionListItem } from '@/contracts/divisions/dto';
+import type { TournamentAthlete } from '@/contracts/tournament-athletes/dto';
 
-import type {
-  DivisionData,
-  TournamentAthleteData,
-} from '@/contracts/tournament/division';
 import type { DataTableColumnDef } from '@/lib/data-table/features';
 import { AthleteAvatar } from '@/features/dashboard/components/athlete/athlete-avatar';
 import { Badge } from '@/components/ui/badge';
@@ -23,9 +21,9 @@ import { cn } from '@/lib/utils';
 import { getBeltLabel, getGenderLabel } from '@/config/athlete';
 
 interface GetDivisionRosterColumnsArgs {
-  division: DivisionData;
+  division: DivisionListItem;
   readOnly: boolean;
-  otherDivisions: Array<DivisionData>;
+  otherDivisions: Array<DivisionListItem>;
   onUnassign: (athleteId: string) => void;
   onMove: (athleteId: string, targetDivisionId: string) => void;
 }
@@ -35,7 +33,7 @@ function NameCell({
   fromDivisionId,
   readOnly,
 }: {
-  athlete: TournamentAthleteData;
+  athlete: TournamentAthlete;
   fromDivisionId: string;
   readOnly: boolean;
 }) {
@@ -75,9 +73,7 @@ export function getDivisionRosterColumns({
   otherDivisions,
   onUnassign,
   onMove,
-}: GetDivisionRosterColumnsArgs): Array<
-  DataTableColumnDef<TournamentAthleteData>
-> {
+}: GetDivisionRosterColumnsArgs): Array<DataTableColumnDef<TournamentAthlete>> {
   return [
     {
       id: 'name',

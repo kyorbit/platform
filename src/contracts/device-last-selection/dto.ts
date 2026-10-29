@@ -20,3 +20,9 @@ export const SetLastSelectionSchema = z.object({
 
 export type GetLastSelectionDTO = z.infer<typeof GetLastSelectionSchema>;
 export type SetLastSelectionDTO = z.infer<typeof SetLastSelectionSchema>;
+
+export type LastSelectionPayload = {
+  tournamentId: string | null;
+  divisionId: string | null;
+  matchId: string | null;
+};

@@ -1,36 +1,12 @@
 import { z } from 'zod';
-import { MatchStatusSchema } from '@/lib/tournament/match-status';
 
-export {
-  MatchStatusSchema,
-  type MatchStatus as MatchStatusDTO,
-} from '@/lib/tournament/match-status';
+export const MATCH_STATUSES = ['pending', 'active', 'complete'] as const;
+export const MatchStatusSchema = z.enum(MATCH_STATUSES);
+export type MatchStatus = (typeof MATCH_STATUSES)[number];
 
-export const MatchKindSchema = z.enum(['bracket', 'custom']);
-
-export const MatchSchema = z.object({
-  id: z.string(),
-  kind: MatchKindSchema,
-  displayLabel: z.string().nullable(),
-  round: z.number().int(),
-  matchIndex: z.number().int(),
-  status: MatchStatusSchema,
-  redAthleteId: z.string().nullable(),
-  blueAthleteId: z.string().nullable(),
-  redTournamentAthleteId: z.string().nullable(),
-  blueTournamentAthleteId: z.string().nullable(),
-  redWins: z.number().int(),
-  blueWins: z.number().int(),
-  winnerId: z.string().nullable(),
-  tournamentWinnerId: z.string().nullable(),
-  redLocked: z.boolean(),
-  blueLocked: z.boolean(),
-  cornersSwapped: z.boolean(),
-  divisionId: z.string(),
-  tournamentId: z.string(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-});
+export const MATCH_KINDS = ['bracket', 'custom'] as const;
+export const MatchKindSchema = z.enum(MATCH_KINDS);
+export type MatchKind = (typeof MATCH_KINDS)[number];
 
 export const UpdateScoreSchema = z.object({
   matchId: z.string(),
@@ -106,7 +82,6 @@ export const CreateCustomMatchSchema = z.object({
   blue: CustomSlotSchema,
 });
 
-export type MatchDTO = z.infer<typeof MatchSchema>;
 export type UpdateScoreDTO = z.infer<typeof UpdateScoreSchema>;
 export type SetWinnerDTO = z.infer<typeof SetWinnerSchema>;
 export type SwapParticipantsDTO = z.infer<typeof SwapParticipantsSchema>;
@@ -120,3 +95,29 @@ export type AssignSlotDTO = z.infer<typeof AssignSlotSchema>;
 export type SwapSlotsDTO = z.infer<typeof SwapSlotsSchema>;
 export type CustomSlotDTO = z.infer<typeof CustomSlotSchema>;
 export type CreateCustomMatchDTO = z.infer<typeof CreateCustomMatchSchema>;
+
+export type Match = {
+  id: string;
+  kind: MatchKind;
+  displayLabel: string | null;
+  divisionId: string;
+  tournamentId: string;
+  round: number;
+  matchIndex: number;
+  status: MatchStatus;
+  redAthleteId: string | null;
+  blueAthleteId: string | null;
+  redTournamentAthleteId: string | null;
+  blueTournamentAthleteId: string | null;
+  redWins: number;
+  blueWins: number;
+  winnerId: string | null;
+  tournamentWinnerId: string | null;
+  redLocked: boolean;
+  blueLocked: boolean;
+  cornersSwapped: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  /** Per-arena order; only reads that compute it set this. */
+  arenaSequenceRank?: number | null;
+};

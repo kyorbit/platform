@@ -7,7 +7,7 @@ import {
 import { useDroppable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import { GripVertical, MapPin, MinusIcon } from 'lucide-react';
-import type { DivisionData } from '@/contracts/tournament/division';
+import type { DivisionListItem } from '@/contracts/divisions/dto';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Label } from '@/components/ui/label';
@@ -159,7 +159,7 @@ function ArenaListDropTail({
 
 interface ArenaDivisionOrderListProps {
   arenaIndex: number;
-  divisionsOnArena: Array<DivisionData>;
+  divisionsOnArena: Array<DivisionListItem>;
   divisionOrder: Array<string>;
   readOnly: boolean;
   crossArenaDropPreview?: ArenaCrossInsertPreview | null;

@@ -1,7 +1,7 @@
 import { Settings } from 'lucide-react';
 import { DivisionViolationBadge } from '../division-violation-badge';
 import { DivisionRosterEmptyState } from './division-roster-empty-state';
-import type { DivisionData } from '@/contracts/tournament/division';
+import type { DivisionListItem } from '@/contracts/divisions/dto';
 import { useDivisionRosterTable } from '@/features/dashboard/hooks/use-division-roster-table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -19,11 +19,11 @@ function rosterView(showSkeleton: boolean, total: number) {
 }
 
 export interface DivisionRosterTableProps {
-  division: DivisionData | null;
+  division: DivisionListItem | null;
   tournamentId: string;
-  divisions: Array<DivisionData>;
+  divisions: Array<DivisionListItem>;
   readOnly: boolean;
-  prepareSettingsDivision: (division: DivisionData) => void;
+  prepareSettingsDivision: (division: DivisionListItem) => void;
 }
 
 export function DivisionRosterTable({
@@ -52,7 +52,7 @@ interface DivisionRosterActiveProps extends Omit<
   DivisionRosterTableProps,
   'division'
 > {
-  division: DivisionData;
+  division: DivisionListItem;
 }
 
 function DivisionRosterActive({

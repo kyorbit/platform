@@ -1,6 +1,5 @@
 import React from 'react';
-import type { DivisionData } from '@/contracts/tournament/division';
-import type { MatchData } from '@/contracts/tournament/match';
+import type { DivisionListItem } from '@/contracts/divisions/dto';
 import {
   buildArenaMatchNumberById,
   buildManualRankMap,
@@ -17,7 +16,7 @@ import { useTournament } from '@/queries/tournament';
 
 export interface UseBracketsTabQueriesArgs {
   tournamentId: string;
-  divisions: Array<DivisionData>;
+  divisions: Array<DivisionListItem>;
   selectedDivisionId: string | null;
   tournamentStatus: string;
   readOnly: boolean;
@@ -43,7 +42,7 @@ export function useBracketsTabQueries({
   });
 
   const matches = matchesQuery.data ?? [];
-  const tournamentMatches = tournamentMatchesQuery.data as Array<MatchData>;
+  const tournamentMatches = tournamentMatchesQuery.data;
   const athletes = athletesQuery.data?.items ?? [];
   const selectedDivision = divisions.find((d) => d.id === selectedDivisionId);
 
@@ -60,7 +59,7 @@ export function useBracketsTabQueries({
       onArena.has(m.divisionId)
     );
     if (arenaMatches.length === 0) {
-      const local = matches as Array<MatchData>;
+      const local = matches;
       if (local.length > 0) {
         return buildArenaMatchNumberById(
           local,

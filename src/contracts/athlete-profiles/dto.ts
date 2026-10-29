@@ -1,8 +1,19 @@
 import { z } from 'zod';
-import { ATHLETE_PROFILE_SORT_IDS } from '@/contracts/athlete/profile';
+import type { Page } from '@/contracts/base';
 import { dataTableConfig } from '@/config/data-table';
 import { filterItemSchema } from '@/lib/data-table/parsers';
 import { flagConfig } from '@/config/flag';
+
+export const ATHLETE_PROFILE_SORT_IDS = [
+  'name',
+  'athleteCode',
+  'beltLevel',
+  'weight',
+  'affiliation',
+  'createdAt',
+] as const;
+
+export type AthleteProfileSortId = (typeof ATHLETE_PROFILE_SORT_IDS)[number];
 
 const createProfileImageSchema = z
   .union([z.url('Photo URL must be a valid URL'), z.literal('')])
@@ -115,3 +126,31 @@ export const BulkDeleteAthleteProfilesSchema = z.object({
 export type BulkDeleteAthleteProfilesDTO = z.infer<
   typeof BulkDeleteAthleteProfilesSchema
 >;
+
+export type AthleteProfile = {
+  id: string;
+  athleteCode: string | null;
+  name: string;
+  gender: string;
+  beltLevel: number;
+  weight: number;
+  affiliation: string;
+  image: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+/** List rows always carry an athlete code. */
+export type AthleteProfileListItem = Omit<AthleteProfile, 'athleteCode'> & {
+  athleteCode: string;
+};
+
+export type AthleteProfilesPage = Page<AthleteProfileListItem>;
+
+export type DedupMatch = Pick<AthleteProfile, 'id' | 'name' | 'affiliation'>;
+
+export type DedupResult = {
+  isDuplicate: boolean;
+  isHardBlock: boolean;
+  matches: Array<DedupMatch>;
+};
