@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.3.0](https://github.com/kyorbit/platform/compare/kyorbit-v1.2.1...kyorbit-v1.3.0) (2026-10-29)
+
+
+### Features
+
+* **orpc:** upgrade to v2 beta and adopt a contract-first RPC seam ([f816337](https://github.com/kyorbit/platform/commit/f8163374e7d491fcacfed2f45275151395144aae))
+
+
+### Chores
+
+* **deps:** upgrade oRPC to v2 beta ([df5bf25](https://github.com/kyorbit/platform/commit/df5bf25152d4e8a186ef33d3caf0bfafb0509a4d))
+
 ## [1.2.1](https://github.com/kyorbit/platform/compare/kyorbit-v1.2.0...kyorbit-v1.2.1) (2026-10-27)
 
 
