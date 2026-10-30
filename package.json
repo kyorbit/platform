@@ -57,7 +57,7 @@
     "@orpc/zod": "2.0.0-beta.47",
     "@prisma/adapter-neon": "^7.10.1",
     "@prisma/client": "^7.10.1",
-    "@tabler/icons-react": "^3.49.0",
+    "@tabler/icons-react": "^3.50.0",
     "@tailwindcss/vite": "^4.3.3",
     "@tanstack/react-devtools": "^0.10.13",
     "@tanstack/react-form": "^1.33.5",
