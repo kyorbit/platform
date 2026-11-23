@@ -27,6 +27,7 @@ import { Label } from '@/components/ui/label';
 export function BracketActionQueue() {
   const {
     matches,
+    selectedMatch,
     handleSlotClick,
     showArrangedHint,
     matchLabel,
@@ -90,6 +91,7 @@ export function BracketActionQueue() {
             <QueueRow
               key={match.id}
               match={match}
+              isSelected={selectedMatch?.id === match.id}
               order={index + 1}
               isLast={index === queue.length - 1}
               maxRound={maxRound}
@@ -114,6 +116,7 @@ export function BracketActionQueue() {
 
 interface QueueRowProps {
   match: Match;
+  isSelected: boolean;
   maxRound: number;
   order: number;
   isLast: boolean;
@@ -123,6 +126,7 @@ interface QueueRowProps {
 
 function QueueRow({
   match,
+  isSelected,
   maxRound,
   order,
   isLast,
@@ -158,6 +162,7 @@ function QueueRow({
       <Card
         role="button"
         tabIndex={0}
+        aria-current={isSelected ? 'true' : undefined}
         aria-label={
           match.kind === 'custom'
             ? `Custom — ${match.displayLabel?.trim() || 'match'}`
@@ -171,6 +176,7 @@ function QueueRow({
         }}
         className={cn(
           'group bg-muted dark:bg-muted/50 relative min-w-0 flex-1 gap-0 rounded-md border-none p-0 ring-0',
+          isSelected && 'ring-2 ring-blue-500/70',
           'focus-visible:ring-ring focus-visible:ring-offset-background focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none'
         )}
       >

@@ -32,15 +32,25 @@ import type {
 } from '@/lib/tournament/bracket/bracket-layout/hit-test';
 import {
   buildMatchIndex,
+  getMatchCardGeometry,
   hitTestBracket,
   resolveMatchSlots,
 } from '@/lib/tournament/bracket/bracket-layout/hit-test';
 import { useBracketLayout } from '@/hooks/use-bracket-layout';
 
+export interface BracketFitInsets {
+  top?: number;
+  right?: number;
+  bottom?: number;
+  left?: number;
+}
+
 export interface BracketCanvasHandle {
   zoomIn: () => void;
   zoomOut: () => void;
+  resetZoom: () => void;
   fitView: () => void;
+  revealMatch: (matchId: string) => void;
   getViewport: () => Viewport;
   screenToWorld: (
     clientX: number,
@@ -76,6 +86,8 @@ export interface BracketCanvasViewProps {
   layout?: BracketLayoutResult;
   connectors?: Array<BracketConnectorPath>;
   dropTarget?: { matchId: string; side: BracketCorner } | null;
+  fitInsets?: BracketFitInsets;
+  onZoomChange?: (zoom: number) => void;
   ariaLabel?: string;
   canvasRef?: React.Ref<BracketCanvasHandle>;
   onSlotPointerDown?: (
@@ -88,22 +100,30 @@ function computeFitViewport(
   containerW: number,
   containerH: number,
   contentW: number,
-  contentH: number
+  contentH: number,
+  insets?: BracketFitInsets
 ): Viewport {
   if (containerW <= 0 || containerH <= 0 || contentW <= 0 || contentH <= 0) {
     return DEFAULT_VIEWPORT;
   }
+  const top = insets?.top ?? 0;
+  const right = insets?.right ?? 0;
+  const bottom = insets?.bottom ?? 0;
+  const left = insets?.left ?? 0;
+  const availW = Math.max(1, containerW - left - right);
+  const availH = Math.max(1, containerH - top - bottom);
+
   const zoom = Math.max(
     MIN_ZOOM,
     Math.min(
       FIT_MAX_ZOOM,
-      (containerW - FIT_PADDING * 2) / contentW,
-      (containerH - FIT_PADDING * 2) / contentH
+      (availW - FIT_PADDING * 2) / contentW,
+      (availH - FIT_PADDING * 2) / contentH
     )
   );
   return {
-    x: (containerW - contentW * zoom) / 2,
-    y: (containerH - contentH * zoom) / 2,
+    x: left + (availW - contentW * zoom) / 2,
+    y: top + (availH - contentH * zoom) / 2,
     zoom,
   };
 }
@@ -126,6 +146,8 @@ export function BracketCanvasView({
   layout: precomputedLayout,
   connectors: precomputedConnectors,
   dropTarget = null,
+  fitInsets,
+  onZoomChange,
   ariaLabel = 'Tournament bracket',
   canvasRef,
   onSlotPointerDown,
@@ -164,14 +186,31 @@ export function BracketCanvasView({
     moved: boolean;
   } | null>(null);
 
+  const insetTop = fitInsets?.top ?? 0;
+  const insetRight = fitInsets?.right ?? 0;
+  const insetBottom = fitInsets?.bottom ?? 0;
+  const insetLeft = fitInsets?.left ?? 0;
+
   const fitView = React.useCallback(() => {
     const el = surfaceRef.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
     setViewport(
-      computeFitViewport(rect.width, rect.height, layout.width, layout.height)
+      computeFitViewport(rect.width, rect.height, layout.width, layout.height, {
+        top: insetTop,
+        right: insetRight,
+        bottom: insetBottom,
+        left: insetLeft,
+      })
     );
-  }, [layout.width, layout.height]);
+  }, [
+    layout.width,
+    layout.height,
+    insetTop,
+    insetRight,
+    insetBottom,
+    insetLeft,
+  ]);
 
   const zoomAt = React.useCallback(
     (factor: number, clientX?: number, clientY?: number) => {
@@ -202,6 +241,56 @@ export function BracketCanvasView({
     [size.width, size.height]
   );
 
+  const resetZoom = React.useCallback(() => {
+    const el = surfaceRef.current;
+    const rect = el?.getBoundingClientRect();
+    const cx = (rect?.width ?? size.width) / 2;
+    const cy = (rect?.height ?? size.height) / 2;
+    setViewport((prev) => {
+      const ratio = 1 / prev.zoom;
+      return {
+        x: cx - (cx - prev.x) * ratio,
+        y: cy - (cy - prev.y) * ratio,
+        zoom: 1,
+      };
+    });
+  }, [size.width, size.height]);
+
+  const revealMatch = React.useCallback(
+    (matchId: string) => {
+      const el = surfaceRef.current;
+      const pos = layout.positions.find((p) => p.match.id === matchId);
+      if (!el || !pos) return;
+      const rect = el.getBoundingClientRect();
+      const geom = getMatchCardGeometry(pos, layout.layoutMaxRound);
+      const availW = Math.max(1, rect.width - insetLeft - insetRight);
+      const availH = Math.max(1, rect.height - insetTop - insetBottom);
+      const centerX = insetLeft + availW / 2;
+      const centerY = insetTop + availH / 2;
+
+      setViewport((prev) => {
+        const sx = geom.left * prev.zoom + prev.x;
+        const sy = geom.top * prev.zoom + prev.y;
+        const sr = geom.right * prev.zoom + prev.x;
+        const sb = geom.bottom * prev.zoom + prev.y;
+        const inView =
+          sx >= insetLeft + 16 &&
+          sr <= rect.width - insetRight - 16 &&
+          sy >= insetTop + 16 &&
+          sb <= rect.height - insetBottom - 16;
+        if (inView) return prev;
+        const cardMidX = geom.left + geom.width / 2;
+        const cardMidY = geom.top + geom.height / 2;
+        return {
+          ...prev,
+          x: centerX - cardMidX * prev.zoom,
+          y: centerY - cardMidY * prev.zoom,
+        };
+      });
+    },
+    [layout, insetTop, insetRight, insetBottom, insetLeft]
+  );
+
   const screenToWorld = React.useCallback(
     (clientX: number, clientY: number) => {
       const el = surfaceRef.current;
@@ -230,13 +319,19 @@ export function BracketCanvasView({
     () => ({
       zoomIn: () => zoomAt(1.15),
       zoomOut: () => zoomAt(1 / 1.15),
+      resetZoom,
       fitView,
+      revealMatch,
       getViewport: () => viewportRef.current,
       screenToWorld,
       hitTestClient,
     }),
-    [zoomAt, fitView, screenToWorld, hitTestClient]
+    [zoomAt, resetZoom, fitView, revealMatch, screenToWorld, hitTestClient]
   );
+
+  React.useEffect(() => {
+    onZoomChange?.(viewport.zoom);
+  }, [viewport.zoom, onZoomChange]);
 
   // Observe surface resize and auto-fit when layout dimensions change
   React.useLayoutEffect(() => {
@@ -256,10 +351,31 @@ export function BracketCanvasView({
   React.useLayoutEffect(() => {
     if (size.width > 0 && size.height > 0 && layout.width > 0) {
       setViewport(
-        computeFitViewport(size.width, size.height, layout.width, layout.height)
+        computeFitViewport(
+          size.width,
+          size.height,
+          layout.width,
+          layout.height,
+          {
+            top: insetTop,
+            right: insetRight,
+            bottom: insetBottom,
+            left: insetLeft,
+          }
+        )
       );
     }
-  }, [layout.width, layout.height, layoutMode, size.width, size.height]);
+  }, [
+    layout.width,
+    layout.height,
+    layoutMode,
+    size.width,
+    size.height,
+    insetTop,
+    insetRight,
+    insetBottom,
+    insetLeft,
+  ]);
 
   // Observe light/dark theme toggle on documentElement
   React.useEffect(() => {

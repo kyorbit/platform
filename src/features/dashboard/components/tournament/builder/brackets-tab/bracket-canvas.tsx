@@ -23,6 +23,8 @@ import {
   useSwapSlots,
 } from '@/queries/match';
 
+const CANVAS_FIT_INSETS = { top: 48, left: 68, right: 60, bottom: 16 };
+
 export function BracketCanvas() {
   const {
     matches,
@@ -58,10 +60,21 @@ export function BracketCanvas() {
 
   const canvasRef = React.useRef<BracketCanvasHandle>(null);
   const { setCaptureTarget } = useBracketChrome();
+  const [zoomPercent, setZoomPercent] = React.useState(100);
   const [dropTarget, setDropTarget] = React.useState<{
     matchId: string;
     side: BracketCorner;
   } | null>(null);
+
+  const handleZoomChange = React.useCallback((zoom: number) => {
+    setZoomPercent(Math.round(zoom * 100));
+  }, []);
+
+  React.useEffect(() => {
+    if (selectedMatch?.id) {
+      canvasRef.current?.revealMatch(selectedMatch.id);
+    }
+  }, [selectedMatch?.id]);
 
   const { setNodeRef: setDropRef } = useDroppable({
     id: 'bracket-canvas-drop',
@@ -211,6 +224,8 @@ export function BracketCanvas() {
         matchLabel={matchLabel}
         readOnly={readOnly}
         dropTarget={dropTarget}
+        fitInsets={CANVAS_FIT_INSETS}
+        onZoomChange={handleZoomChange}
         onSlotClick={handleSlotClick}
         onToggleLock={onToggleLock}
         onAssignSlot={onAssignSlot}
@@ -225,6 +240,8 @@ export function BracketCanvas() {
         onFit={() => canvasRef.current?.fitView()}
         onZoomIn={() => canvasRef.current?.zoomIn()}
         onZoomOut={() => canvasRef.current?.zoomOut()}
+        onResetZoom={() => canvasRef.current?.resetZoom()}
+        zoomPercent={zoomPercent}
       />
     </div>
   );

@@ -21,6 +21,8 @@ type BracketViewToolbarProps = {
   onFit: () => void;
   onZoomIn: () => void;
   onZoomOut: () => void;
+  onResetZoom?: () => void;
+  zoomPercent?: number;
 };
 
 const ICON_BTN_CLASS =
@@ -30,6 +32,8 @@ export function BracketViewToolbar({
   onFit,
   onZoomIn,
   onZoomOut,
+  onResetZoom,
+  zoomPercent,
 }: BracketViewToolbarProps) {
   const { isFullscreen, toggleFullscreen, setScreenshotOpen, captureTarget } =
     useBracketChrome();
@@ -75,6 +79,23 @@ export function BracketViewToolbar({
         />
         <TooltipContent side="left">Zoom in</TooltipContent>
       </Tooltip>
+      {zoomPercent !== undefined && onResetZoom && (
+        <Tooltip>
+          <TooltipTrigger
+            render={
+              <Button
+                type="button"
+                aria-label={`Reset zoom to 100%, currently ${zoomPercent}%`}
+                className="hover:bg-accent hover:text-accent-foreground text-muted-foreground inline-flex h-6 w-8 cursor-pointer items-center justify-center rounded-md font-mono text-[10px] font-medium tabular-nums transition-colors"
+                onClick={onResetZoom}
+              >
+                {zoomPercent}%
+              </Button>
+            }
+          />
+          <TooltipContent side="left">Reset zoom (100%)</TooltipContent>
+        </Tooltip>
+      )}
       <Tooltip>
         <TooltipTrigger
           render={
