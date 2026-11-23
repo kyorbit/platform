@@ -1,3 +1,6 @@
+'use client';
+
+import { Button } from '@ui-sdk/react/button';
 import {
   Camera,
   Maximize2,
@@ -6,9 +9,7 @@ import {
   ZoomIn,
   ZoomOut,
 } from 'lucide-react';
-
 import { useBracketChrome } from '@/features/dashboard/contexts/bracket-chrome';
-import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import {
   Tooltip,
@@ -21,6 +22,9 @@ type BracketViewToolbarProps = {
   onZoomIn: () => void;
   onZoomOut: () => void;
 };
+
+const ICON_BTN_CLASS =
+  'hover:bg-accent hover:text-accent-foreground inline-flex size-8 cursor-pointer items-center justify-center rounded-md transition-colors disabled:pointer-events-none disabled:opacity-50';
 
 export function BracketViewToolbar({
   onFit,
@@ -43,14 +47,13 @@ export function BracketViewToolbar({
           render={
             <Button
               type="button"
-              variant="ghost"
-              size="icon-sm"
-              className="size-8 cursor-pointer"
+              aria-label="Capture bracket screenshot"
+              className={ICON_BTN_CLASS}
               disabled={!canScreenshot}
               onClick={() => setScreenshotOpen(true)}
             >
-              <Camera data-icon="inline-start" />
-              <span className="sr-only">Screenshot</span>
+              <Camera className="size-4" aria-hidden="true" />
+              <span className="sr-only">Capture bracket screenshot</span>
             </Button>
           }
         />
@@ -61,12 +64,11 @@ export function BracketViewToolbar({
           render={
             <Button
               type="button"
-              variant="ghost"
-              size="icon-sm"
-              className="size-8 cursor-pointer"
+              aria-label="Zoom in"
+              className={ICON_BTN_CLASS}
               onClick={onZoomIn}
             >
-              <ZoomIn data-icon="inline-start" />
+              <ZoomIn className="size-4" aria-hidden="true" />
               <span className="sr-only">Zoom in</span>
             </Button>
           }
@@ -78,12 +80,11 @@ export function BracketViewToolbar({
           render={
             <Button
               type="button"
-              variant="ghost"
-              size="icon-sm"
-              className="size-8 cursor-pointer"
+              aria-label="Zoom out"
+              className={ICON_BTN_CLASS}
               onClick={onZoomOut}
             >
-              <ZoomOut data-icon="inline-start" />
+              <ZoomOut className="size-4" aria-hidden="true" />
               <span className="sr-only">Zoom out</span>
             </Button>
           }
@@ -95,13 +96,12 @@ export function BracketViewToolbar({
           render={
             <Button
               type="button"
-              variant="ghost"
-              size="icon-sm"
-              className="size-8 cursor-pointer"
+              aria-label="Fit bracket to view"
+              className={ICON_BTN_CLASS}
               onClick={onFit}
             >
-              <Scan data-icon="inline-start" />
-              <span className="sr-only">Fit to view</span>
+              <Scan className="size-4" aria-hidden="true" />
+              <span className="sr-only">Fit bracket to view</span>
             </Button>
           }
         />
@@ -112,18 +112,23 @@ export function BracketViewToolbar({
           render={
             <Button
               type="button"
-              variant="ghost"
-              size="icon-sm"
-              className="size-8 cursor-pointer"
+              aria-label={
+                isFullscreen
+                  ? 'Exit bracket fullscreen'
+                  : 'Toggle bracket fullscreen'
+              }
+              className={ICON_BTN_CLASS}
               onClick={toggleFullscreen}
             >
               {isFullscreen ? (
-                <Minimize2 data-icon="inline-start" />
+                <Minimize2 className="size-4" aria-hidden="true" />
               ) : (
-                <Maximize2 data-icon="inline-start" />
+                <Maximize2 className="size-4" aria-hidden="true" />
               )}
               <span className="sr-only">
-                {isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
+                {isFullscreen
+                  ? 'Exit bracket fullscreen'
+                  : 'Toggle bracket fullscreen'}
               </span>
             </Button>
           }

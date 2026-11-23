@@ -4,6 +4,7 @@ import { GripVertical, List, LockOpen } from 'lucide-react';
 import { EdgeReveal } from '../builder-shell/edge-reveal';
 import { BuilderFooterPortal } from '../builder-shell/footer-portal';
 import { Pane } from '../builder-shell/pane';
+import { AgentConfirmDialog } from './agent-confirm-dialog';
 import { BracketCanvas } from './bracket-canvas';
 import { BracketScreenshotDialog } from './bracket-screenshot-dialog';
 import { BracketToolbar } from './bracket-toolbar';
@@ -141,6 +142,8 @@ export function BracketsTab() {
       <MatchDetailPanel />
 
       <BracketScreenshotDialog />
+
+      <AgentConfirmDialog />
 
       <ArenaDivisionOrderSheet
         open={arenaOrderSheetOpen}

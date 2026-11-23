@@ -199,6 +199,7 @@ export function BracketToolbar() {
             variant="ghost"
             size="icon"
             aria-label="Regenerate bracket"
+            data-agent-confirm="Deletes every match in this division and recreates an empty bracket shell"
             onClick={() => {
               if (!divisionId) return;
               void wrap(regenerate.mutateAsync({ divisionId }), {
@@ -224,6 +225,7 @@ export function BracketToolbar() {
             variant="ghost"
             size="icon"
             aria-label="Reset bracket"
+            data-agent-confirm="Clears all recorded scores and resets the division bracket"
             onClick={() => {
               if (!divisionId) return;
               void wrap(reset.mutateAsync({ divisionId }), {

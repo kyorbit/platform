@@ -1,9 +1,7 @@
 import { createContext } from 'react';
 
 export type BracketCaptureTarget = {
-  root: HTMLElement;
-  width: number;
-  height: number;
+  renderPng: () => Promise<Blob>;
 };
 
 export interface BracketChromeContextValue {

@@ -31,3 +31,7 @@ GLOSSARY.md
 
 # eslint
 .eslintcache
+
+# Local verification artifacts
+.verify-kyorbit
+
