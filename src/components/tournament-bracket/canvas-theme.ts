@@ -8,10 +8,13 @@ export interface BracketCanvasTheme {
   divider: string;
   textPrimary: string;
   textMuted: string;
+  textEliminated: string;
   labelText: string;
   connectorPending: string;
   connectorActive: string;
   connectorComplete: string;
+  connectorHighlight: string;
+  connectorDimmed: string;
   redAccent: string;
   blueAccent: string;
   winnerTintRed: string;
@@ -33,14 +36,17 @@ export const LIGHT_BRACKET_THEME: BracketCanvasTheme = {
   cardBg: '#ffffff',
   cardBorder: '#e4e4e7',
   cardBorderActive: '#f59e0b',
-  cardBorderComplete: '#3b82f6',
+  cardBorderComplete: '#a1a1aa',
   divider: '#e4e4e7',
   textPrimary: '#09090b',
   textMuted: '#71717a',
+  textEliminated: '#a1a1aa',
   labelText: '#52525b',
   connectorPending: '#d4d4d8',
   connectorActive: '#f59e0b',
-  connectorComplete: '#3b82f6',
+  connectorComplete: '#71717a',
+  connectorHighlight: '#2563eb',
+  connectorDimmed: 'rgba(212, 212, 216, 0.35)',
   redAccent: '#ef4444',
   blueAccent: '#3b82f6',
   winnerTintRed: 'rgba(239, 68, 68, 0.12)',
@@ -62,14 +68,17 @@ export const DARK_BRACKET_THEME: BracketCanvasTheme = {
   cardBg: '#18181b',
   cardBorder: '#27272a',
   cardBorderActive: '#f59e0b',
-  cardBorderComplete: '#60a5fa',
+  cardBorderComplete: '#52525b',
   divider: '#27272a',
   textPrimary: '#fafafa',
   textMuted: '#a1a1aa',
+  textEliminated: '#52525b',
   labelText: '#a1a1aa',
   connectorPending: '#3f3f46',
   connectorActive: '#f59e0b',
-  connectorComplete: '#60a5fa',
+  connectorComplete: '#a1a1aa',
+  connectorHighlight: '#60a5fa',
+  connectorDimmed: 'rgba(63, 63, 70, 0.32)',
   redAccent: '#ef4444',
   blueAccent: '#3b82f6',
   winnerTintRed: 'rgba(239, 68, 68, 0.2)',

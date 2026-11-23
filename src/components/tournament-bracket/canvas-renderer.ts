@@ -130,26 +130,104 @@ function drawLockIcon(
   ctx.restore();
 }
 
+function computeHighlightedPath(
+  focusMatchId: string | null,
+  positions: Array<MatchPosition>
+): Set<string> | null {
+  if (!focusMatchId) return null;
+  const byId = new Map<string, MatchPosition>();
+  const byCoord = new Map<string, MatchPosition>();
+  for (const p of positions) {
+    byId.set(p.match.id, p);
+    byCoord.set(`${p.match.round}-${p.match.matchIndex}`, p);
+  }
+  const start = byId.get(focusMatchId);
+  if (!start) return null;
+
+  const set = new Set<string>([start.match.id]);
+
+  // Walk downstream toward the final
+  let curr: MatchPosition | undefined = start;
+  while (curr) {
+    const parent = byCoord.get(
+      `${curr.match.round + 1}-${Math.floor(curr.match.matchIndex / 2)}`
+    );
+    if (!parent || set.has(parent.match.id)) break;
+    set.add(parent.match.id);
+    curr = parent;
+  }
+
+  // Walk upstream feeders
+  const stack: Array<MatchPosition> = [start];
+  while (stack.length > 0) {
+    const node = stack.pop();
+    if (!node || node.match.round <= 0) continue;
+    for (const childIdx of [
+      node.match.matchIndex * 2,
+      node.match.matchIndex * 2 + 1,
+    ]) {
+      const child = byCoord.get(`${node.match.round - 1}-${childIdx}`);
+      if (child && !set.has(child.match.id)) {
+        set.add(child.match.id);
+        stack.push(child);
+      }
+    }
+  }
+
+  return set;
+}
+
 function drawConnectorPaths(
   ctx: CanvasRenderingContext2D,
   connectors: Array<BracketConnectorPath>,
-  theme: BracketCanvasTheme
+  theme: BracketCanvasTheme,
+  highlightedPath: Set<string> | null
 ) {
   ctx.save();
-  ctx.lineWidth = 1.5;
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
 
-  for (const c of connectors) {
-    ctx.strokeStyle =
-      c.status === 'complete'
-        ? theme.connectorComplete
-        : c.status === 'active'
-          ? theme.connectorActive
-          : theme.connectorPending;
+  const drawOne = (
+    c: BracketConnectorPath,
+    strokeStyle: string,
+    lineWidth: number
+  ) => {
+    ctx.strokeStyle = strokeStyle;
+    ctx.lineWidth = lineWidth;
     if (typeof Path2D !== 'undefined') {
       ctx.stroke(new Path2D(c.d));
     }
+  };
+
+  if (!highlightedPath) {
+    for (const c of connectors) {
+      const color =
+        c.status === 'complete'
+          ? theme.connectorComplete
+          : c.status === 'active'
+            ? theme.connectorActive
+            : theme.connectorPending;
+      drawOne(c, color, 1.5);
+    }
+    ctx.restore();
+    return;
+  }
+
+  // Draw dimmed connectors first, then highlighted path on top
+  const highlighted: Array<BracketConnectorPath> = [];
+  for (const c of connectors) {
+    const onPath =
+      c.parentMatchId !== undefined &&
+      highlightedPath.has(c.parentMatchId) &&
+      (c.childMatchId === undefined || highlightedPath.has(c.childMatchId));
+    if (onPath) {
+      highlighted.push(c);
+    } else {
+      drawOne(c, theme.connectorDimmed, 1.25);
+    }
+  }
+  for (const c of highlighted) {
+    drawOne(c, theme.connectorHighlight, 2);
   }
   ctx.restore();
 }
@@ -166,13 +244,13 @@ function drawRoundLabels(
   );
 
   ctx.save();
-  ctx.font = `600 11px ${theme.fontSans}`;
+  ctx.font = `600 13px ${theme.fontSans}`;
   ctx.fillStyle = theme.labelText;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
 
   for (const item of placements) {
-    ctx.fillText(item.label.toUpperCase(), item.x, ROUND_LABEL_Y);
+    ctx.fillText(item.label, item.x, ROUND_LABEL_Y);
   }
 
   if (layout.thirdPlace) {
@@ -181,7 +259,7 @@ function drawRoundLabels(
     );
     if (tpPos) {
       ctx.fillText(
-        'THIRD PLACE',
+        'Third Place',
         tpPos.x + MATCH_W / 2,
         tpPos.y - MATCH_HEADER_ABOVE - 14
       );
@@ -301,42 +379,44 @@ function drawMatchCard(
   const s = geom.scale;
   const radius = 8 * s;
 
-  // Header line above match card
+  // Header line above match card (with subtle live dot for active matches)
   ctx.save();
   ctx.font = `500 ${Math.round(11 * s)}px ${theme.fontMono}`;
-  ctx.fillStyle = theme.textMuted;
+  ctx.fillStyle =
+    pos.match.status === 'active' ? theme.cardBorderActive : theme.textMuted;
   ctx.textAlign = geom.isFinal
     ? 'center'
     : geom.direction === 'rtl'
       ? 'right'
       : 'left';
   ctx.textBaseline = 'bottom';
+  const isActive = pos.match.status === 'active';
+  const dotOffset = isActive && !geom.isFinal ? 10 * s : 0;
   const headerX = geom.isFinal
     ? geom.left + geom.width / 2
     : geom.direction === 'rtl'
-      ? geom.right - 2
-      : geom.left + 2;
+      ? geom.right - 2 - dotOffset
+      : geom.left + 2 + dotOffset;
   ctx.fillText(resolved.header, headerX, geom.top - 4 * s);
+  if (isActive && !geom.isFinal) {
+    const dotX =
+      geom.direction === 'rtl' ? geom.right - 5 * s : geom.left + 5 * s;
+    const dotY = geom.top - 9.5 * s;
+    ctx.beginPath();
+    ctx.arc(dotX, dotY, 3 * s, 0, Math.PI * 2);
+    ctx.fillStyle = theme.cardBorderActive;
+    ctx.fill();
+  }
   ctx.restore();
 
-  // Card background and border
+  // Card background and border (flat surface, crisp borders)
   ctx.save();
-  if (geom.isFinal) {
-    ctx.shadowColor = theme.isDark
-      ? 'rgba(0, 0, 0, 0.45)'
-      : 'rgba(9, 9, 11, 0.14)';
-    ctx.shadowBlur = 12 * s;
-    ctx.shadowOffsetY = 3 * s;
-  }
   drawRoundedRect(ctx, geom.left, geom.top, geom.width, geom.height, radius);
   ctx.fillStyle = theme.cardBg;
   ctx.fill();
-  ctx.shadowColor = 'transparent';
-  ctx.shadowBlur = 0;
-  ctx.shadowOffsetY = 0;
 
   if (geom.isFinal) {
-    // Subtle outer halo ring matching ring-ring/50 ring-2 on final card
+    // Subtle outer halo ring on the final card
     drawRoundedRect(
       ctx,
       geom.left - 1.5 * s,
@@ -347,8 +427,8 @@ function drawMatchCard(
     );
     ctx.lineWidth = 2 * s;
     ctx.strokeStyle = theme.isDark
-      ? 'rgba(161, 161, 170, 0.35)'
-      : 'rgba(113, 113, 122, 0.35)';
+      ? 'rgba(161, 161, 170, 0.28)'
+      : 'rgba(113, 113, 122, 0.25)';
     ctx.stroke();
     drawRoundedRect(ctx, geom.left, geom.top, geom.width, geom.height, radius);
   } else {
@@ -366,10 +446,19 @@ function drawMatchCard(
   // Clip interior for corner bars, winner tints, and hover/drop fills
   ctx.clip();
 
+  const isByeMatch =
+    pos.match.status === 'complete' &&
+    pos.match.redWins === 0 &&
+    pos.match.blueWins === 0 &&
+    (resolved.redName === null || resolved.blueName === null);
+  const hasWinner = resolved.isRedWinner || resolved.isBlueWinner;
+
   for (const side of ['red', 'blue'] as const) {
     const slotRect = getSlotRect(pos, side, layout.layoutMaxRound);
     const isWinner =
       side === 'red' ? resolved.isRedWinner : resolved.isBlueWinner;
+    const isEliminated =
+      pos.match.status === 'complete' && hasWinner && !isWinner;
     const isHovered =
       hoveredHit?.matchId === pos.match.id && hoveredHit.side === side;
     const isDrop =
@@ -422,13 +511,19 @@ function drawMatchCard(
     }
 
     // Athlete name or feeder placeholder
-    const text = side === 'red' ? resolved.redDisplay : resolved.blueDisplay;
     const hasAthlete =
       side === 'red' ? resolved.redName !== null : resolved.blueName !== null;
+    const text =
+      isByeMatch && !hasAthlete
+        ? '—'
+        : side === 'red'
+          ? resolved.redDisplay
+          : resolved.blueDisplay;
     const locked = side === 'red' ? pos.match.redLocked : pos.match.blueLocked;
     const wins = side === 'red' ? pos.match.redWins : pos.match.blueWins;
     const showScore =
-      pos.match.status === 'active' || pos.match.status === 'complete';
+      !isByeMatch &&
+      (pos.match.status === 'active' || pos.match.status === 'complete');
 
     const lockReserve = readOnly ? 8 * s : 32 * s;
     const scoreReserve = showScore ? 24 * s : 0;
@@ -438,9 +533,11 @@ function drawMatchCard(
     ctx.font = `${isWinner ? '600' : '500'} ${Math.round(12 * s)}px ${theme.fontSans}`;
     ctx.fillStyle = locked
       ? theme.lockedColor
-      : hasAthlete
-        ? theme.textPrimary
-        : theme.textMuted;
+      : isEliminated
+        ? theme.textEliminated
+        : hasAthlete
+          ? theme.textPrimary
+          : theme.textMuted;
     ctx.textBaseline = 'middle';
     ctx.textAlign = geom.direction === 'rtl' ? 'right' : 'left';
     const textX =
@@ -452,7 +549,11 @@ function drawMatchCard(
 
     if (showScore) {
       ctx.font = `600 ${Math.round(12 * s)}px ${theme.fontMono}`;
-      ctx.fillStyle = isWinner ? theme.textPrimary : theme.textMuted;
+      ctx.fillStyle = isWinner
+        ? theme.textPrimary
+        : isEliminated
+          ? theme.textEliminated
+          : theme.textMuted;
       ctx.textAlign = geom.direction === 'rtl' ? 'left' : 'right';
       const scoreX =
         geom.direction === 'rtl'
@@ -533,7 +634,9 @@ function drawMatchCard(
     ctx.restore();
 
     drawFinalEdgeDiamond(ctx, geom.left, geom.top + halfH, s, theme);
-    drawFinalEdgeDiamond(ctx, geom.right, geom.top + halfH, s, theme);
+    if (scene.layoutMode === 'two-sided') {
+      drawFinalEdgeDiamond(ctx, geom.right, geom.top + halfH, s, theme);
+    }
   }
 
   // Outer selection halo when selected
@@ -578,7 +681,13 @@ export function drawBracketCanvas(
     dpr * viewport.y
   );
 
-  drawConnectorPaths(ctx, scene.connectors, theme);
+  const focusMatchId = scene.hoveredHit?.matchId ?? scene.selectedMatchId;
+  const highlightedPath = computeHighlightedPath(
+    focusMatchId,
+    scene.layout.positions
+  );
+
+  drawConnectorPaths(ctx, scene.connectors, theme, highlightedPath);
   drawRoundLabels(ctx, scene);
 
   const index = buildMatchIndex(scene.matches);
