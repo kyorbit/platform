@@ -24,6 +24,8 @@
     "db:migrate": "prisma migrate dev",
     "db:migrate:deploy": "prisma migrate deploy",
     "db:migrate:status": "prisma migrate status",
+    "auth:change-password": "bun --env-file=.env.local scripts/change-password.ts",
+    "auth:create-user": "bun --env-file=.env.local scripts/create-user.ts",
     "routes:generate": "tsr generate",
     "test": "vitest run",
     "typecheck": "node ./node_modules/typescript-7/bin/tsc --skipLibCheck --extendedDiagnostics",
