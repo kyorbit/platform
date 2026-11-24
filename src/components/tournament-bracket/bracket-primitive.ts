@@ -28,7 +28,7 @@ export type BracketLayoutChangeReason =
   'item-press' | 'layout-toggle' | 'programmatic';
 
 export type BracketSelectionChangeReason =
-  'item-press' | 'list-navigation' | 'programmatic';
+  'item-press' | 'list-navigation' | 'outside-press' | 'programmatic';
 
 export type BracketViewportChangeReason = ViewportReason | 'programmatic';
 
@@ -329,12 +329,20 @@ export const bracketPrimitive = definePrimitive({
         return false;
       }
       const ok = change('selectedMatchId', matchId, {
-        reason: event ? 'item-press' : 'programmatic',
+        reason: event
+          ? matchId === null
+            ? 'outside-press'
+            : 'item-press'
+          : 'programmatic',
         event,
       });
-      if (ok && matchId !== null) {
-        const match = s.matches.find((m) => m.id === matchId);
-        if (match) context.options().onSelectMatch?.(match);
+      if (ok) {
+        if (matchId === null) {
+          store.set({ focusedSlotKey: null });
+        } else {
+          const match = s.matches.find((m) => m.id === matchId);
+          if (match) context.options().onSelectMatch?.(match);
+        }
       }
       return ok;
     };
@@ -469,6 +477,50 @@ export const bracketPrimitive = definePrimitive({
         'data-layout': state.layoutMode,
         'data-readonly': state.readOnly ? '' : undefined,
       }),
+      bind: (el, { api, store }) => {
+        const doc = el.ownerDocument;
+        const onPointerDown = (event: PointerEvent) => {
+          if (event.button !== 0) return;
+          const state = store.get();
+          const activeMatchId =
+            state.selectedMatchId ??
+            (state.focusedSlotKey
+              ? (parseSlotKey(state.focusedSlotKey)?.matchId ?? null)
+              : null);
+          if (!activeMatchId) return;
+
+          const target = event.target;
+          const targetEl =
+            target instanceof Element
+              ? target
+              : target instanceof Node
+                ? target.parentElement
+                : null;
+          if (targetEl && el.contains(targetEl)) {
+            if (targetEl.closest('canvas[data-bracket-canvas]')) return;
+            const matchEl = targetEl.closest('[data-match-id]');
+            if (matchEl?.getAttribute('data-match-id') === activeMatchId) {
+              return;
+            }
+          }
+
+          if (state.selectedMatchId !== null) {
+            api.selectMatch(null, event);
+          } else if (state.focusedSlotKey !== null) {
+            store.set({ focusedSlotKey: null });
+          }
+
+          const activeEl = doc.activeElement;
+          if (activeEl instanceof HTMLElement && el.contains(activeEl)) {
+            activeEl.blur();
+          }
+        };
+
+        doc.addEventListener('pointerdown', onPointerDown, true);
+        return () => {
+          doc.removeEventListener('pointerdown', onPointerDown, true);
+        };
+      },
     }),
     surface: slot({
       attrs: (state) => ({
@@ -519,6 +571,7 @@ export const bracketPrimitive = definePrimitive({
         'aria-pressed': String(state.selectedMatchId === part.props.matchId),
         'data-selected':
           state.selectedMatchId === part.props.matchId ? '' : undefined,
+        'data-match-id': part.props.matchId,
         'data-side': part.props.side,
         'data-wing': part.props.wing,
       }),
@@ -574,6 +627,7 @@ export const bracketPrimitive = definePrimitive({
         type: 'button',
         'aria-pressed': String(part.props.locked),
         'aria-disabled': state.readOnly ? 'true' : undefined,
+        'data-match-id': part.props.matchId,
         'data-locked': part.props.locked ? '' : undefined,
       }),
       press: ({ api, props }) =>

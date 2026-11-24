@@ -130,4 +130,44 @@ describe('bracketPrimitive', () => {
       sampleMarkup
     );
   });
+
+  it('clears selection and focus on outside pointerdown except on the active node', async () => {
+    const onSelectedMatchIdChange = vi.fn();
+    const view = mount(
+      bracketPrimitive,
+      { matches: sampleMatches, onSelectedMatchIdChange },
+      sampleMarkup
+    );
+    try {
+      await view.keys('Tab', 'Enter');
+      expect(view.state.selectedMatchId).toBe('m0');
+
+      const sameNodeBlueSlot = view.root.querySelector(
+        '[data-slot="tournament-bracket-slot"][data-match-id="m0"][data-side="blue"]'
+      );
+      expect(sameNodeBlueSlot).toBeTruthy();
+      sameNodeBlueSlot!.dispatchEvent(
+        new PointerEvent('pointerdown', { bubbles: true, button: 0 })
+      );
+      expect(view.state.selectedMatchId).toBe('m0');
+
+      const outside = document.createElement('button');
+      document.body.appendChild(outside);
+      try {
+        outside.dispatchEvent(
+          new PointerEvent('pointerdown', { bubbles: true, button: 0 })
+        );
+        expect(view.state.selectedMatchId).toBeNull();
+        expect(view.state.focusedSlotKey).toBeNull();
+        expect(onSelectedMatchIdChange).toHaveBeenLastCalledWith(
+          null,
+          expect.objectContaining({ reason: 'outside-press' })
+        );
+      } finally {
+        outside.remove();
+      }
+    } finally {
+      view.unmount();
+    }
+  });
 });

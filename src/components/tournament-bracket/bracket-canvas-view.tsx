@@ -7,6 +7,7 @@ import {
   FIT_PADDING,
   MAX_ZOOM,
   MIN_ZOOM,
+  parseSlotKey,
   slotKey,
 } from './bracket-primitive';
 import {
@@ -17,6 +18,7 @@ import {
 } from './bracket-parts';
 import { drawBracketCanvas } from './canvas-renderer';
 import { resolveBracketTheme } from './canvas-theme';
+import type { BracketSelectionChangeReason } from './bracket-primitive';
 import type { Viewport } from '@ui-sdk/core';
 import type { Match } from '@/contracts/matches/dto';
 import type { TournamentAthlete } from '@/contracts/tournament-athletes/dto';
@@ -69,6 +71,13 @@ export interface BracketCanvasViewProps {
   defaultLayoutMode?: BracketCanvasLayout;
   onLayoutModeChange?: (next: BracketCanvasLayout) => void;
   selectedMatchId?: string | null;
+  onSelectedMatchIdChange?: (
+    matchId: string | null,
+    details: {
+      reason: BracketSelectionChangeReason;
+      event?: Event;
+    }
+  ) => void;
   onSlotClick: (match: Match) => void;
   onToggleLock: (matchId: string, side: BracketCorner, locked: boolean) => void;
   onAssignSlot?: (
@@ -137,7 +146,8 @@ export function BracketCanvasView({
   layoutMode: controlledLayoutMode,
   defaultLayoutMode = 'two-sided',
   onLayoutModeChange,
-  selectedMatchId = null,
+  selectedMatchId: controlledSelectedMatchId,
+  onSelectedMatchIdChange,
   onSlotClick,
   onToggleLock,
   onAssignSlot,
@@ -155,6 +165,12 @@ export function BracketCanvasView({
   const [uncontrolledLayout, setUncontrolledLayout] =
     React.useState<BracketCanvasLayout>(defaultLayoutMode);
   const layoutMode = controlledLayoutMode ?? uncontrolledLayout;
+  const [uncontrolledSelectedMatchId, setUncontrolledSelectedMatchId] =
+    React.useState<string | null>(null);
+  const selectedMatchId =
+    controlledSelectedMatchId !== undefined
+      ? controlledSelectedMatchId
+      : uncontrolledSelectedMatchId;
 
   const { layout, connectors } = useBracketLayout(matches, thirdPlaceMatch, {
     layout: precomputedLayout,
@@ -451,11 +467,42 @@ export function BracketCanvasView({
     theme,
   ]);
 
+  const clearFocus = React.useCallback(
+    (event?: Event) => {
+      setFocusedSlotKey(null);
+      const activeEl = document.activeElement;
+      if (
+        activeEl instanceof HTMLElement &&
+        surfaceRef.current?.contains(activeEl)
+      ) {
+        activeEl.blur();
+      }
+      if (selectedMatchId !== null) {
+        if (controlledSelectedMatchId === undefined) {
+          setUncontrolledSelectedMatchId(null);
+        }
+        onSelectedMatchIdChange?.(null, {
+          reason: 'outside-press',
+          event,
+        });
+      }
+    },
+    [selectedMatchId, controlledSelectedMatchId, onSelectedMatchIdChange]
+  );
+
   const handlePointerDown = (event: React.PointerEvent<HTMLCanvasElement>) => {
     if (event.button !== 0) return;
     const hit = hitTestClient(event.clientX, event.clientY);
     if (hit?.kind === 'lock') {
       event.stopPropagation();
+      const activeMatchId =
+        selectedMatchId ??
+        (focusedSlotKey
+          ? (parseSlotKey(focusedSlotKey)?.matchId ?? null)
+          : null);
+      if (activeMatchId && hit.matchId !== activeMatchId) {
+        clearFocus(event.nativeEvent);
+      }
       const locked =
         hit.side === 'red' ? hit.pos.match.redLocked : hit.pos.match.blueLocked;
       onToggleLock(hit.matchId, hit.side, !locked);
@@ -501,7 +548,18 @@ export function BracketCanvasView({
       if (wasClick) {
         const hit = hitTestClient(event.clientX, event.clientY);
         if (hit?.kind === 'slot') {
+          if (controlledSelectedMatchId === undefined) {
+            setUncontrolledSelectedMatchId(hit.matchId);
+          }
+          if (hit.matchId !== selectedMatchId) {
+            onSelectedMatchIdChange?.(hit.matchId, {
+              reason: 'item-press',
+              event: event.nativeEvent,
+            });
+          }
           onSlotClick(hit.pos.match);
+        } else {
+          clearFocus(event.nativeEvent);
         }
       }
     }
@@ -529,6 +587,15 @@ export function BracketCanvasView({
         onLayoutModeChange?.(next);
       }}
       selectedMatchId={selectedMatchId}
+      onSelectedMatchIdChange={(next, details) => {
+        if (controlledSelectedMatchId === undefined) {
+          setUncontrolledSelectedMatchId(next);
+        }
+        if (next === null) {
+          setFocusedSlotKey(null);
+        }
+        onSelectedMatchIdChange?.(next, details);
+      }}
       viewport={viewport}
       onViewportChange={(next) => setViewport(next)}
       onSelectMatch={onSlotClick}

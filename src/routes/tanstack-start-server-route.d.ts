@@ -8,14 +8,7 @@ import type {
 } from '@tanstack/router-core';
 
 type RouteMethod =
-  | 'ANY'
-  | 'GET'
-  | 'POST'
-  | 'PUT'
-  | 'PATCH'
-  | 'DELETE'
-  | 'OPTIONS'
-  | 'HEAD';
+  'ANY' | 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'OPTIONS' | 'HEAD';
 
 type RouteMethodNextResult<TContext> = {
   isNext: true;
@@ -23,9 +16,7 @@ type RouteMethodNextResult<TContext> = {
 };
 
 type RouteMethodResult<TContext> =
-  | Response
-  | undefined
-  | RouteMethodNextResult<TContext>;
+  Response | undefined | RouteMethodNextResult<TContext>;
 
 type RouteMethodHandlerCtx<
   TParentRoute extends AnyRoute,

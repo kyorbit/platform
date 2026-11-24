@@ -8,6 +8,7 @@ import { BracketViewToolbar } from './bracket-view-toolbar';
 import type { TournamentAthlete } from '@/contracts/tournament-athletes/dto';
 import type { BracketCorner } from '@/lib/tournament/bracket/bracket-layout/hit-test';
 import type { BracketCanvasHandle } from '@/components/tournament-bracket/bracket';
+import type { BracketSelectionChangeReason } from '@/components/tournament-bracket/bracket-primitive';
 import { useBracketChrome } from '@/features/dashboard/contexts/bracket-chrome';
 import { useTournamentBracket } from '@/features/dashboard/contexts/tournament-bracket/use-tournament-bracket';
 import { useBracketCanvasLayout } from '@/features/dashboard/hooks/use-bracket-canvas-layout';
@@ -31,6 +32,8 @@ export function BracketCanvas() {
     athletes,
     selectedDivision,
     selectedMatch,
+    setSelectedMatch,
+    setPanelOpen,
     matchLabel,
     handleSlotClick,
     readOnly,
@@ -204,6 +207,27 @@ export function BracketCanvas() {
     [matchList, swapParticipants]
   );
 
+  const handleSelectedMatchIdChange = React.useCallback(
+    (
+      next: string | null,
+      details: { reason: BracketSelectionChangeReason; event?: Event }
+    ) => {
+      if (next !== null) return;
+      if (
+        details.reason === 'outside-press' &&
+        details.event?.target instanceof Element &&
+        details.event.target.closest(
+          '[data-slot="sheet-content"], [data-slot="dialog-content"], [data-slot="alert-dialog-content"], [data-slot="select-content"]'
+        )
+      ) {
+        return;
+      }
+      setSelectedMatch(null);
+      setPanelOpen(false);
+    },
+    [setSelectedMatch, setPanelOpen]
+  );
+
   if (matchList.length === 0) return null;
 
   return (
@@ -220,6 +244,7 @@ export function BracketCanvas() {
         layoutMode={layoutMode}
         onLayoutModeChange={handleLayoutModeChange}
         selectedMatchId={selectedMatch?.id ?? null}
+        onSelectedMatchIdChange={handleSelectedMatchIdChange}
         athleteMap={athleteMap}
         matchLabel={matchLabel}
         readOnly={readOnly}
