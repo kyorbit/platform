@@ -3,7 +3,6 @@ import { PanelsTopLeft } from 'lucide-react';
 import { EdgeReveal } from './edge-reveal';
 import { BuilderFooterProvider } from './footer-portal';
 import { useBracketChrome } from '@/features/dashboard/contexts/bracket-chrome';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -30,16 +29,16 @@ export function BuilderShell({
       >
         {isFullscreen ? <EdgeReveal edge="top">{header}</EdgeReveal> : header}
         {readOnly && !isFullscreen && (
-          <Alert
-            variant="warning"
-            className="fixed top-16 left-1/2 z-20 w-fit max-w-[calc(100vw-2rem)] -translate-x-1/2 border-amber-500/20 bg-amber-500/10 backdrop-blur-sm"
+          <div
+            role="status"
+            className="flex shrink-0 items-center justify-center gap-2 border-b border-amber-500/20 bg-amber-500/10 px-4 py-1.5 text-center text-xs text-amber-800 dark:text-amber-200"
           >
-            <AlertTitle className="text-center">Read-only workspace</AlertTitle>
-            <AlertDescription className="text-center">
+            <span className="font-semibold">Read-only workspace</span>
+            <span className="text-amber-700/80 dark:text-amber-200/80">
               This tournament is completed. Features are disabled so results
               stay locked.
-            </AlertDescription>
-          </Alert>
+            </span>
+          </div>
         )}
         <main
           className={cn(

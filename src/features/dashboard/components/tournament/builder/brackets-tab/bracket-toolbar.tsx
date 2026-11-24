@@ -133,8 +133,8 @@ export function BracketToolbar() {
   }
 
   return (
-    // Below sm it docks along the canvas bottom instead of covering the bracket.
-    <div className="fixed top-1/3 left-3 z-10 -translate-y-1/4 space-y-2 max-sm:absolute max-sm:top-auto max-sm:bottom-0 max-sm:left-1/2 max-sm:flex max-sm:-translate-x-1/2 max-sm:justify-center max-sm:gap-2 max-sm:space-y-0">
+    // Docks under the layout toggle on desktop and along the bottom on narrow screens.
+    <div className="absolute top-15 left-2.5 z-10 space-y-2 max-sm:top-auto max-sm:bottom-2 max-sm:left-1/2 max-sm:flex max-sm:-translate-x-1/2 max-sm:justify-center max-sm:gap-2 max-sm:space-y-0">
       <Card className={GROUP_CLASS}>
         <CreateCustomMatchDialog>
           <Tool
@@ -199,6 +199,7 @@ export function BracketToolbar() {
             variant="ghost"
             size="icon"
             aria-label="Regenerate bracket"
+            data-agent-confirm="Deletes every match in this division and recreates an empty bracket shell"
             onClick={() => {
               if (!divisionId) return;
               void wrap(regenerate.mutateAsync({ divisionId }), {
@@ -224,6 +225,7 @@ export function BracketToolbar() {
             variant="ghost"
             size="icon"
             aria-label="Reset bracket"
+            data-agent-confirm="Clears all recorded scores and resets the division bracket"
             onClick={() => {
               if (!divisionId) return;
               void wrap(reset.mutateAsync({ divisionId }), {

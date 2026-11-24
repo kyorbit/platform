@@ -1,0 +1,680 @@
+'use client';
+
+import React from 'react';
+import {
+  DEFAULT_VIEWPORT,
+  FIT_MAX_ZOOM,
+  FIT_PADDING,
+  MAX_ZOOM,
+  MIN_ZOOM,
+  parseSlotKey,
+  slotKey,
+} from './bracket-primitive';
+import {
+  BracketLockButtonPart,
+  BracketRoot,
+  BracketSlotPart,
+  BracketSurface,
+} from './bracket-parts';
+import { drawBracketCanvas } from './canvas-renderer';
+import { resolveBracketTheme } from './canvas-theme';
+import type { BracketSelectionChangeReason } from './bracket-primitive';
+import type { Viewport } from '@ui-sdk/core';
+import type { Match } from '@/contracts/matches/dto';
+import type { TournamentAthlete } from '@/contracts/tournament-athletes/dto';
+import type {
+  BracketCanvasLayout,
+  BracketConnectorPath,
+  BracketLayoutResult,
+} from '@/lib/tournament/bracket/bracket-layout';
+import type { BracketCanvasTheme } from './canvas-theme';
+import type {
+  BracketCorner,
+  BracketHit,
+} from '@/lib/tournament/bracket/bracket-layout/hit-test';
+import {
+  buildMatchIndex,
+  getMatchCardGeometry,
+  hitTestBracket,
+  resolveMatchSlots,
+} from '@/lib/tournament/bracket/bracket-layout/hit-test';
+import { useBracketLayout } from '@/hooks/use-bracket-layout';
+
+export interface BracketFitInsets {
+  top?: number;
+  right?: number;
+  bottom?: number;
+  left?: number;
+}
+
+export interface BracketCanvasHandle {
+  zoomIn: () => void;
+  zoomOut: () => void;
+  resetZoom: () => void;
+  fitView: () => void;
+  revealMatch: (matchId: string) => void;
+  getViewport: () => Viewport;
+  screenToWorld: (
+    clientX: number,
+    clientY: number
+  ) => { x: number; y: number } | null;
+  hitTestClient: (clientX: number, clientY: number) => BracketHit | null;
+}
+
+export interface BracketCanvasViewProps {
+  matches: Array<Match>;
+  thirdPlaceMatch: boolean;
+  athleteMap: ReadonlyMap<string, TournamentAthlete>;
+  matchLabel: ReadonlyMap<string, number | null>;
+  readOnly: boolean;
+  layoutMode?: BracketCanvasLayout;
+  defaultLayoutMode?: BracketCanvasLayout;
+  onLayoutModeChange?: (next: BracketCanvasLayout) => void;
+  selectedMatchId?: string | null;
+  onSelectedMatchIdChange?: (
+    matchId: string | null,
+    details: {
+      reason: BracketSelectionChangeReason;
+      event?: Event;
+    }
+  ) => void;
+  onSlotClick: (match: Match) => void;
+  onToggleLock: (matchId: string, side: BracketCorner, locked: boolean) => void;
+  onAssignSlot?: (
+    matchId: string,
+    side: BracketCorner,
+    tournamentAthleteId: string | null
+  ) => void;
+  onSwapSlots?: (
+    matchAId: string,
+    sideA: BracketCorner,
+    matchBId: string,
+    sideB: BracketCorner
+  ) => void;
+  onSwapParticipants?: (matchId: string) => void;
+  layout?: BracketLayoutResult;
+  connectors?: Array<BracketConnectorPath>;
+  dropTarget?: { matchId: string; side: BracketCorner } | null;
+  fitInsets?: BracketFitInsets;
+  onZoomChange?: (zoom: number) => void;
+  ariaLabel?: string;
+  canvasRef?: React.Ref<BracketCanvasHandle>;
+  onSlotPointerDown?: (
+    hit: Extract<BracketHit, { kind: 'slot' }>,
+    event: React.PointerEvent<HTMLCanvasElement>
+  ) => boolean;
+}
+
+function computeFitViewport(
+  containerW: number,
+  containerH: number,
+  contentW: number,
+  contentH: number,
+  insets?: BracketFitInsets
+): Viewport {
+  if (containerW <= 0 || containerH <= 0 || contentW <= 0 || contentH <= 0) {
+    return DEFAULT_VIEWPORT;
+  }
+  const top = insets?.top ?? 0;
+  const right = insets?.right ?? 0;
+  const bottom = insets?.bottom ?? 0;
+  const left = insets?.left ?? 0;
+  const availW = Math.max(1, containerW - left - right);
+  const availH = Math.max(1, containerH - top - bottom);
+
+  const zoom = Math.max(
+    MIN_ZOOM,
+    Math.min(
+      FIT_MAX_ZOOM,
+      (availW - FIT_PADDING * 2) / contentW,
+      (availH - FIT_PADDING * 2) / contentH
+    )
+  );
+  return {
+    x: left + (availW - contentW * zoom) / 2,
+    y: top + (availH - contentH * zoom) / 2,
+    zoom,
+  };
+}
+
+export function BracketCanvasView({
+  matches,
+  thirdPlaceMatch,
+  athleteMap,
+  matchLabel,
+  readOnly,
+  layoutMode: controlledLayoutMode,
+  defaultLayoutMode = 'two-sided',
+  onLayoutModeChange,
+  selectedMatchId: controlledSelectedMatchId,
+  onSelectedMatchIdChange,
+  onSlotClick,
+  onToggleLock,
+  onAssignSlot,
+  onSwapSlots,
+  onSwapParticipants,
+  layout: precomputedLayout,
+  connectors: precomputedConnectors,
+  dropTarget = null,
+  fitInsets,
+  onZoomChange,
+  ariaLabel = 'Tournament bracket',
+  canvasRef,
+  onSlotPointerDown,
+}: BracketCanvasViewProps) {
+  const [uncontrolledLayout, setUncontrolledLayout] =
+    React.useState<BracketCanvasLayout>(defaultLayoutMode);
+  const layoutMode = controlledLayoutMode ?? uncontrolledLayout;
+  const [uncontrolledSelectedMatchId, setUncontrolledSelectedMatchId] =
+    React.useState<string | null>(null);
+  const selectedMatchId =
+    controlledSelectedMatchId !== undefined
+      ? controlledSelectedMatchId
+      : uncontrolledSelectedMatchId;
+
+  const { layout, connectors } = useBracketLayout(matches, thirdPlaceMatch, {
+    layout: precomputedLayout,
+    connectors: precomputedConnectors,
+    layoutMode,
+  });
+
+  const surfaceRef = React.useRef<HTMLDivElement>(null);
+  const htmlCanvasRef = React.useRef<HTMLCanvasElement>(null);
+  const [size, setSize] = React.useState({ width: 0, height: 0 });
+  const [viewport, setViewport] = React.useState<Viewport>(DEFAULT_VIEWPORT);
+  const [hoveredHit, setHoveredHit] = React.useState<BracketHit | null>(null);
+  const [focusedSlotKey, setFocusedSlotKey] = React.useState<string | null>(
+    null
+  );
+  const [theme, setTheme] = React.useState<BracketCanvasTheme>(() =>
+    resolveBracketTheme(null)
+  );
+
+  const viewportRef = React.useRef(viewport);
+  viewportRef.current = viewport;
+
+  const dragRef = React.useRef<{
+    pointerId: number;
+    startX: number;
+    startY: number;
+    originX: number;
+    originY: number;
+    moved: boolean;
+  } | null>(null);
+
+  const insetTop = fitInsets?.top ?? 0;
+  const insetRight = fitInsets?.right ?? 0;
+  const insetBottom = fitInsets?.bottom ?? 0;
+  const insetLeft = fitInsets?.left ?? 0;
+
+  const fitView = React.useCallback(() => {
+    const el = surfaceRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    setViewport(
+      computeFitViewport(rect.width, rect.height, layout.width, layout.height, {
+        top: insetTop,
+        right: insetRight,
+        bottom: insetBottom,
+        left: insetLeft,
+      })
+    );
+  }, [
+    layout.width,
+    layout.height,
+    insetTop,
+    insetRight,
+    insetBottom,
+    insetLeft,
+  ]);
+
+  const zoomAt = React.useCallback(
+    (factor: number, clientX?: number, clientY?: number) => {
+      const el = surfaceRef.current;
+      const rect = el?.getBoundingClientRect();
+      const cx =
+        clientX !== undefined && rect
+          ? clientX - rect.left
+          : (rect?.width ?? size.width) / 2;
+      const cy =
+        clientY !== undefined && rect
+          ? clientY - rect.top
+          : (rect?.height ?? size.height) / 2;
+
+      setViewport((prev) => {
+        const nextZoom = Math.max(
+          MIN_ZOOM,
+          Math.min(MAX_ZOOM, prev.zoom * factor)
+        );
+        const ratio = nextZoom / prev.zoom;
+        return {
+          x: cx - (cx - prev.x) * ratio,
+          y: cy - (cy - prev.y) * ratio,
+          zoom: nextZoom,
+        };
+      });
+    },
+    [size.width, size.height]
+  );
+
+  const resetZoom = React.useCallback(() => {
+    const el = surfaceRef.current;
+    const rect = el?.getBoundingClientRect();
+    const cx = (rect?.width ?? size.width) / 2;
+    const cy = (rect?.height ?? size.height) / 2;
+    setViewport((prev) => {
+      const ratio = 1 / prev.zoom;
+      return {
+        x: cx - (cx - prev.x) * ratio,
+        y: cy - (cy - prev.y) * ratio,
+        zoom: 1,
+      };
+    });
+  }, [size.width, size.height]);
+
+  const revealMatch = React.useCallback(
+    (matchId: string) => {
+      const el = surfaceRef.current;
+      const pos = layout.positions.find((p) => p.match.id === matchId);
+      if (!el || !pos) return;
+      const rect = el.getBoundingClientRect();
+      const geom = getMatchCardGeometry(pos, layout.layoutMaxRound);
+      const availW = Math.max(1, rect.width - insetLeft - insetRight);
+      const availH = Math.max(1, rect.height - insetTop - insetBottom);
+      const centerX = insetLeft + availW / 2;
+      const centerY = insetTop + availH / 2;
+
+      setViewport((prev) => {
+        const sx = geom.left * prev.zoom + prev.x;
+        const sy = geom.top * prev.zoom + prev.y;
+        const sr = geom.right * prev.zoom + prev.x;
+        const sb = geom.bottom * prev.zoom + prev.y;
+        const inView =
+          sx >= insetLeft + 16 &&
+          sr <= rect.width - insetRight - 16 &&
+          sy >= insetTop + 16 &&
+          sb <= rect.height - insetBottom - 16;
+        if (inView) return prev;
+        const cardMidX = geom.left + geom.width / 2;
+        const cardMidY = geom.top + geom.height / 2;
+        return {
+          ...prev,
+          x: centerX - cardMidX * prev.zoom,
+          y: centerY - cardMidY * prev.zoom,
+        };
+      });
+    },
+    [layout, insetTop, insetRight, insetBottom, insetLeft]
+  );
+
+  const screenToWorld = React.useCallback(
+    (clientX: number, clientY: number) => {
+      const el = surfaceRef.current;
+      if (!el) return null;
+      const rect = el.getBoundingClientRect();
+      const vp = viewportRef.current;
+      return {
+        x: (clientX - rect.left - vp.x) / vp.zoom,
+        y: (clientY - rect.top - vp.y) / vp.zoom,
+      };
+    },
+    []
+  );
+
+  const hitTestClient = React.useCallback(
+    (clientX: number, clientY: number) => {
+      const world = screenToWorld(clientX, clientY);
+      if (!world) return null;
+      return hitTestBracket(world, layout, { readOnly });
+    },
+    [screenToWorld, layout, readOnly]
+  );
+
+  React.useImperativeHandle(
+    canvasRef,
+    () => ({
+      zoomIn: () => zoomAt(1.15),
+      zoomOut: () => zoomAt(1 / 1.15),
+      resetZoom,
+      fitView,
+      revealMatch,
+      getViewport: () => viewportRef.current,
+      screenToWorld,
+      hitTestClient,
+    }),
+    [zoomAt, resetZoom, fitView, revealMatch, screenToWorld, hitTestClient]
+  );
+
+  React.useEffect(() => {
+    onZoomChange?.(viewport.zoom);
+  }, [viewport.zoom, onZoomChange]);
+
+  // Observe surface resize and auto-fit when layout dimensions change
+  React.useLayoutEffect(() => {
+    const el = surfaceRef.current;
+    if (!el) return;
+    const measure = () => {
+      const rect = el.getBoundingClientRect();
+      setSize({ width: rect.width, height: rect.height });
+      setTheme(resolveBracketTheme(el));
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  React.useLayoutEffect(() => {
+    if (size.width > 0 && size.height > 0 && layout.width > 0) {
+      setViewport(
+        computeFitViewport(
+          size.width,
+          size.height,
+          layout.width,
+          layout.height,
+          {
+            top: insetTop,
+            right: insetRight,
+            bottom: insetBottom,
+            left: insetLeft,
+          }
+        )
+      );
+    }
+  }, [
+    layout.width,
+    layout.height,
+    layoutMode,
+    size.width,
+    size.height,
+    insetTop,
+    insetRight,
+    insetBottom,
+    insetLeft,
+  ]);
+
+  // Observe light/dark theme toggle on documentElement
+  React.useEffect(() => {
+    if (typeof MutationObserver === 'undefined' || !surfaceRef.current) return;
+    const el = surfaceRef.current;
+    setTheme(resolveBracketTheme(el));
+    const mo = new MutationObserver(() => setTheme(resolveBracketTheme(el)));
+    mo.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+    return () => mo.disconnect();
+  }, []);
+
+  // Dirty-flag requestAnimationFrame paint loop (zero idle frames)
+  React.useEffect(() => {
+    const canvas = htmlCanvasRef.current;
+    if (!canvas || size.width <= 0 || size.height <= 0) return;
+
+    let rafId = 0;
+    rafId = requestAnimationFrame(() => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const targetW = Math.round(size.width * dpr);
+      const targetH = Math.round(size.height * dpr);
+      if (canvas.width !== targetW) canvas.width = targetW;
+      if (canvas.height !== targetH) canvas.height = targetH;
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      drawBracketCanvas(ctx, {
+        layout,
+        connectors,
+        layoutMode,
+        matches,
+        athleteMap,
+        matchLabel,
+        viewport,
+        dpr,
+        width: size.width,
+        height: size.height,
+        readOnly,
+        selectedMatchId,
+        focusedSlotKey,
+        hoveredHit: hoveredHit
+          ? {
+              kind: hoveredHit.kind,
+              matchId: hoveredHit.matchId,
+              side: hoveredHit.side,
+            }
+          : null,
+        dropTarget,
+        theme,
+      });
+    });
+
+    return () => cancelAnimationFrame(rafId);
+  }, [
+    layout,
+    connectors,
+    layoutMode,
+    matches,
+    athleteMap,
+    matchLabel,
+    viewport,
+    size.width,
+    size.height,
+    readOnly,
+    selectedMatchId,
+    focusedSlotKey,
+    hoveredHit,
+    dropTarget,
+    theme,
+  ]);
+
+  const clearFocus = React.useCallback(
+    (event?: Event) => {
+      setFocusedSlotKey(null);
+      const activeEl = document.activeElement;
+      if (
+        activeEl instanceof HTMLElement &&
+        surfaceRef.current?.contains(activeEl)
+      ) {
+        activeEl.blur();
+      }
+      if (selectedMatchId !== null) {
+        if (controlledSelectedMatchId === undefined) {
+          setUncontrolledSelectedMatchId(null);
+        }
+        onSelectedMatchIdChange?.(null, {
+          reason: 'outside-press',
+          event,
+        });
+      }
+    },
+    [selectedMatchId, controlledSelectedMatchId, onSelectedMatchIdChange]
+  );
+
+  const handlePointerDown = (event: React.PointerEvent<HTMLCanvasElement>) => {
+    if (event.button !== 0) return;
+    const hit = hitTestClient(event.clientX, event.clientY);
+    if (hit?.kind === 'lock') {
+      event.stopPropagation();
+      const activeMatchId =
+        selectedMatchId ??
+        (focusedSlotKey
+          ? (parseSlotKey(focusedSlotKey)?.matchId ?? null)
+          : null);
+      if (activeMatchId && hit.matchId !== activeMatchId) {
+        clearFocus(event.nativeEvent);
+      }
+      const locked =
+        hit.side === 'red' ? hit.pos.match.redLocked : hit.pos.match.blueLocked;
+      onToggleLock(hit.matchId, hit.side, !locked);
+      return;
+    }
+    if (hit?.kind === 'slot' && onSlotPointerDown?.(hit, event)) {
+      return;
+    }
+    dragRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      originX: viewportRef.current.x,
+      originY: viewportRef.current.y,
+      moved: false,
+    };
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+  };
+
+  const handlePointerMove = (event: React.PointerEvent<HTMLCanvasElement>) => {
+    const drag = dragRef.current;
+    if (drag && drag.pointerId === event.pointerId) {
+      const dx = event.clientX - drag.startX;
+      const dy = event.clientY - drag.startY;
+      if (Math.hypot(dx, dy) > 4) drag.moved = true;
+      if (drag.moved) {
+        setViewport((prev) => ({
+          ...prev,
+          x: drag.originX + dx,
+          y: drag.originY + dy,
+        }));
+      }
+      return;
+    }
+    setHoveredHit(hitTestClient(event.clientX, event.clientY));
+  };
+
+  const handlePointerUp = (event: React.PointerEvent<HTMLCanvasElement>) => {
+    const drag = dragRef.current;
+    if (drag && drag.pointerId === event.pointerId) {
+      const wasClick = !drag.moved;
+      dragRef.current = null;
+      if (wasClick) {
+        const hit = hitTestClient(event.clientX, event.clientY);
+        if (hit?.kind === 'slot') {
+          if (controlledSelectedMatchId === undefined) {
+            setUncontrolledSelectedMatchId(hit.matchId);
+          }
+          if (hit.matchId !== selectedMatchId) {
+            onSelectedMatchIdChange?.(hit.matchId, {
+              reason: 'item-press',
+              event: event.nativeEvent,
+            });
+          }
+          onSlotClick(hit.pos.match);
+        } else {
+          clearFocus(event.nativeEvent);
+        }
+      }
+    }
+  };
+
+  const handleWheel = (event: React.WheelEvent<HTMLCanvasElement>) => {
+    event.preventDefault();
+    const factor = event.deltaY < 0 ? 1.1 : 1 / 1.1;
+    zoomAt(factor, event.clientX, event.clientY);
+  };
+
+  const matchIndex = React.useMemo(() => buildMatchIndex(matches), [matches]);
+
+  return (
+    <BracketRoot
+      aria-label={ariaLabel}
+      matches={matches}
+      thirdPlaceMatch={thirdPlaceMatch}
+      athleteMap={athleteMap}
+      matchLabel={matchLabel}
+      readOnly={readOnly}
+      layoutMode={layoutMode}
+      onLayoutModeChange={(next) => {
+        if (controlledLayoutMode === undefined) setUncontrolledLayout(next);
+        onLayoutModeChange?.(next);
+      }}
+      selectedMatchId={selectedMatchId}
+      onSelectedMatchIdChange={(next, details) => {
+        if (controlledSelectedMatchId === undefined) {
+          setUncontrolledSelectedMatchId(next);
+        }
+        if (next === null) {
+          setFocusedSlotKey(null);
+        }
+        onSelectedMatchIdChange?.(next, details);
+      }}
+      viewport={viewport}
+      onViewportChange={(next) => setViewport(next)}
+      onSelectMatch={onSlotClick}
+      onToggleLock={onToggleLock}
+      onAssignSlot={onAssignSlot}
+      onSwapSlots={onSwapSlots}
+      onSwapParticipants={onSwapParticipants}
+      className="relative size-full min-h-0 overflow-hidden select-none"
+    >
+      <BracketSurface
+        ref={surfaceRef}
+        className="relative size-full min-h-0 touch-none overflow-hidden"
+      >
+        <canvas
+          ref={htmlCanvasRef}
+          aria-hidden="true"
+          data-bracket-canvas
+          className="block size-full cursor-grab active:cursor-grabbing"
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerLeave={() => setHoveredHit(null)}
+          onWheel={handleWheel}
+        />
+
+        <div className="sr-only">
+          {layout.positions.map((pos) => {
+            const resolved = resolveMatchSlots(
+              pos.match,
+              matchIndex,
+              athleteMap,
+              matchLabel
+            );
+            return (
+              <React.Fragment key={pos.match.id}>
+                {(['red', 'blue'] as const).map((side) => {
+                  const key = slotKey(pos.match.id, side);
+                  const display =
+                    side === 'red' ? resolved.redDisplay : resolved.blueDisplay;
+                  const locked =
+                    side === 'red' ? pos.match.redLocked : pos.match.blueLocked;
+                  return (
+                    <React.Fragment key={key}>
+                      <BracketSlotPart
+                        value={key}
+                        matchId={pos.match.id}
+                        side={side}
+                        round={pos.match.round}
+                        matchIndex={pos.match.matchIndex}
+                        wing={pos.wing}
+                        aria-label={`${resolved.header} ${side} corner ${display}`}
+                        onFocus={() => setFocusedSlotKey(key)}
+                        onBlur={() =>
+                          setFocusedSlotKey((prev) =>
+                            prev === key ? null : prev
+                          )
+                        }
+                      >
+                        {`${resolved.header} ${side} corner ${display}`}
+                      </BracketSlotPart>
+                      {!readOnly && (
+                        <BracketLockButtonPart
+                          value={`lock:${key}`}
+                          matchId={pos.match.id}
+                          side={side}
+                          locked={locked}
+                          aria-label={`${locked ? 'Unlock' : 'Lock'} ${resolved.header} ${side} corner`}
+                        >
+                          {locked ? 'Unlock' : 'Lock'}
+                        </BracketLockButtonPart>
+                      )}
+                    </React.Fragment>
+                  );
+                })}
+              </React.Fragment>
+            );
+          })}
+        </div>
+      </BracketSurface>
+    </BracketRoot>
+  );
+}

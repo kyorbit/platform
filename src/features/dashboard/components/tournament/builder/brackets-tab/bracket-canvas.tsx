@@ -1,29 +1,54 @@
+'use client';
+
 import React from 'react';
+import { useDndMonitor, useDroppable } from '@dnd-kit/core';
+import { toast } from 'sonner';
 import { BracketLayoutToggle } from './bracket-layout-toggle';
 import { BracketViewToolbar } from './bracket-view-toolbar';
 import type { TournamentAthlete } from '@/contracts/tournament-athletes/dto';
+import type { BracketCorner } from '@/lib/tournament/bracket/bracket-layout/hit-test';
+import type { BracketCanvasHandle } from '@/components/tournament-bracket/bracket';
+import type { BracketSelectionChangeReason } from '@/components/tournament-bracket/bracket-primitive';
 import { useBracketChrome } from '@/features/dashboard/contexts/bracket-chrome';
 import { useTournamentBracket } from '@/features/dashboard/contexts/tournament-bracket/use-tournament-bracket';
 import { useBracketCanvasLayout } from '@/features/dashboard/hooks/use-bracket-canvas-layout';
-import { usePanZoom } from '@/features/dashboard/hooks/use-pan-zoom';
-import { Bracket } from '@/components/tournament-bracket/bracket';
+import {
+  Bracket,
+  renderBracketToPng,
+} from '@/components/tournament-bracket/bracket';
 import { useBracketLayout } from '@/hooks/use-bracket-layout';
-import { useSetLock } from '@/queries/match';
+import {
+  useAssignSlot,
+  useSetLock,
+  useSwapParticipants,
+  useSwapSlots,
+} from '@/queries/match';
+
+const CANVAS_FIT_INSETS = { top: 48, left: 68, right: 60, bottom: 16 };
 
 export function BracketCanvas() {
   const {
     matches,
     athletes,
     selectedDivision,
+    selectedMatch,
+    setSelectedMatch,
+    setPanelOpen,
     matchLabel,
     handleSlotClick,
     readOnly,
   } = useTournamentBracket();
 
   const setLock = useSetLock();
+  const assignSlot = useAssignSlot();
+  const swapSlots = useSwapSlots();
+  const swapParticipants = useSwapParticipants();
+
   const thirdPlaceMatch = selectedDivision?.thirdPlaceMatch ?? false;
-  const matchListFull = matches;
-  const matchList = matchListFull.filter((m) => m.kind !== 'custom');
+  const matchList = React.useMemo(
+    () => matches.filter((m) => m.kind !== 'custom'),
+    [matches]
+  );
 
   const athleteMap = React.useMemo(() => {
     const map = new Map<string, TournamentAthlete>();
@@ -32,90 +57,217 @@ export function BracketCanvas() {
   }, [athletes]);
 
   const [layoutMode, setLayoutMode] = useBracketCanvasLayout();
-
   const { layout, connectors } = useBracketLayout(matchList, thirdPlaceMatch, {
     layoutMode,
   });
 
-  const { containerRef, transform, handlers, reset, zoomIn, zoomOut } =
-    usePanZoom(layout.width, layout.height);
-
+  const canvasRef = React.useRef<BracketCanvasHandle>(null);
   const { setCaptureTarget } = useBracketChrome();
-  const captureRef = React.useRef<HTMLDivElement>(null);
+  const [zoomPercent, setZoomPercent] = React.useState(100);
+  const [dropTarget, setDropTarget] = React.useState<{
+    matchId: string;
+    side: BracketCorner;
+  } | null>(null);
+
+  const handleZoomChange = React.useCallback((zoom: number) => {
+    setZoomPercent(Math.round(zoom * 100));
+  }, []);
 
   React.useEffect(() => {
-    const root = captureRef.current;
-    if (!root || matchList.length === 0) {
+    if (selectedMatch?.id) {
+      canvasRef.current?.revealMatch(selectedMatch.id);
+    }
+  }, [selectedMatch?.id]);
+
+  const { setNodeRef: setDropRef } = useDroppable({
+    id: 'bracket-canvas-drop',
+    data: { from: 'canvas-drop' },
+  });
+
+  useDndMonitor({
+    onDragMove(event) {
+      const activator = event.activatorEvent as
+        PointerEvent | MouseEvent | null;
+      if (!activator || !canvasRef.current) return;
+      const clientX = activator.clientX + event.delta.x;
+      const clientY = activator.clientY + event.delta.y;
+      const hit = canvasRef.current.hitTestClient(clientX, clientY);
+      if (hit?.kind === 'slot') {
+        const locked =
+          hit.side === 'red'
+            ? hit.pos.match.redLocked
+            : hit.pos.match.blueLocked;
+        if (!locked && hit.pos.match.status !== 'complete') {
+          setDropTarget({ matchId: hit.matchId, side: hit.side });
+          return;
+        }
+      }
+      setDropTarget(null);
+    },
+    onDragCancel() {
+      setDropTarget(null);
+    },
+    onDragEnd(event) {
+      const target = dropTarget;
+      setDropTarget(null);
+      if (!target || readOnly) return;
+      const src = event.active.data.current as
+        { from?: string; tournamentAthleteId?: string } | undefined;
+      if (src?.from === 'panel' && src.tournamentAthleteId) {
+        assignSlot.mutate(
+          {
+            matchId: target.matchId,
+            side: target.side,
+            tournamentAthleteId: src.tournamentAthleteId,
+          },
+          {
+            onError: (err) =>
+              toast.error(err instanceof Error ? err.message : 'Assign failed'),
+          }
+        );
+      }
+    },
+  });
+
+  React.useEffect(() => {
+    if (matchList.length === 0) {
       setCaptureTarget(null);
       return;
     }
     setCaptureTarget({
-      root,
-      width: layout.width,
-      height: layout.height,
+      renderPng: async () => {
+        const result = await renderBracketToPng({
+          matches: matchList,
+          thirdPlaceMatch,
+          layoutMode,
+          athleteMap,
+          matchLabel,
+        });
+        return result.blob;
+      },
     });
     return () => setCaptureTarget(null);
   }, [
-    layout.width,
-    layout.height,
+    matchList,
+    thirdPlaceMatch,
     layoutMode,
-    matchList.length,
-    selectedDivision?.id,
+    athleteMap,
+    matchLabel,
     setCaptureTarget,
   ]);
 
   const handleLayoutModeChange = React.useCallback(
     (next: typeof layoutMode) => {
       setLayoutMode(next);
-      reset();
+      canvasRef.current?.fitView();
     },
-    [setLayoutMode, reset]
+    [setLayoutMode]
   );
 
   const onToggleLock = React.useCallback(
-    (matchId: string, side: 'red' | 'blue', locked: boolean) => {
+    (matchId: string, side: BracketCorner, locked: boolean) => {
       setLock.mutate({ matchId, side, locked });
     },
     [setLock]
+  );
+
+  const onAssignSlot = React.useCallback(
+    (
+      matchId: string,
+      side: BracketCorner,
+      tournamentAthleteId: string | null
+    ) => {
+      assignSlot.mutate({ matchId, side, tournamentAthleteId });
+    },
+    [assignSlot]
+  );
+
+  const onSwapSlots = React.useCallback(
+    (
+      matchAId: string,
+      sideA: BracketCorner,
+      matchBId: string,
+      sideB: BracketCorner
+    ) => {
+      swapSlots.mutate({ matchAId, sideA, matchBId, sideB });
+    },
+    [swapSlots]
+  );
+
+  const onSwapParticipants = React.useCallback(
+    (matchId: string) => {
+      const match = matchList.find((m) => m.id === matchId);
+      if (!match) return;
+      swapParticipants.mutate({
+        matchId,
+        redTournamentAthleteId: match.blueTournamentAthleteId ?? null,
+        blueTournamentAthleteId: match.redTournamentAthleteId ?? null,
+      });
+    },
+    [matchList, swapParticipants]
+  );
+
+  const handleSelectedMatchIdChange = React.useCallback(
+    (
+      next: string | null,
+      details: { reason: BracketSelectionChangeReason; event?: Event }
+    ) => {
+      if (next !== null) return;
+      if (
+        details.reason === 'outside-press' &&
+        details.event?.target instanceof Element &&
+        details.event.target.closest(
+          '[data-slot="sheet-content"], [data-slot="dialog-content"], [data-slot="alert-dialog-content"], [data-slot="select-content"]'
+        )
+      ) {
+        return;
+      }
+      setSelectedMatch(null);
+      setPanelOpen(false);
+    },
+    [setSelectedMatch, setPanelOpen]
   );
 
   if (matchList.length === 0) return null;
 
   return (
     <div
-      ref={containerRef}
+      ref={setDropRef}
       className="relative size-full min-h-0 touch-none overflow-hidden pl-2"
-      {...handlers}
     >
-      <div
-        ref={captureRef}
-        data-bracket-capture-root
-        style={{
-          transform: `translate(${transform.x}px, ${transform.y}px) scale(${transform.scale})`,
-          transformOrigin: '0 0',
-          width: layout.width,
-          height: layout.height,
-          position: 'relative',
-        }}
-      >
-        <Bracket
-          matches={matchList}
-          thirdPlaceMatch={thirdPlaceMatch}
-          layout={layout}
-          connectors={connectors}
-          layoutMode={layoutMode}
-          athleteMap={athleteMap}
-          matchLabel={matchLabel}
-          readOnly={readOnly}
-          onSlotClick={handleSlotClick}
-          onToggleLock={onToggleLock}
-        />
-      </div>
+      <Bracket
+        canvasRef={canvasRef}
+        matches={matchList}
+        thirdPlaceMatch={thirdPlaceMatch}
+        layout={layout}
+        connectors={connectors}
+        layoutMode={layoutMode}
+        onLayoutModeChange={handleLayoutModeChange}
+        selectedMatchId={selectedMatch?.id ?? null}
+        onSelectedMatchIdChange={handleSelectedMatchIdChange}
+        athleteMap={athleteMap}
+        matchLabel={matchLabel}
+        readOnly={readOnly}
+        dropTarget={dropTarget}
+        fitInsets={CANVAS_FIT_INSETS}
+        onZoomChange={handleZoomChange}
+        onSlotClick={handleSlotClick}
+        onToggleLock={onToggleLock}
+        onAssignSlot={onAssignSlot}
+        onSwapSlots={onSwapSlots}
+        onSwapParticipants={onSwapParticipants}
+      />
       <BracketLayoutToggle
         value={layoutMode}
         onChange={handleLayoutModeChange}
       />
-      <BracketViewToolbar onFit={reset} onZoomIn={zoomIn} onZoomOut={zoomOut} />
+      <BracketViewToolbar
+        onFit={() => canvasRef.current?.fitView()}
+        onZoomIn={() => canvasRef.current?.zoomIn()}
+        onZoomOut={() => canvasRef.current?.zoomOut()}
+        onResetZoom={() => canvasRef.current?.resetZoom()}
+        zoomPercent={zoomPercent}
+      />
     </div>
   );
 }

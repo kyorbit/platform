@@ -3,10 +3,7 @@ import { Download } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTournamentBracket } from '@/features/dashboard/contexts/tournament-bracket/use-tournament-bracket';
 import { useBracketChrome } from '@/features/dashboard/contexts/bracket-chrome';
-import {
-  bracketScreenshotFilename,
-  captureBracketPng,
-} from '@/features/dashboard/lib/tournament/capture-bracket-png';
+import { bracketScreenshotFilename } from '@/features/dashboard/lib/tournament/capture-bracket-png';
 import { useTournament } from '@/queries/tournament';
 import { CopyButton } from '@/components/ui/copy-button';
 import { Button } from '@/components/ui/button';
@@ -72,11 +69,8 @@ export function BracketScreenshotDialog() {
     setIsCapturing(true);
     setBlob(null);
 
-    void captureBracketPng({
-      root: captureTarget.root,
-      width: captureTarget.width,
-      height: captureTarget.height,
-    })
+    void captureTarget
+      .renderPng()
       .then((result) => {
         if (!cancelled) setBlob(result);
       })

@@ -29,7 +29,7 @@ export function useMatchDetailPanel() {
     matchLabel,
     matchDetail: match,
     panelOpen: open,
-    setPanelOpen: onOpenChange,
+    setPanelOpen,
     setSelectedMatch,
     athletes,
     readOnly,
@@ -38,6 +38,16 @@ export function useMatchDetailPanel() {
     matches,
     selectedDivision,
   } = useTournamentBracket();
+
+  const onOpenChange = React.useCallback(
+    (nextOpen: boolean) => {
+      setPanelOpen(nextOpen);
+      if (!nextOpen) {
+        setSelectedMatch(null);
+      }
+    },
+    [setPanelOpen, setSelectedMatch]
+  );
 
   const [redWins, setRedWins] = React.useState(0);
   const [blueWins, setBlueWins] = React.useState(0);

@@ -127,9 +127,11 @@ function isBracketFinal(
 function pushConnector(
   paths: Array<BracketConnectorPath>,
   d: string,
-  status: MatchStatus
+  status: MatchStatus,
+  parentMatchId: string,
+  childMatchId?: string
 ) {
-  paths.push({ d, status });
+  paths.push({ d, status, parentMatchId, childMatchId });
 }
 
 function appendLtrToParent(
@@ -155,11 +157,18 @@ function appendLtrToParent(
         midX,
         parentMidY
       ),
-      status
+      status,
+      parent.match.id,
+      child.match.id
     );
   }
   if (hasChild) {
-    pushConnector(paths, buildConnectorTrunk(midX, parentMidY, trunkX), status);
+    pushConnector(
+      paths,
+      buildConnectorTrunk(midX, parentMidY, trunkX),
+      status,
+      parent.match.id
+    );
   }
 }
 
@@ -188,10 +197,17 @@ function appendOneSidedFinalFeeders(
         busX,
         parentMidY
       ),
-      status
+      status,
+      parent.match.id,
+      child.match.id
     );
   }
-  pushConnector(paths, buildConnectorTrunk(busX, parentMidY, attachX), status);
+  pushConnector(
+    paths,
+    buildConnectorTrunk(busX, parentMidY, attachX),
+    status,
+    parent.match.id
+  );
 }
 
 function appendToParent(
@@ -222,14 +238,17 @@ function appendToParent(
         midX,
         parentMidY
       ),
-      status
+      status,
+      parent.match.id,
+      child.match.id
     );
   }
   if (hasChild) {
     pushConnector(
       paths,
       buildConnectorTrunkRtl(midX, parentMidY, parentRightX),
-      status
+      status,
+      parent.match.id
     );
   }
 }

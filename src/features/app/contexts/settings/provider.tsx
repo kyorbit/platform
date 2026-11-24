@@ -174,8 +174,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
                   divisionId: advance.division,
                 }).queryKey
               ) as
-                | { matches: Array<{ id: string; label: string }> }
-                | undefined;
+                { matches: Array<{ id: string; label: string }> } | undefined;
               label =
                 cached?.matches
                   ?.find((m) => m.id === advance.match)

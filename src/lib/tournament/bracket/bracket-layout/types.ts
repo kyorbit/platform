@@ -22,6 +22,8 @@ export type BracketLayoutResult = {
 export interface BracketConnectorPath {
   d: string;
   status: MatchStatus;
+  parentMatchId?: string;
+  childMatchId?: string;
 }
 
 export type RoundLabelPlacement = {
