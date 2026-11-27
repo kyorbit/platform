@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.4.0](https://github.com/kyorbit/platform/compare/kyorbit-v1.3.0...kyorbit-v1.4.0) (2026-11-24)
+
+
+### Features
+
+* **bracket:** add safe fit insets, zoom readout, and matches list sync ([2eaa76b](https://github.com/kyorbit/platform/commit/2eaa76b9de144a4c74b02716ce89d916e7d25acd))
+* **bracket:** rebuild tournament bracket on canvas with UI SDK and agent bridge ([ec61d0b](https://github.com/kyorbit/platform/commit/ec61d0b89e1fb2d748db6206f0adba7cb3275aad))
+* **bracket:** rebuild tournament bracket on canvas with UI SDK and agent bridge ([c7ca9cd](https://github.com/kyorbit/platform/commit/c7ca9cd7a03fe767e6aa9d1af925066c662e22d3))
+* **bracket:** refine canvas card hierarchy, status colors, and hover path highlight ([0f8e957](https://github.com/kyorbit/platform/commit/0f8e957036fb7a61060961d9b716d682060214e0))
+* **scripts:** add change password and create user scripts ([6bd637c](https://github.com/kyorbit/platform/commit/6bd637c283e9d2a57c5d42bf253e003c3e171855))
+
+
+### Bug Fixes
+
+* **bracket:** clear node focus when clicking outside the active node ([5986053](https://github.com/kyorbit/platform/commit/5986053b509d9b4d7e7b5d0b6d71eba114c201a9))
+* **bracket:** dock read-only bar and align action toolbar inside canvas ([71e06d8](https://github.com/kyorbit/platform/commit/71e06d8d6ebd2feac14e82b36ddd61478d5ed1f2))
+* **dialog:** restore overlayClassName and closeButtonClassName props ([ea1f40e](https://github.com/kyorbit/platform/commit/ea1f40eb36d5ada453110add836aaec44fc5c0a4))
+
 ## [1.3.0](https://github.com/kyorbit/platform/compare/kyorbit-v1.2.1...kyorbit-v1.3.0) (2026-10-29)
 
 
